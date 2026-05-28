@@ -1,0 +1,42 @@
+name: Daily CRM Automation Run
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # Every day at 06:00 UTC (08:00 Israel time)
+  workflow_dispatch:        # Also allows manual run from GitHub UI
+
+jobs:
+  run-crm-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write Google credentials
+        run: echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
+
+      - name: Run churn model
+        run: python3 churn_model.py
+
+      - name: Run chip economy scoring
+        run: python3 chip_economy.py
+
+      - name: Run campaign automation
+        run: python3 run_campaigns.py
+        env:
+          BRAZE_API_KEY: ${{ secrets.BRAZE_API_KEY }}
+
+      - name: Upload dashboard as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: crm-dashboard
+          path: dashboard.html
