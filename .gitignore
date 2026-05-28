@@ -1,0 +1,8 @@
+credentials.json
+token_sheets.pkl
+*.pkl
+.env
+__pycache__/
+*.pyc
+automation_ready.csv
+gaming_rfm_report.xlsx
