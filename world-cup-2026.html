@@ -41,6 +41,11 @@ button{font-family:inherit}
 .appbar .live{display:inline-flex;align-items:center;gap:7px;font-size:.72rem;font-weight:800;letter-spacing:1.6px;
   color:var(--red);border:1px solid rgba(255,77,109,.4);padding:6px 12px;border-radius:99px;background:rgba(255,77,109,.08)}
 .live i{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.2s infinite}
+.live.ok{color:var(--green);border-color:rgba(25,229,143,.4);background:rgba(25,229,143,.08)}
+.live.ok i{background:var(--green)}
+.live.off{color:var(--mut);border-color:var(--line);background:rgba(255,255,255,.05)}
+.live.off i{background:var(--mut);animation:none}
+.mscore.live{background:rgba(255,77,109,.16);color:#ffd9e1;animation:pulse 1.6s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
 .appbar .sp{flex:1}
 .search-pill{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border:1px solid var(--line);
@@ -212,6 +217,9 @@ main{position:relative;z-index:1;padding:84px 0 40px;margin-left:var(--rail);min
 .conf{display:flex;align-items:center;gap:10px;font-size:.74rem;color:var(--mut);margin-top:10px}
 .conf .bar{flex:1;height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
 .conf .fill{height:100%;border-radius:99px;background:var(--grad);width:0;transition:width 1.1s cubic-bezier(.22,.9,.36,1)}
+.pscore{display:flex;align-items:center;justify-content:space-between;background:rgba(255,200,61,.08);border:1px dashed rgba(255,200,61,.35);
+  border-radius:12px;padding:9px 14px;margin-top:10px;font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--mut)}
+.pscore b{font-family:'JetBrains Mono',monospace;font-size:1.25rem;color:var(--gold);letter-spacing:0}
 .disclaimer{font-size:.73rem;color:#6b7399;margin-top:18px;line-height:1.6}
 
 /* ============ PERFORMERS ============ */
@@ -297,7 +305,7 @@ footer a{color:#bcd8ff}
 <!-- ============ APP BAR ============ -->
 <div class="appbar">
   <div class="logo" onclick="go('home')">⚽ WC<b>26</b></div>
-  <span class="live"><i></i> MATCHDAY LIVE</span>
+  <span class="live off" id="syncBadge"><i></i> CONNECTING…</span>
   <div class="sp"></div>
   <button class="search-pill" onclick="openSearch()">🔍 <span class="q">Search teams &amp; players…</span> <span class="k">/</span></button>
   <span class="clock" id="clock"></span>
@@ -358,7 +366,7 @@ footer a{color:#bcd8ff}
   <div class="hgrid" id="homeHl"></div>
 
   <footer class="anim" style="--i:5">
-    Unofficial fan app · results current through Day 1 (June 11, 2026) · Sources:
+    Unofficial fan app · built-in results through Day 1 (June 11, 2026); when online, scores &amp; tables auto-sync from ESPN's public scoreboard every 2 minutes (see badge, top-left) · Sources:
     <a href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026" target="_blank" rel="noopener">FIFA</a> ·
     <a href="https://www.espn.com/soccer/story/_/id/48939282/2026-fifa-world-cup-fixtures-results-match-schedule-group-stage-knockout-rounds-bracket" target="_blank" rel="noopener">ESPN</a> ·
     <a href="https://www.skysports.com/football/news/11095/13481245/" target="_blank" rel="noopener">Sky Sports</a> ·
@@ -440,7 +448,7 @@ footer a{color:#bcd8ff}
     </div>
   </div>
   <div class="pgrid" id="predGrid"></div>
-  <p class="disclaimer">⚠️ Odds from public sportsbooks (FanDuel and others) as of June 10–12, 2026 and move constantly. Tips are editorial opinion for entertainment — never bet more than you can afford to lose. 21+ where applicable. Problem gambling help: 1-800-GAMBLER.</p>
+  <p class="disclaimer">⚠️ Odds from public sportsbooks (FanDuel and others) as of June 10–12, 2026 and move constantly. 🎯 Predicted scores are an editorial model — for fun and bragging rights, not a promise. Never bet more than you can afford to lose. 21+ where applicable. Problem gambling help: 1-800-GAMBLER.</p>
 </section>
 
 <!-- ================= STATS ================= -->
@@ -626,19 +634,30 @@ const WATCH = [
  {n:"Erling Haaland",t:"NOR",v:"+1600",w:"Erling_Haaland",note:"16 goals in qualifying — WC debut Jun 16"}
 ];
 
+/* ps = predicted exact score [home, away] — editorial model, for fun */
 const PREDS = [
- {h:"CAN",a:"BIH",when:"Today · 3:00 PM ET · Toronto",fav:"Canada -125",tip:"<b>Tip:</b> Canada to win &amp; both teams to score. Bosnia have seen BTTS land in 8 of their last 9; Canada have scored in 5 of 6 at home. Model gives Canada 53%. Draw sits at +255.",conf:62},
- {h:"USA",a:"PAR",when:"Today · 9:00 PM ET · SoFi Stadium",fav:"USA +100 (model pick)",tip:"<b>Tip:</b> USA to win + over 2.5 goals. The USMNT have kept 1 clean sheet in 14 and conceded in 8 straight — but Paraguay are missing the injured Julio Enciso. Expect goals at both ends.",conf:58},
- {h:"QAT",a:"SUI",when:"Sat Jun 13 · 3:00 PM ET · Santa Clara",fav:"Switzerland",tip:"<b>Expert lean:</b> Switzerland to win to nil. The deepest squad in Group B against the group's outsider — Xhaka controls this one.",conf:70},
- {h:"BRA",a:"MAR",when:"Sat Jun 13 · 6:00 PM ET · MetLife",fav:"Brazil (slight)",tip:"<b>Expert lean:</b> The pick of MD1 — 2022 semi-finalists Morocco can frustrate anyone. Lean Brazil narrowly; under 3.5 goals. Vinícius vs Hakimi is the duel of the weekend.",conf:52},
- {h:"HAI",a:"SCO",when:"Sat Jun 13 · 9:00 PM ET · Foxborough",fav:"Scotland",tip:"<b>Expert lean:</b> Scotland to win. McTominay's form carries them past debutants Haiti — but Haiti's pace on the break is live for a goal.",conf:64},
- {h:"AUS",a:"TUR",when:"Sat Jun 13 · 12:00 AM ET · Vancouver",fav:"Türkiye (slight)",tip:"<b>Expert lean:</b> Türkiye, back at the World Cup after 24 years, ride playoff momentum. Güler &amp; Yıldız creativity edges it — but Australia never go quietly. Draw is live.",conf:48},
- {h:"GER",a:"CUW",when:"Sun Jun 14 · 1:00 PM ET · Houston",fav:"Germany (heavy)",tip:"<b>Expert lean:</b> Germany -2.5 goals. The smallest nation ever at a World Cup meets a four-time champion. Musiala &amp; Wirtz should feast.",conf:78},
- {h:"NED",a:"JPN",when:"Sun Jun 14 · 4:00 PM ET · Arlington",fav:"Netherlands (slight)",tip:"<b>Expert lean:</b> Sneaky banana skin — Japan beat Germany and Spain in 2022. BTTS and a narrow Dutch win, or grab the draw at value odds.",conf:50},
- {h:"ESP",a:"CPV",when:"Mon Jun 15 · 1:00 PM ET · Atlanta",fav:"Spain (heavy)",tip:"<b>Expert lean:</b> Tournament co-favourites against debutants. Spain -2.5 and Oyarzabal anytime scorer — he's third in Golden Boot odds for a reason.",conf:80},
- {h:"FRA",a:"SEN",when:"Tue Jun 16 · 3:00 PM ET · MetLife",fav:"France",tip:"<b>Expert lean:</b> Heavyweight opener. France win + BTTS — Mané will test that French back line. Mbappé anytime scorer is the obvious play.",conf:60},
- {h:"ARG",a:"ALG",when:"Tue Jun 16 · 9:00 PM ET · Kansas City",fav:"Argentina",tip:"<b>Expert lean:</b> The champions begin the title defence. Argentina to win &amp; Messi to score or assist in his record sixth World Cup.",conf:72},
- {h:"ENG",a:"CRO",when:"Wed Jun 17 · 4:00 PM ET · Arlington",fav:"England",tip:"<b>Expert lean:</b> A 2018 semi-final rematch. England to win, under 3.5 — Kane opens his Golden Boot account against an ageing Croatia midfield.",conf:61}
+ {h:"CAN",a:"BIH",ps:[2,1],when:"Today · 3:00 PM ET · Toronto",fav:"Canada -125",tip:"<b>Tip:</b> Canada to win &amp; both teams to score. Bosnia have seen BTTS land in 8 of their last 9; Canada have scored in 5 of 6 at home. Model gives Canada 53%. Draw sits at +255.",conf:62},
+ {h:"USA",a:"PAR",ps:[2,1],when:"Today · 9:00 PM ET · SoFi Stadium",fav:"USA +100 (model pick)",tip:"<b>Tip:</b> USA to win + over 2.5 goals. The USMNT have kept 1 clean sheet in 14 and conceded in 8 straight — but Paraguay are missing the injured Julio Enciso. Expect goals at both ends.",conf:58},
+ {h:"QAT",a:"SUI",ps:[0,2],when:"Sat Jun 13 · 3:00 PM ET · Santa Clara",fav:"Switzerland",tip:"<b>Expert lean:</b> Switzerland to win to nil. The deepest squad in Group B against the group's outsider — Xhaka controls this one.",conf:70},
+ {h:"BRA",a:"MAR",ps:[2,1],when:"Sat Jun 13 · 6:00 PM ET · MetLife",fav:"Brazil (slight)",tip:"<b>Expert lean:</b> The pick of MD1 — 2022 semi-finalists Morocco can frustrate anyone. Lean Brazil narrowly; under 3.5 goals. Vinícius vs Hakimi is the duel of the weekend.",conf:52},
+ {h:"HAI",a:"SCO",ps:[0,2],when:"Sat Jun 13 · 9:00 PM ET · Foxborough",fav:"Scotland",tip:"<b>Expert lean:</b> Scotland to win. McTominay's form carries them past debutants Haiti — but Haiti's pace on the break is live for a goal.",conf:64},
+ {h:"AUS",a:"TUR",ps:[1,2],when:"Sat Jun 13 · 12:00 AM ET · Vancouver",fav:"Türkiye (slight)",tip:"<b>Expert lean:</b> Türkiye, back at the World Cup after 24 years, ride playoff momentum. Güler &amp; Yıldız creativity edges it — but Australia never go quietly. Draw is live.",conf:48},
+ {h:"GER",a:"CUW",ps:[3,0],when:"Sun Jun 14 · 1:00 PM ET · Houston",fav:"Germany (heavy)",tip:"<b>Expert lean:</b> Germany -2.5 goals. The smallest nation ever at a World Cup meets a four-time champion. Musiala &amp; Wirtz should feast.",conf:78},
+ {h:"NED",a:"JPN",ps:[2,1],when:"Sun Jun 14 · 4:00 PM ET · Arlington",fav:"Netherlands (slight)",tip:"<b>Expert lean:</b> Sneaky banana skin — Japan beat Germany and Spain in 2022. BTTS and a narrow Dutch win, or grab the draw at value odds.",conf:50},
+ {h:"CIV",a:"ECU",ps:[1,1],when:"Sun Jun 14 · 7:00 PM ET · Philadelphia",fav:"Pick'em",tip:"<b>Expert lean:</b> The tightest game of MD1 — Caicedo anchors Ecuador, the Elephants bring power up front. Take the draw and under 2.5.",conf:45},
+ {h:"SWE",a:"TUN",ps:[2,0],when:"Sun Jun 14 · 10:00 PM ET · Monterrey",fav:"Sweden",tip:"<b>Expert lean:</b> Isak + Gyökeres is the scariest strike pair of any non-seed. Sweden to win to nil at altitude-free Monterrey.",conf:66},
+ {h:"ESP",a:"CPV",ps:[3,0],when:"Mon Jun 15 · 1:00 PM ET · Atlanta",fav:"Spain (heavy)",tip:"<b>Expert lean:</b> Tournament co-favourites against debutants. Spain -2.5 and Oyarzabal anytime scorer — he's third in Golden Boot odds for a reason.",conf:80},
+ {h:"KSA",a:"URU",ps:[0,2],when:"Mon Jun 15 · 6:00 PM ET · Miami",fav:"Uruguay",tip:"<b>Expert lean:</b> Valverde runs the midfield and Núñez loves space in behind. Uruguay win — but remember what Saudi did to Argentina in 2022.",conf:63},
+ {h:"BEL",a:"EGY",ps:[2,1],when:"Mon Jun 15 · 6:00 PM ET · Seattle",fav:"Belgium",tip:"<b>Expert lean:</b> De Bruyne's last World Cup vs Salah's first knockout-stage push. Belgium win, both teams score — Salah always shows up.",conf:57},
+ {h:"IRN",a:"NZL",ps:[1,0],when:"Mon Jun 15 · 12:00 AM ET · SoFi",fav:"Iran",tip:"<b>Expert lean:</b> Iran's third straight World Cup with a strong spine; Taremi nicks it late. Under 2.5 goals is the safer angle.",conf:55},
+ {h:"FRA",a:"SEN",ps:[2,1],when:"Tue Jun 16 · 3:00 PM ET · MetLife",fav:"France",tip:"<b>Expert lean:</b> Heavyweight opener. France win + BTTS — Mané will test that French back line. Mbappé anytime scorer is the obvious play.",conf:60},
+ {h:"IRQ",a:"NOR",ps:[0,3],when:"Tue Jun 16 · 6:00 PM ET · Foxborough",fav:"Norway (heavy)",tip:"<b>Expert lean:</b> Haaland's World Cup debut against the playoff fairytale. Norway -1.5 and Haaland first scorer — he hit 16 in qualifying.",conf:68},
+ {h:"ARG",a:"ALG",ps:[2,0],when:"Tue Jun 16 · 9:00 PM ET · Kansas City",fav:"Argentina",tip:"<b>Expert lean:</b> The champions begin the title defence. Argentina to win &amp; Messi to score or assist in his record sixth World Cup.",conf:72},
+ {h:"AUT",a:"JOR",ps:[2,0],when:"Tue Jun 16 · 12:00 AM ET · Santa Clara",fav:"Austria",tip:"<b>Expert lean:</b> Rangnick's pressing machine against a deep Jordan block. Austria win; second half goals as legs tire.",conf:63},
+ {h:"POR",a:"COD",ps:[3,1],when:"Wed Jun 17 · 1:00 PM ET · Houston",fav:"Portugal",tip:"<b>Expert lean:</b> Ronaldo's record sixth World Cup begins. Portugal over 2.5 team goals — but DR Congo's Wissa gets one against a shaky back line.",conf:74},
+ {h:"ENG",a:"CRO",ps:[2,0],when:"Wed Jun 17 · 4:00 PM ET · Arlington",fav:"England",tip:"<b>Expert lean:</b> A 2018 semi-final rematch. England to win, under 3.5 — Kane opens his Golden Boot account against an ageing Croatia midfield.",conf:61},
+ {h:"GHA",a:"PAN",ps:[1,1],when:"Wed Jun 17 · 7:00 PM ET · Toronto",fav:"Ghana (slight)",tip:"<b>Expert lean:</b> Kudus is the difference-maker, but Panama's 2026 form has been rock solid. Draw is the value play.",conf:44},
+ {h:"UZB",a:"COL",ps:[1,2],when:"Wed Jun 17 · 10:00 PM ET · Estadio Azteca",fav:"Colombia",tip:"<b>Expert lean:</b> Luis Díaz at the Azteca under lights. Colombia win, but debutants Uzbekistan have enough through Shomurodov to score first-ever WC goal.",conf:59}
 ];
 
 const STADIUMS = [
@@ -681,6 +700,7 @@ const HIGHLIGHTS = [
 const $=q=>document.querySelector(q), $$=q=>document.querySelectorAll(q);
 const flag=(code,w=40)=>`https://flagcdn.com/w${w}/${TEAMS[code].f}.png`;
 const fmtDate=d=>new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
 
 async function wikiImg(title){
   try{
@@ -716,10 +736,12 @@ window.addEventListener("hashchange",()=>{
    RENDER: match cards
    ================================================================= */
 function matchCard(m,i){
-  const played=!!m.s, today=!!m.today;
-  const badge=played?'<span class="badge ft">FULL TIME</span>':today?'<span class="badge today">● TODAY</span>':'<span class="badge up">UPCOMING</span>';
-  const mid=played
-    ?`<div class="mscore">${m.s[0]} – ${m.s[1]}</div>`
+  const played=!!m.s&&!m.live, live=!!m.live, today=!!m.today;
+  const badge=live?'<span class="badge today">● LIVE</span>'
+    :played?'<span class="badge ft">FULL TIME</span>'
+    :today?'<span class="badge today">● TODAY</span>':'<span class="badge up">UPCOMING</span>';
+  const mid=m.s
+    ?`<div class="mscore${live?" live":""}">${m.s[0]} – ${m.s[1]}</div>`
     :`<div class="mtime">${m.t}${m.t.includes("*")?"":" ET"}</div>`;
   return `<div class="match anim tilt" style="--i:${i%10}" data-g="${m.g}" data-md="${m.md}">
     ${badge}
@@ -734,7 +756,10 @@ function matchCard(m,i){
   </div>`;
 }
 
-$("#liveGrid").innerHTML = MATCHES.filter(m=>m.s||m.today).map(matchCard).join("");
+function renderLive(){
+  $("#liveGrid").innerHTML = MATCHES.filter(m=>m.s||m.today||m.live).map(matchCard).join("");
+  bindTilt();
+}
 
 let mdFilter="all", gFilter="all";
 function renderFixtures(){
@@ -793,6 +818,7 @@ function standings(g){
   });
   return Object.values(rows).sort((a,b)=>b.Pts-a.Pts||(b.GF-b.GA)-(a.GF-a.GA)||b.GF-a.GF||TEAMS[a.t].n.localeCompare(TEAMS[b.t].n));
 }
+function renderGroups(){
 $("#groupsGrid").innerHTML="ABCDEFGHIJKL".split("").map((g,gi)=>`
   <div class="gcard anim" style="--i:${gi+1}" id="group-${g}">
     <h3>GROUP <b>${g}</b></h3>
@@ -803,6 +829,7 @@ $("#groupsGrid").innerHTML="ABCDEFGHIJKL".split("").map((g,gi)=>`
         <td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF-r.GA>0?"+":""}${r.GF-r.GA}</td><td class="pts">${r.Pts}</td></tr>`).join("")}
     </table>
   </div>`).join("");
+}
 
 /* =================================================================
    RENDER: predictions (confidence bars animate on view enter)
@@ -811,6 +838,7 @@ $("#predGrid").innerHTML=PREDS.map((p,i)=>`
   <div class="pcard anim" style="--i:${(i%8)+3}">
     <div class="ph"><img src="${flag(p.h)}" alt="">${TEAMS[p.h].n} <span style="color:var(--mut)">vs</span> ${TEAMS[p.a].n}<img src="${flag(p.a)}" alt=""></div>
     <div class="when">${p.when} · Favourite: ${p.fav}</div>
+    <div class="pscore"><span>🎯 Predicted score</span><b>${TEAMS[p.h].n.split(" ")[0]} ${p.ps[0]} – ${p.ps[1]} ${TEAMS[p.a].n.split(" ")[0]}</b></div>
     <div class="tip">${p.tip}</div>
     <div class="conf">Confidence <div class="bar"><div class="fill" data-w="${p.conf}"></div></div> ${p.conf}%</div>
   </div>`).join("");
@@ -917,24 +945,111 @@ const cio=new IntersectionObserver(es=>es.forEach(e=>{
 $$("[data-count]").forEach(el=>cio.observe(el));
 
 /* =================================================================
-   countdown (with flip animation on change)
+   dynamic schedule awareness: kickoff Dates, TODAY flags, next-up countdown
    ================================================================= */
-const KICKOFF=new Date("2026-06-12T19:00:00Z");
+function etDate(m){ /* kickoff as a real Date (ET is UTC-4 in June/July) */
+  if(!m.t||m.t==="FT")return null;
+  const t12=m.t.replace("*","").trim();
+  const mm=t12.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if(!mm)return null;
+  let h=+mm[1]%12; if(/pm/i.test(mm[3]))h+=12;
+  const d=new Date(`${m.d}T${String(h).padStart(2,"0")}:${mm[2]}:00-04:00`);
+  if(m.t.includes("*"))d.setDate(d.getDate()+1); /* asterisk = just past midnight ET */
+  return d;
+}
+function computeToday(){
+  const todayET=new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});
+  MATCHES.forEach(m=>{m.today=(!m.s&&!m.live&&m.d===todayET)?1:0});
+}
+let NEXT=null;
+function updateNext(){
+  const liveM=MATCHES.find(m=>m.live);
+  if(liveM){
+    NEXT=null;
+    $(".count-label").innerHTML=`🔴 <b>LIVE NOW: ${TEAMS[liveM.h].n} ${liveM.s?liveM.s.join("–"):""} ${TEAMS[liveM.a].n}</b>${liveM.v?" · "+liveM.v:""}`;
+    return;
+  }
+  const now=new Date();
+  const up=MATCHES.filter(m=>!m.s).map(m=>({m,k:etDate(m)})).filter(x=>x.k&&x.k>now).sort((a,b)=>a.k-b.k)[0];
+  if(!up){NEXT=null;$(".count-label").innerHTML="🏆 <b>Group stage complete — knockout rounds on FIFA.com</b>";return}
+  NEXT=up.k;
+  $("#nextGame").textContent=`${TEAMS[up.m.h].n} vs ${TEAMS[up.m.a].n}${up.m.v?" · "+up.m.v+", "+up.m.c:""}`;
+}
 let prev={};
 function setCd(id,val){
   const el=$("#"+id);
   if(prev[id]!==val){el.classList.remove("tick");void el.offsetWidth;el.classList.add("tick");el.textContent=val;prev[id]=val}
 }
 function tick(){
-  let ms=KICKOFF-new Date();
-  if(ms<0){$(".count-label").innerHTML="🔴 <b>Matchday is LIVE</b> — Canada vs Bosnia under way in Toronto";ms=0}
-  const s=Math.floor(ms/1000);
+  if(!NEXT){setCd("cd-d","0");setCd("cd-h","00");setCd("cd-m","00");setCd("cd-s","00");return}
+  let ms=NEXT-new Date();
+  if(ms<0){updateNext();ms=NEXT?NEXT-new Date():0}
+  const s=Math.max(0,Math.floor(ms/1000));
   setCd("cd-d",String(Math.floor(s/86400)));
   setCd("cd-h",String(Math.floor(s/3600)%24).padStart(2,"0"));
   setCd("cd-m",String(Math.floor(s/60)%60).padStart(2,"0"));
   setCd("cd-s",String(s%60).padStart(2,"0"));
 }
+
+/* =================================================================
+   LIVE AUTO-SYNC — pulls real scores from ESPN's public scoreboard API
+   (no key needed). If unreachable, the app keeps its built-in data.
+   ================================================================= */
+const ALIAS={"south korea":"KOR","korea republic":"KOR","czech republic":"CZE","czechia":"CZE",
+ "usa":"USA","united states":"USA","turkey":"TUR","turkiye":"TUR","ivory coast":"CIV","cote d'ivoire":"CIV",
+ "cape verde islands":"CPV","cape verde":"CPV","dr congo":"COD","democratic republic of the congo":"COD","congo dr":"COD",
+ "bosnia and herzegovina":"BIH","bosnia & herzegovina":"BIH","curacao":"CUW","iran":"IRN","ir iran":"IRN"};
+Object.keys(TEAMS).forEach(c=>ALIAS[norm(TEAMS[c].n)]=c);
+const teamCode=name=>ALIAS[norm(String(name||"").replace(/[''']/g,"'"))]||null;
+
+function setBadge(state,extra){
+  const b=$("#syncBadge");
+  if(state==="ok"){b.className="live ok";b.innerHTML=`<i></i> LIVE SYNC${extra?" · "+extra:""}`}
+  else if(state==="live"){b.className="live";b.innerHTML=`<i></i> MATCH LIVE`}
+  else{b.className="live off";b.innerHTML=`<i></i> BUILT-IN DATA · JUN 12`}
+}
+function rerenderAll(){computeToday();renderLive();renderFixtures();renderGroups();updateNext()}
+
+async function syncScores(){
+  try{
+    const start=new Date(Date.UTC(2026,5,11)),now=new Date(),end=new Date(Date.UTC(2026,6,20));
+    const stop=now<end?now:end;
+    const dates=[];
+    for(let d=new Date(start);d<=stop&&dates.length<45;d.setUTCDate(d.getUTCDate()+1))
+      dates.push(d.toISOString().slice(0,10).replace(/-/g,""));
+    const res=await Promise.allSettled(dates.map(ds=>
+      fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${ds}`)
+        .then(r=>r.ok?r.json():null)));
+    let applied=0,anyLive=false;
+    for(const r of res){
+      const j=r.status==="fulfilled"&&r.value;
+      if(!j||!Array.isArray(j.events))continue;
+      for(const ev of j.events){
+        const comp=ev.competitions&&ev.competitions[0];if(!comp)continue;
+        const cs=comp.competitors||[];if(cs.length!==2)continue;
+        const state=ev.status&&ev.status.type&&ev.status.type.state;
+        if(state!=="in"&&state!=="post")continue;
+        const codes=cs.map(c=>teamCode(c.team&&(c.team.displayName||c.team.name)));
+        if(!codes[0]||!codes[1])continue;
+        const m=MATCHES.find(x=>(x.h===codes[0]&&x.a===codes[1])||(x.h===codes[1]&&x.a===codes[0]));
+        if(!m)continue;
+        const score=code=>parseInt(cs[codes.indexOf(code)].score,10)||0;
+        m.s=[score(m.h),score(m.a)];
+        m.live=state==="in"?1:0;
+        if(state==="post"&&!m.sc)m.t="FT";
+        if(m.live)anyLive=true;
+        applied++;
+      }
+    }
+    if(applied){
+      rerenderAll();
+      setBadge(anyLive?"live":"ok",new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"}));
+    }else setBadge("off");
+  }catch(e){setBadge("off")}
+}
+computeToday();updateNext();
 tick();setInterval(tick,1000);
+syncScores();setInterval(syncScores,120000); /* re-sync every 2 minutes */
 
 /* =================================================================
    SEARCH OVERLAY — teams & players
@@ -943,7 +1058,6 @@ const sIndex=[
   ...Object.keys(TEAMS).map(c=>({type:"team",key:c,label:TEAMS[c].n,sub:`Group ${TEAMS[c].g}`,flag:flag(c,40)})),
   ...PLAYERS.map(p=>({type:"player",key:p.t,label:p.n,sub:`${p.p} · ${TEAMS[p.t].n}`,flag:flag(p.t,40)}))
 ];
-const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
 const sInput=$("#search"),sBox=$("#searchResults"),sOv=$("#sOv");
 function openSearch(){sOv.classList.add("open");setTimeout(()=>sInput.focus(),60)}
 function closeSearch(){sOv.classList.remove("open");sInput.value="";sBox.innerHTML=""}
@@ -993,7 +1107,9 @@ document.addEventListener("animationend",e=>{
   if(e.animationName==="rise"){e.target.style.animation="none";e.target.style.opacity="1"}
 });
 
-/* boot: honour deep link + bind tilt on home cards */
+/* boot: initial renders, deep link, tilt */
+renderLive();
+renderGroups();
 bindTilt();
 if(location.hash.startsWith("#/")){const v=location.hash.slice(2);if(document.getElementById("v-"+v))go(v)}
 </script>
