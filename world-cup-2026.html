@@ -279,7 +279,47 @@ main{position:relative;z-index:1;padding:84px 0 40px;margin-left:var(--rail);min
 .s-close{position:absolute;top:22px;right:26px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;
   width:42px;height:42px;border-radius:50%;font-size:1.1rem;cursor:pointer}
 
-/* ============ TEAM MODAL ============ */
+/* ============ FLOATING PLAYER PORTRAITS ============ */
+.float-layer{position:absolute;inset:0;pointer-events:none;z-index:2}
+.fp{position:absolute;width:78px;height:78px;border-radius:50%;border:2px solid rgba(255,255,255,.4);
+  background:#1a1f44 center 18%/cover;box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 26px rgba(77,163,255,.28);
+  animation:bob var(--dur,7s) ease-in-out var(--del,0s) infinite alternate;opacity:.94;transition:transform .3s}
+.fp .tag{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:.6rem;font-weight:800;
+  letter-spacing:.5px;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);padding:3px 9px;border-radius:99px;white-space:nowrap}
+@keyframes bob{from{margin-top:-10px}to{margin-top:12px}}
+@media(max-width:760px){.fp:nth-child(n+4){display:none}.fp{width:60px;height:60px}}
+
+/* ============ NEXT-LEVEL POLISH ============ */
+#prog{position:fixed;top:0;left:0;height:3px;background:var(--grad);z-index:90;width:0;box-shadow:0 0 12px rgba(25,229,143,.6)}
+.hero h1 .grad{background:linear-gradient(90deg,#19e58f,#4da3ff,#a78bfa,#19e58f);background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 7s linear infinite}
+@keyframes shimmer{to{background-position:300% 0}}
+.match::after,.pcard::after,.ob::after{content:'';position:absolute;top:0;left:-90%;width:55%;height:100%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.09),transparent);transform:skewX(-20deg);
+  transition:left .65s ease;pointer-events:none}
+.match:hover::after,.pcard:hover::after,.ob:hover::after{left:130%}
+.pcard,.ob{position:relative;overflow:hidden}
+
+/* ============ AI PANEL (predictions) ============ */
+.panel-strip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.expert{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);border-radius:99px;
+  padding:9px 17px;font-size:.8rem;font-weight:700;transition:.25s}
+.expert:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.3)}
+.expert .em{font-size:1.15rem}
+.expert .role{color:var(--mut);font-weight:600;font-size:.7rem;display:block}
+.pred-top{display:flex;align-items:center;gap:14px;margin:12px 0 4px}
+.big-score{flex:1;text-align:center;background:rgba(255,200,61,.08);border:1px dashed rgba(255,200,61,.35);border-radius:14px;padding:10px 8px}
+.big-score b{font-family:'JetBrains Mono',monospace;font-size:1.7rem;color:var(--gold)}
+.big-score span{display:block;font-size:.62rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--mut);margin-top:2px}
+.luck{position:relative;width:62px;height:62px;border-radius:50%;flex:none;
+  background:conic-gradient(var(--red) calc(var(--p,30)*1%),rgba(255,255,255,.09) 0)}
+.luck i{position:absolute;inset:7px;background:var(--card);border-radius:50%;display:grid;place-items:center;
+  font-style:normal;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:#ffb3c1;text-align:center;line-height:1}
+.luck i small{display:block;font-size:.5rem;letter-spacing:1px;color:var(--mut)}
+.votes{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
+.vote{font-size:.7rem;font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:4px 10px;border-radius:99px;color:var(--mut)}
+.vote b{color:#fff;font-weight:700}
 .modal-bg{position:fixed;inset:0;background:rgba(4,5,10,.82);backdrop-filter:blur(8px);z-index:130;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-bg.open{display:flex}
 .modal{background:#141833;border:1px solid rgba(255,255,255,.15);border-radius:24px;max-width:560px;width:100%;max-height:84vh;overflow:auto;padding:28px;animation:modalIn .35s cubic-bezier(.22,.9,.36,1) both}
@@ -300,6 +340,7 @@ footer a{color:#bcd8ff}
 </head>
 <body>
 
+<div id="prog"></div>
 <div class="orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
 
 <!-- ============ APP BAR ============ -->
@@ -330,6 +371,16 @@ footer a{color:#bcd8ff}
     <div class="slide show" id="slideA"></div>
     <div class="slide" id="slideB"></div>
     <span class="where" id="heroWhere">🏟 Estadio Azteca · Mexico City</span>
+    <div class="float-layer" id="floatLayer">
+      <div class="fp" data-wiki="Kylian_Mbappé" data-z="3" style="top:8%;right:6%;--dur:6.5s;--del:0s"><span class="tag">Mbappé 🇫🇷</span></div>
+      <div class="fp" data-wiki="Lionel_Messi" data-z="2" style="top:38%;right:14%;--dur:8s;--del:.8s"><span class="tag">Messi 🇦🇷</span></div>
+      <div class="fp" data-wiki="Erling_Haaland" data-z="4" style="top:12%;right:24%;--dur:7.2s;--del:.4s"><span class="tag">Haaland 🇳🇴</span></div>
+      <div class="fp" data-wiki="Harry_Kane" data-z="2.5" style="top:60%;right:5%;--dur:7.8s;--del:1.2s"><span class="tag">Kane 🏴</span></div>
+      <div class="fp" data-wiki="Lamine_Yamal" data-z="3.5" style="top:64%;right:22%;--dur:6.8s;--del:.2s"><span class="tag">Yamal 🇪🇸</span></div>
+      <div class="fp" data-wiki="Son_Heung-min" data-z="2" style="top:34%;right:32%;--dur:8.4s;--del:1.6s"><span class="tag">Son 🇰🇷</span></div>
+      <div class="fp" data-wiki="Cristiano_Ronaldo" data-z="3" style="top:6%;right:42%;--dur:7.4s;--del:.6s"><span class="tag">Ronaldo 🇵🇹</span></div>
+      <div class="fp" data-wiki="Vinícius_Júnior" data-z="2.8" style="top:58%;right:38%;--dur:7s;--del:1s"><span class="tag">Vinícius 🇧🇷</span></div>
+    </div>
     <div class="hero-in">
       <span class="kicker">🇺🇸 🇲🇽 🇨🇦 · June 11 — July 19, 2026</span>
       <h1>FIFA WORLD CUP <span class="grad">26™</span></h1>
@@ -420,9 +471,16 @@ footer a{color:#bcd8ff}
 <!-- ================= PREDICTIONS ================= -->
 <section class="view" id="v-predict">
   <div class="vhead anim" style="--i:0">
-    <div class="eyebrow">Odds &amp; expert leans · updated Jun 12</div>
-    <h2>Predictions &amp; <span>Tips</span></h2>
-    <p>Bookmaker favourites, model picks and an expert lean for every upcoming first-round game.</p>
+    <div class="eyebrow">5-expert AI panel · researched &amp; aligned Jun 12</div>
+    <h2>Panel Predictions &amp; <span>Tips</span></h2>
+    <p>Five specialist analysts researched odds, injuries, Elo ratings and World Cup history independently, then aligned on a consensus exact score, win probability and <b style="color:#ffb3c1">luck factor</b> for every game.</p>
+  </div>
+  <div class="panel-strip anim" style="--i:1">
+    <div class="expert"><span class="em">🧮</span><span>The Quant<span class="role">Elo · xG · Poisson model</span></span></div>
+    <div class="expert"><span class="em">♟️</span><span>The Tactician<span class="role">match-ups · injuries · systems</span></span></div>
+    <div class="expert"><span class="em">💰</span><span>The Market Reader<span class="role">odds · line moves · sharp money</span></span></div>
+    <div class="expert"><span class="em">📜</span><span>The Historian<span class="role">WC patterns · upsets · luck</span></span></div>
+    <div class="expert"><span class="em">🤝</span><span>The Chairman<span class="role">aligns the panel consensus</span></span></div>
   </div>
   <div class="odds-board">
     <div class="ob anim" style="--i:1">
@@ -448,7 +506,7 @@ footer a{color:#bcd8ff}
     </div>
   </div>
   <div class="pgrid" id="predGrid"></div>
-  <p class="disclaimer">⚠️ Odds from public sportsbooks (FanDuel and others) as of June 10–12, 2026 and move constantly. 🎯 Predicted scores are an editorial model — for fun and bragging rights, not a promise. Never bet more than you can afford to lose. 21+ where applicable. Problem gambling help: 1-800-GAMBLER.</p>
+  <p class="disclaimer">🧠 How these were made: four specialist AI analysts (statistics, tactics, betting markets, World Cup history) each independently researched articles, odds boards and injury news on June 12, 2026, predicted every game, and a fifth aligned their votes into the consensus shown — the vote chips show where they disagreed. LUCK% is the panel's estimate of how much pure variance could flip the result. ⚠️ Odds quoted from public sportsbooks (FanDuel, Oddschecker, Bet365) as of June 10–12 and move constantly. For fun and bragging rights, not a promise — never bet more than you can afford to lose. 21+ where applicable. Problem gambling help: 1-800-GAMBLER.</p>
 </section>
 
 <!-- ================= STATS ================= -->
@@ -634,30 +692,32 @@ const WATCH = [
  {n:"Erling Haaland",t:"NOR",v:"+1600",w:"Erling_Haaland",note:"16 goals in qualifying — WC debut Jun 16"}
 ];
 
-/* ps = predicted exact score [home, away] — editorial model, for fun */
+/* 5-expert AI panel consensus (researched Jun 12, 2026)
+   ps=consensus score · conf=favourite win% · luck=variance share
+   votes: 🧮 Quant ♟️ Tactician 💰 Market 📜 Historian */
 const PREDS = [
- {h:"CAN",a:"BIH",ps:[2,1],when:"Today · 3:00 PM ET · Toronto",fav:"Canada -125",tip:"<b>Tip:</b> Canada to win &amp; both teams to score. Bosnia have seen BTTS land in 8 of their last 9; Canada have scored in 5 of 6 at home. Model gives Canada 53%. Draw sits at +255.",conf:62},
- {h:"USA",a:"PAR",ps:[2,1],when:"Today · 9:00 PM ET · SoFi Stadium",fav:"USA +100 (model pick)",tip:"<b>Tip:</b> USA to win + over 2.5 goals. The USMNT have kept 1 clean sheet in 14 and conceded in 8 straight — but Paraguay are missing the injured Julio Enciso. Expect goals at both ends.",conf:58},
- {h:"QAT",a:"SUI",ps:[0,2],when:"Sat Jun 13 · 3:00 PM ET · Santa Clara",fav:"Switzerland",tip:"<b>Expert lean:</b> Switzerland to win to nil. The deepest squad in Group B against the group's outsider — Xhaka controls this one.",conf:70},
- {h:"BRA",a:"MAR",ps:[2,1],when:"Sat Jun 13 · 6:00 PM ET · MetLife",fav:"Brazil (slight)",tip:"<b>Expert lean:</b> The pick of MD1 — 2022 semi-finalists Morocco can frustrate anyone. Lean Brazil narrowly; under 3.5 goals. Vinícius vs Hakimi is the duel of the weekend.",conf:52},
- {h:"HAI",a:"SCO",ps:[0,2],when:"Sat Jun 13 · 9:00 PM ET · Foxborough",fav:"Scotland",tip:"<b>Expert lean:</b> Scotland to win. McTominay's form carries them past debutants Haiti — but Haiti's pace on the break is live for a goal.",conf:64},
- {h:"AUS",a:"TUR",ps:[1,2],when:"Sat Jun 13 · 12:00 AM ET · Vancouver",fav:"Türkiye (slight)",tip:"<b>Expert lean:</b> Türkiye, back at the World Cup after 24 years, ride playoff momentum. Güler &amp; Yıldız creativity edges it — but Australia never go quietly. Draw is live.",conf:48},
- {h:"GER",a:"CUW",ps:[3,0],when:"Sun Jun 14 · 1:00 PM ET · Houston",fav:"Germany (heavy)",tip:"<b>Expert lean:</b> Germany -2.5 goals. The smallest nation ever at a World Cup meets a four-time champion. Musiala &amp; Wirtz should feast.",conf:78},
- {h:"NED",a:"JPN",ps:[2,1],when:"Sun Jun 14 · 4:00 PM ET · Arlington",fav:"Netherlands (slight)",tip:"<b>Expert lean:</b> Sneaky banana skin — Japan beat Germany and Spain in 2022. BTTS and a narrow Dutch win, or grab the draw at value odds.",conf:50},
- {h:"CIV",a:"ECU",ps:[1,1],when:"Sun Jun 14 · 7:00 PM ET · Philadelphia",fav:"Pick'em",tip:"<b>Expert lean:</b> The tightest game of MD1 — Caicedo anchors Ecuador, the Elephants bring power up front. Take the draw and under 2.5.",conf:45},
- {h:"SWE",a:"TUN",ps:[2,0],when:"Sun Jun 14 · 10:00 PM ET · Monterrey",fav:"Sweden",tip:"<b>Expert lean:</b> Isak + Gyökeres is the scariest strike pair of any non-seed. Sweden to win to nil at altitude-free Monterrey.",conf:66},
- {h:"ESP",a:"CPV",ps:[3,0],when:"Mon Jun 15 · 1:00 PM ET · Atlanta",fav:"Spain (heavy)",tip:"<b>Expert lean:</b> Tournament co-favourites against debutants. Spain -2.5 and Oyarzabal anytime scorer — he's third in Golden Boot odds for a reason.",conf:80},
- {h:"KSA",a:"URU",ps:[0,2],when:"Mon Jun 15 · 6:00 PM ET · Miami",fav:"Uruguay",tip:"<b>Expert lean:</b> Valverde runs the midfield and Núñez loves space in behind. Uruguay win — but remember what Saudi did to Argentina in 2022.",conf:63},
- {h:"BEL",a:"EGY",ps:[2,1],when:"Mon Jun 15 · 6:00 PM ET · Seattle",fav:"Belgium",tip:"<b>Expert lean:</b> De Bruyne's last World Cup vs Salah's first knockout-stage push. Belgium win, both teams score — Salah always shows up.",conf:57},
- {h:"IRN",a:"NZL",ps:[1,0],when:"Mon Jun 15 · 12:00 AM ET · SoFi",fav:"Iran",tip:"<b>Expert lean:</b> Iran's third straight World Cup with a strong spine; Taremi nicks it late. Under 2.5 goals is the safer angle.",conf:55},
- {h:"FRA",a:"SEN",ps:[2,1],when:"Tue Jun 16 · 3:00 PM ET · MetLife",fav:"France",tip:"<b>Expert lean:</b> Heavyweight opener. France win + BTTS — Mané will test that French back line. Mbappé anytime scorer is the obvious play.",conf:60},
- {h:"IRQ",a:"NOR",ps:[0,3],when:"Tue Jun 16 · 6:00 PM ET · Foxborough",fav:"Norway (heavy)",tip:"<b>Expert lean:</b> Haaland's World Cup debut against the playoff fairytale. Norway -1.5 and Haaland first scorer — he hit 16 in qualifying.",conf:68},
- {h:"ARG",a:"ALG",ps:[2,0],when:"Tue Jun 16 · 9:00 PM ET · Kansas City",fav:"Argentina",tip:"<b>Expert lean:</b> The champions begin the title defence. Argentina to win &amp; Messi to score or assist in his record sixth World Cup.",conf:72},
- {h:"AUT",a:"JOR",ps:[2,0],when:"Tue Jun 16 · 12:00 AM ET · Santa Clara",fav:"Austria",tip:"<b>Expert lean:</b> Rangnick's pressing machine against a deep Jordan block. Austria win; second half goals as legs tire.",conf:63},
- {h:"POR",a:"COD",ps:[3,1],when:"Wed Jun 17 · 1:00 PM ET · Houston",fav:"Portugal",tip:"<b>Expert lean:</b> Ronaldo's record sixth World Cup begins. Portugal over 2.5 team goals — but DR Congo's Wissa gets one against a shaky back line.",conf:74},
- {h:"ENG",a:"CRO",ps:[2,0],when:"Wed Jun 17 · 4:00 PM ET · Arlington",fav:"England",tip:"<b>Expert lean:</b> A 2018 semi-final rematch. England to win, under 3.5 — Kane opens his Golden Boot account against an ageing Croatia midfield.",conf:61},
- {h:"GHA",a:"PAN",ps:[1,1],when:"Wed Jun 17 · 7:00 PM ET · Toronto",fav:"Ghana (slight)",tip:"<b>Expert lean:</b> Kudus is the difference-maker, but Panama's 2026 form has been rock solid. Draw is the value play.",conf:44},
- {h:"UZB",a:"COL",ps:[1,2],when:"Wed Jun 17 · 10:00 PM ET · Estadio Azteca",fav:"Colombia",tip:"<b>Expert lean:</b> Luis Díaz at the Azteca under lights. Colombia win, but debutants Uzbekistan have enough through Shomurodov to score first-ever WC goal.",conf:59}
+ {h:"CAN",a:"BIH",ps:[2,1],conf:54,luck:38,votes:"🧮 2-1|♟️ 2-1|💰 2-1|📜 2-1",when:"Today · 3:00 PM ET · Toronto",fav:"Canada -125",tip:"<b>Unanimous panel:</b> Canada 2–1. Host Elo bump (+100) and the BMO Field roar beat Džeko's hold-up play — but Bosnia are priced live to score, so BTTS is the side bet."},
+ {h:"USA",a:"PAR",ps:[1,0],conf:53,luck:42,votes:"🧮 1-0|♟️ 1-0|💰 1-0|📜 1-0",when:"Today · 9:00 PM ET · SoFi Stadium",fav:"USA ≈ -170",tip:"<b>Unanimous panel:</b> 1–0 grind. Paraguay's elite low block (best xGA in CONMEBOL qualifying, unbeaten in 8) makes this a one-moment game — Pulisic settles it. Sub-2.5 total is the market profile."},
+ {h:"QAT",a:"SUI",ps:[0,2],conf:89,luck:18,votes:"🧮 0-2|♟️ 0-2|💰 0-2|📜 0-2",when:"Sat Jun 13 · 3:00 PM ET · Santa Clara",fav:"Switzerland 2/9",tip:"<b>Unanimous panel:</b> Switzerland to nil. Qatar have lost all six World Cup games in their history; the Swiss near-clean-sheet qualifying campaign makes this the closest thing to a solved equation."},
+ {h:"BRA",a:"MAR",ps:[2,1],conf:50,luck:39,votes:"🧮 2-1|♟️ 2-1|💰 2-1|📜 2-1",when:"Sat Jun 13 · 6:00 PM ET · MetLife",fav:"Brazil 8/13",tip:"<b>Unanimous score, nervous panel:</b> both back lines are gutted (Brazil missing Militão &amp; Rodrygo; Morocco without Aguerd). Brazil have never lost a WC opener since 1934 — but Morocco beat them 2-1 in 2023. Highest-profile upset risk of MD1."},
+ {h:"HAI",a:"SCO",ps:[0,2],conf:65,luck:39,votes:"🧮 0-2|♟️ 0-2|💰 0-1|📜 1-2",when:"Sat Jun 13 · 9:00 PM ET · Foxborough",fav:"Scotland",tip:"<b>Majority 0–2:</b> McTominay's late runs and set-piece weight beat a Haiti side short of competitive minutes. The Historian notes returning minnows usually score — Haiti +1.5 has value."},
+ {h:"AUS",a:"TUR",ps:[1,2],conf:45,luck:43,votes:"🧮 1-2|♟️ 1-2|💰 1-2|📜 1-1",when:"Sat Jun 13 · 12:00 AM ET · Vancouver",fav:"Türkiye (slight)",tip:"<b>3-of-4 panel:</b> Türkiye 2–1. Güler and Yıldız between the lines stress Australia's mid-block; only the Historian holds out for a classic confederation-clash draw. High variance — don't bet the house."},
+ {h:"GER",a:"CUW",ps:[3,0],conf:88,luck:10,votes:"🧮 4-0|♟️ 3-0|💰 4-0|📜 3-0",when:"Sun Jun 14 · 1:00 PM ET · Houston",fav:"Germany 1/16",tip:"<b>Panel split only on margin (3–0 vs 4–0):</b> largest Elo mismatch of the matchday (~400 pts). Wirtz/Musiala half-space overloads against the smallest nation ever at a World Cup; Houston heat is Curaçao's only friend."},
+ {h:"NED",a:"JPN",ps:[2,1],conf:44,luck:47,votes:"🧮 2-1|♟️ 1-1|💰 2-1|📜 2-1",when:"Sun Jun 14 · 4:00 PM ET · Arlington",fav:"Netherlands 21/20",tip:"<b>The sleeping volcano:</b> tightest big-team line of round one (NED 21/20, JPN 14/5). Timber's absence weakens Dutch build-up exactly where Mitoma &amp; Kubo counter-press. Japan toppled Germany AND Spain in 2022 — the Tactician took the draw."},
+ {h:"CIV",a:"ECU",ps:[1,1],conf:42,luck:51,votes:"🧮 1-1|♟️ 1-1|💰 1-1|📜 1-1",when:"Sun Jun 14 · 7:00 PM ET · Philadelphia",fav:"Pick'em",tip:"<b>Unanimous draw — and the highest luck score on the slate (51%).</b> Caicedo's midfield cancels Ivorian athleticism; Ecuador conceded fewest in CONMEBOL qualifying. 1–1 tops the correct-score grid."},
+ {h:"SWE",a:"TUN",ps:[2,1],conf:43,luck:44,votes:"🧮 2-1|♟️ 2-1|💰 1-0|📜 1-1",when:"Sun Jun 14 · 10:00 PM ET · Monterrey",fav:"Sweden",tip:"<b>3-of-4 back Sweden:</b> Isak + Gyökeres is the scariest non-seed strike pair. Monterrey heat drains pressing legs late and these two drew 1–1 at the 2002 World Cup — the Historian remembers."},
+ {h:"ESP",a:"CPV",ps:[3,0],conf:89,luck:9,votes:"🧮 3-0|♟️ 4-0|💰 3-0|📜 3-0",when:"Mon Jun 15 · 1:00 PM ET · Atlanta",fav:"Spain 1/9",tip:"<b>Near-unanimous 3–0:</b> the tournament favourites (+450) against the lowest-rated qualifier. Even managing Yamal's hamstring, Spain's positional play strangles debutants. Lowest luck factor of the round (9%)."},
+ {h:"KSA",a:"URU",ps:[0,2],conf:85,luck:25,votes:"🧮 0-2|♟️ 0-2|💰 0-2|📜 0-2",when:"Mon Jun 15 · 6:00 PM ET · Miami",fav:"Uruguay",tip:"<b>Unanimous:</b> Bielsa's man-press forces turnovers from Saudi short-passing dogma; Valverde and Núñez punish. The 25% luck tax exists for one reason: remember Argentina, Lusail 2022."},
+ {h:"BEL",a:"EGY",ps:[2,1],conf:55,luck:35,votes:"🧮 2-1|♟️ 2-1|💰 2-1|📜 2-0",when:"Mon Jun 15 · 6:00 PM ET · Seattle",fav:"Belgium 4/6",tip:"<b>Panel consensus 2–1:</b> Doku–De Bruyne combinations outscore Egypt, but Belgium's high line is a standing invitation for Salah — who has never won a WC group game with Egypt and is overdue."},
+ {h:"IRN",a:"NZL",ps:[1,0],conf:56,luck:39,votes:"🧮 2-0|♟️ 2-0|💰 1-0|📜 1-0",when:"Mon Jun 15 · 12:00 AM ET · SoFi",fav:"Iran",tip:"<b>All four back Iran, split on margin:</b> Taremi against a flat Kiwi back four in the lowest-total game of the slate. One set piece decides it — the market's 1–0 wins the chairman's vote."},
+ {h:"FRA",a:"SEN",ps:[2,1],conf:58,luck:32,votes:"🧮 2-1|♟️ 2-1|💰 2-0|📜 2-1",when:"Tue Jun 16 · 3:00 PM ET · MetLife",fav:"France -230",tip:"<b>Panel 2–1:</b> Mbappé won his fitness race; Mané and Sarr didn't fully win theirs. The 2002 ghost (Senegal 1–0 over holders France) is the Historian's warning — France haven't lost an opener since that day."},
+ {h:"IRQ",a:"NOR",ps:[0,3],conf:91,luck:16,votes:"🧮 0-3|♟️ 0-3|💰 0-3|📜 0-2",when:"Tue Jun 16 · 6:00 PM ET · Foxborough",fav:"Norway -900 (to advance)",tip:"<b>Strongest consensus of the matchday:</b> Haaland (16 goals in qualifying, ~1.0 xG/90) plus Ødegaard's delivery against a deep Iraqi block. The Quant calls it 'a set-piece and cutback massacre'."},
+ {h:"ARG",a:"ALG",ps:[2,0],conf:70,luck:23,votes:"🧮 2-0|♟️ 2-0|💰 2-0|📜 2-0",when:"Tue Jun 16 · 9:00 PM ET · Kansas City",fav:"Argentina 2/5",tip:"<b>Unanimous 2–0:</b> the champions' rest-defence smothers Mahrez-led counters; Messi conducts his record sixth World Cup. The holders' curse (2002, 2022) is priced into the 23% luck factor."},
+ {h:"AUT",a:"JOR",ps:[2,0],conf:66,luck:26,votes:"🧮 2-0|♟️ 2-0|💰 2-0|📜 2-0",when:"Tue Jun 16 · 12:00 AM ET · Santa Clara",fav:"Austria ≈ -250",tip:"<b>Unanimous 2–0:</b> Rangnick's gegenpress forces errors from a Jordan side unused to that turnover tempo. Second-half goals as legs tire."},
+ {h:"POR",a:"COD",ps:[3,0],conf:77,luck:17,votes:"🧮 3-0|♟️ 3-1|💰 3-0|📜 2-0",when:"Wed Jun 17 · 1:00 PM ET · Houston",fav:"Portugal 3/10",tip:"<b>Panel 3–0 — and a market signal:</b> Portugal are the biggest futures steamer of the week, shortened from 10/1 to +800. Vitinha–Bruno control plus Ronaldo's box presence; the Tactician thinks Wissa nicks a consolation."},
+ {h:"ENG",a:"CRO",ps:[2,1],conf:50,luck:41,votes:"🧮 2-1|♟️ 2-1|💰 1-0|📜 1-1",when:"Wed Jun 17 · 4:00 PM ET · Arlington",fav:"England 3/4",tip:"<b>Most divided the panel got:</b> three different scores. Tuchel's press targets Modrić (just back from facial fracture), but Croatia never lose midfield battles by much — and the 2018 semi still stings. England win is the only alignment."},
+ {h:"GHA",a:"PAN",ps:[1,0],conf:45,luck:47,votes:"🧮 1-0|♟️ 2-1|💰 1-0|📜 2-1",when:"Wed Jun 17 · 7:00 PM ET · Toronto",fav:"Ghana (slight)",tip:"<b>All four back Ghana — nobody confidently:</b> Kudus breaks the mid-block, but CONCACAF sides on home-continent soil are classic flip risks. Second-highest luck factor on the board (47%)."},
+ {h:"UZB",a:"COL",ps:[0,2],conf:86,luck:26,votes:"🧮 0-2|♟️ 0-2|💰 0-2|📜 0-2",when:"Wed Jun 17 · 10:00 PM ET · Estadio Azteca",fav:"Colombia -1000 (to advance)",tip:"<b>Unanimous 0–2:</b> James and Luis Díaz at the Azteca under lights against a debutant defending narrow. Uzbekistan's Shomurodov counters need perfection to land the nation's first-ever WC goal."}
 ];
 
 const STADIUMS = [
@@ -838,9 +898,13 @@ $("#predGrid").innerHTML=PREDS.map((p,i)=>`
   <div class="pcard anim" style="--i:${(i%8)+3}">
     <div class="ph"><img src="${flag(p.h)}" alt="">${TEAMS[p.h].n} <span style="color:var(--mut)">vs</span> ${TEAMS[p.a].n}<img src="${flag(p.a)}" alt=""></div>
     <div class="when">${p.when} · Favourite: ${p.fav}</div>
-    <div class="pscore"><span>🎯 Predicted score</span><b>${TEAMS[p.h].n.split(" ")[0]} ${p.ps[0]} – ${p.ps[1]} ${TEAMS[p.a].n.split(" ")[0]}</b></div>
+    <div class="pred-top">
+      <div class="big-score"><b>${p.ps[0]} – ${p.ps[1]}</b><span>🤝 panel consensus</span></div>
+      <div class="luck" style="--p:${p.luck}" title="Share of this result we attribute to pure luck/variance"><i>${p.luck}%<small>LUCK</small></i></div>
+    </div>
+    <div class="votes">${p.votes.split("|").map(v=>{const sp=v.trim().split(" ");return`<span class="vote">${sp[0]} <b>${sp[1]}</b></span>`}).join("")}</div>
     <div class="tip">${p.tip}</div>
-    <div class="conf">Confidence <div class="bar"><div class="fill" data-w="${p.conf}"></div></div> ${p.conf}%</div>
+    <div class="conf">Favourite win prob. <div class="bar"><div class="fill" data-w="${p.conf}"></div></div> ${p.conf}%</div>
   </div>`).join("");
 
 /* =================================================================
@@ -1106,6 +1170,24 @@ $("#modalBg").addEventListener("click",e=>{if(e.target.id==="modalBg")e.target.c
 document.addEventListener("animationend",e=>{
   if(e.animationName==="rise"){e.target.style.animation="none";e.target.style.opacity="1"}
 });
+
+/* scroll progress bar */
+window.addEventListener("scroll",()=>{
+  const h=document.documentElement;
+  $("#prog").style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100||0)+"%";
+},{passive:true});
+
+/* hero parallax: floating player portraits follow the mouse by depth */
+const heroEl=$(".hero");
+heroEl.addEventListener("mousemove",e=>{
+  const r=heroEl.getBoundingClientRect();
+  const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+  $$(".fp").forEach(f=>{
+    const z=+f.dataset.z||2;
+    f.style.transform=`translate(${x*z*9}px,${y*z*9}px)`;
+  });
+});
+heroEl.addEventListener("mouseleave",()=>$$(".fp").forEach(f=>f.style.transform=""));
 
 /* boot: initial renders, deep link, tilt */
 renderLive();
