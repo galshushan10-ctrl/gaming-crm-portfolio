@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA World Cup 26™ — Live Hub | Fixtures, Scores, Tables, Predictions</title>
+<meta name="description" content="World Cup 2026 live hub — every fixture, score, group table, prediction, top scorers and assists, stadiums and highlights. USA · Mexico · Canada.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080f; --bg2:#0d1020; --card:#121632; --card2:#1a1f44;
+  --line:rgba(255,255,255,.08);
+  --txt:#f2f4ff; --mut:#9aa3c7;
+  --green:#19e58f; --red:#ff4d6d; --gold:#ffc83d; --blue:#4da3ff; --purple:#a78bfa;
+  --grad:linear-gradient(135deg,#19e58f 0%,#4da3ff 50%,#a78bfa 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+
+/* ---------- NAV ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,8,15,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:18px}
+.logo{font-weight:900;font-size:1.25rem;letter-spacing:.5px;white-space:nowrap}
+.logo b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.nav-links a{padding:8px 13px;border-radius:99px;font-size:.86rem;color:var(--mut);font-weight:600;transition:.2s}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+
+/* ---------- HERO ---------- */
+header{position:relative;min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(ellipse at 30% 20%,#16306e55,transparent 60%),radial-gradient(ellipse at 75% 80%,#10543c66,transparent 55%),var(--bg2)}
+#heroBg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.4s}
+header::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,8,15,.55) 0%,rgba(7,8,15,.75) 60%,var(--bg) 100%)}
+.hero-in{position:relative;z-index:2;padding:120px 20px 60px}
+.kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.06);padding:8px 18px;border-radius:99px;font-size:.85rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+h1{font-size:clamp(2.6rem,7vw,5.2rem);font-weight:900;line-height:1.04;margin:22px 0 10px}
+h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);font-size:clamp(1rem,2vw,1.25rem);max-width:680px;margin:0 auto 30px}
+.flags-row{font-size:2rem;margin-bottom:8px;letter-spacing:6px}
+
+/* countdown */
+.count{display:flex;gap:14px;justify-content:center;margin:28px 0 10px;flex-wrap:wrap}
+.count .box{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:16px;padding:14px 18px;min-width:86px}
+.count .n{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700}
+.count .l{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--mut)}
+.count-label{color:var(--mut);font-size:.9rem;margin-bottom:6px}
+.count-label b{color:#fff}
+
+/* hero search */
+.searchbar{position:relative;max-width:640px;margin:34px auto 26px}
+.searchbar input{width:100%;padding:18px 56px 18px 54px;border-radius:99px;border:1px solid var(--line);
+  background:rgba(255,255,255,.08);backdrop-filter:blur(8px);color:#fff;font-size:1.05rem;font-family:inherit;outline:none;transition:.25s}
+.searchbar input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(25,229,143,.15)}
+.searchbar .icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:1.2rem;opacity:.7}
+.search-results{position:absolute;top:calc(100% + 8px);left:0;right:0;background:#141833;border:1px solid var(--line);border-radius:18px;
+  max-height:380px;overflow:auto;display:none;text-align:left;box-shadow:0 20px 60px rgba(0,0,0,.6);z-index:50}
+.search-results.open{display:block}
+.sr-item{display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04)}
+.sr-item:hover{background:rgba(255,255,255,.06)}
+.sr-item img{width:30px;height:21px;object-fit:cover;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.sr-item .t{font-weight:700}
+.sr-item .s{font-size:.8rem;color:var(--mut)}
+.sr-tag{margin-left:auto;font-size:.68rem;font-weight:800;letter-spacing:1px;padding:4px 10px;border-radius:99px;text-transform:uppercase}
+.sr-tag.team{background:rgba(25,229,143,.14);color:var(--green)}
+.sr-tag.player{background:rgba(77,163,255,.14);color:var(--blue)}
+
+.stat-chips{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.chip{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:12px 22px}
+.chip .v{font-size:1.5rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip .k{font-size:.74rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--mut)}
+.cta-row{margin-top:30px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:99px;font-weight:800;font-size:.95rem;cursor:pointer;border:none;font-family:inherit;transition:.25s}
+.btn.primary{background:var(--grad);color:#06121c}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(25,229,143,.3)}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff}
+.btn.ghost:hover{background:rgba(255,255,255,.1)}
+
+/* ---------- SECTIONS ---------- */
+section{padding:72px 0;position:relative}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:30px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:900}
+.sec-head h2 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sec-head p{color:var(--mut);max-width:560px}
+.eyebrow{font-size:.74rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+
+/* ticker */
+.ticker-wrap{background:var(--grad);padding:2px 0;margin-top:-1px}
+.ticker{background:#0a0c18;overflow:hidden;white-space:nowrap;padding:11px 0}
+.ticker-track{display:inline-block;animation:scroll 45s linear infinite}
+.ticker-track span{margin:0 34px;font-size:.92rem;color:var(--mut)}
+.ticker-track b{color:#fff}
+.ticker-track .up{color:var(--green)}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* match cards */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.fbtn{padding:9px 18px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--mut);font-weight:700;font-size:.84rem;cursor:pointer;font-family:inherit;transition:.2s}
+.fbtn:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+.fbtn.on{background:var(--grad);color:#06121c;border-color:transparent}
+.day-h{font-size:1.05rem;font-weight:800;margin:28px 0 14px;color:var(--gold);display:flex;align-items:center;gap:10px}
+.day-h::after{content:'';flex:1;height:1px;background:var(--line)}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.match{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;transition:.25s;position:relative;overflow:hidden}
+.match:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.22);box-shadow:0 14px 36px rgba(0,0,0,.45)}
+.match .meta{display:flex;justify-content:space-between;font-size:.74rem;color:var(--mut);letter-spacing:.5px;margin-bottom:12px;text-transform:uppercase;font-weight:700}
+.match .meta .g{color:var(--blue)}
+.mrow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+.mteam{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.02rem;min-width:0}
+.mteam.right{justify-content:flex-end;text-align:right}
+.mteam img{width:34px;height:24px;object-fit:cover;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.5);flex:none}
+.mteam .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mscore{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.5rem;padding:4px 12px;border-radius:10px;background:rgba(255,255,255,.07)}
+.mtime{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:var(--gold);padding:4px 10px;border-radius:10px;background:rgba(255,200,61,.1);white-space:nowrap}
+.match .venue{margin-top:12px;font-size:.8rem;color:var(--mut)}
+.match .scorers{margin-top:8px;font-size:.8rem;color:#cdd5f5;border-top:1px dashed var(--line);padding-top:8px;line-height:1.5}
+.badge{position:absolute;top:0;right:0;font-size:.64rem;font-weight:900;letter-spacing:1.5px;padding:5px 12px;border-radius:0 16px 0 12px}
+.badge.ft{background:rgba(25,229,143,.15);color:var(--green)}
+.badge.today{background:var(--red);color:#fff;animation:pulse 1.4s infinite}
+.badge.up{background:rgba(77,163,255,.15);color:var(--blue)}
+
+/* groups */
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.gcard{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s}
+.gcard:hover{border-color:rgba(255,255,255,.2)}
+.gcard h3{padding:13px 18px;font-size:.95rem;letter-spacing:1px;background:linear-gradient(90deg,rgba(25,229,143,.14),transparent);border-bottom:1px solid var(--line)}
+.gcard h3 b{color:var(--green)}
+.gcard table{width:100%;border-collapse:collapse;font-size:.86rem}
+.gcard th{font-size:.66rem;letter-spacing:1px;color:var(--mut);text-transform:uppercase;padding:8px 6px;text-align:center;font-weight:700}
+.gcard th:first-child{text-align:left;padding-left:16px}
+.gcard td{padding:9px 6px;text-align:center;border-top:1px solid rgba(255,255,255,.04);font-family:'JetBrains Mono',monospace;font-size:.82rem}
+.gcard td.tm{text-align:left;padding-left:16px;font-family:'Outfit',sans-serif;font-weight:700;font-size:.86rem;display:flex;align-items:center;gap:8px}
+.gcard td.tm img{width:24px;height:17px;border-radius:3px;object-fit:cover}
+.gcard tr.q td{background:rgba(25,229,143,.05)}
+.gcard td.pts{color:var(--gold);font-weight:700}
+.legend{margin-top:14px;font-size:.78rem;color:var(--mut)}
+.legend i{display:inline-block;width:10px;height:10px;background:rgba(25,229,143,.4);border-radius:3px;margin-right:6px}
+
+/* knockout */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.kcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 18px;text-align:center;transition:.25s;position:relative;overflow:hidden}
+.kcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+.kcard:hover{transform:translateY(-4px)}
+.kcard .r{font-size:1.05rem;font-weight:900}
+.kcard .d{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.85rem;margin:8px 0}
+.kcard .x{color:var(--mut);font-size:.78rem;line-height:1.5}
+.kcard.final{background:linear-gradient(160deg,#2a2410,#121632)}
+.kcard.final .r{color:var(--gold)}
+
+/* predictions */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;transition:.25s}
+.pcard:hover{border-color:rgba(167,139,250,.5)}
+.pcard .ph{display:flex;align-items:center;gap:8px;font-weight:800;margin-bottom:4px;flex-wrap:wrap}
+.pcard .ph img{width:26px;height:18px;border-radius:3px;object-fit:cover}
+.pcard .when{font-size:.74rem;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.tip{background:rgba(167,139,250,.1);border-left:3px solid var(--purple);border-radius:0 10px 10px 0;padding:10px 14px;font-size:.88rem;margin:10px 0;line-height:1.55}
+.tip b{color:var(--purple)}
+.conf{display:flex;align-items:center;gap:10px;font-size:.76rem;color:var(--mut);margin-top:10px}
+.conf .bar{flex:1;height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.conf .fill{height:100%;border-radius:99px;background:var(--grad)}
+.odds-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:34px}
+.ob{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:18px;padding:22px}
+.ob h4{font-size:.8rem;letter-spacing:2px;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+.ob .row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-weight:700;font-size:.92rem}
+.ob .row:last-child{border:none}
+.ob .row img{width:26px;height:18px;border-radius:3px;object-fit:cover}
+.ob .row .od{margin-left:auto;font-family:'JetBrains Mono',monospace;color:var(--green)}
+.disclaimer{font-size:.74rem;color:#6b7399;margin-top:18px;line-height:1.5}
+
+/* performers */
+.perf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.board{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.board h3{padding:15px 20px;background:linear-gradient(90deg,rgba(255,200,61,.12),transparent);border-bottom:1px solid var(--line);font-size:1rem}
+.prow{display:flex;align-items:center;gap:13px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.04)}
+.prow:last-child{border:none}
+.prow .rank{font-family:'JetBrains Mono',monospace;color:var(--mut);width:18px;font-size:.85rem}
+.pava{width:44px;height:44px;border-radius:50%;background:var(--card2) center/cover;border:2px solid var(--line);flex:none;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--mut)}
+.prow .info{min-width:0}
+.prow .nm{font-weight:800;font-size:.94rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .tm{font-size:.76rem;color:var(--mut);display:flex;align-items:center;gap:6px}
+.prow .tm img{width:18px;height:13px;border-radius:2px}
+.prow .num{margin-left:auto;font-size:1.4rem;font-weight:900;color:var(--gold);font-family:'JetBrains Mono',monospace}
+
+/* stadiums */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.scard{position:relative;border-radius:18px;overflow:hidden;height:210px;border:1px solid var(--line);background:var(--card2);cursor:default;transition:.3s}
+.scard:hover{transform:translateY(-4px)}
+.scard .bg{position:absolute;inset:0;background:linear-gradient(140deg,#1b2150,#0e3a2c) center/cover;transition:transform .5s}
+.scard:hover .bg{transform:scale(1.06)}
+.scard .ov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(5,6,12,.92));display:flex;flex-direction:column;justify-content:flex-end;padding:16px}
+.scard .nm{font-weight:900;font-size:1.05rem}
+.scard .ct{font-size:.8rem;color:#cdd5f5}
+.scard .cp{font-size:.72rem;color:var(--gold);font-family:'JetBrains Mono',monospace;margin-top:3px}
+.scard .cc{position:absolute;top:12px;left:12px;font-size:.66rem;font-weight:900;letter-spacing:1px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:5px 10px;border-radius:99px}
+
+/* highlights */
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.hcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;display:block;transition:.25s;position:relative}
+.hcard:hover{border-color:var(--green);transform:translateY(-3px)}
+.hcard .src{font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+.hcard h4{font-size:1.02rem;line-height:1.4;margin-bottom:10px}
+.hcard p{font-size:.84rem;color:var(--mut);line-height:1.5}
+.hcard .go{position:absolute;top:18px;right:18px;opacity:.5}
+
+/* team modal */
+.modal-bg{position:fixed;inset:0;background:rgba(4,5,10,.8);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:#141833;border:1px solid rgba(255,255,255,.15);border-radius:22px;max-width:560px;width:100%;max-height:84vh;overflow:auto;padding:28px}
+.modal .mh{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.modal .mh img{width:52px;height:36px;border-radius:6px;object-fit:cover;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.modal h3{font-size:1.5rem;font-weight:900}
+.modal .gp{color:var(--mut);font-size:.88rem;margin-bottom:18px}
+.modal h5{font-size:.74rem;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin:18px 0 10px}
+.modal .fx{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.88rem}
+.modal .fx .sc{font-family:'JetBrains Mono',monospace;color:var(--gold)}
+.modal .pl{display:inline-block;background:rgba(77,163,255,.12);color:#bcd8ff;border-radius:99px;padding:6px 14px;font-size:.82rem;font-weight:700;margin:0 6px 8px 0}
+.modal .close{float:right;background:none;border:none;color:var(--mut);font-size:1.5rem;cursor:pointer;line-height:1}
+
+footer{border-top:1px solid var(--line);padding:46px 0 60px;color:var(--mut);font-size:.84rem;line-height:1.7}
+footer a{color:#bcd8ff}
+footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;margin-bottom:26px}
+footer h5{color:#fff;font-size:.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.vis{opacity:1;transform:none}
+@media(max-width:760px){
+  .nav-links{display:none}
+  .count .box{min-width:70px;padding:10px 12px}.count .n{font-size:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="logo">⚽ WC<b>26</b> LIVE HUB</div>
+    <div class="nav-links">
+      <a href="#live"><span class="live-dot"></span>Live</a>
+      <a href="#fixtures">Fixtures</a>
+      <a href="#groups">Tables</a>
+      <a href="#knockout">Bracket</a>
+      <a href="#predictions">Predictions</a>
+      <a href="#performers">Top Performers</a>
+      <a href="#stadiums">Stadiums</a>
+      <a href="#highlights">Highlights</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header>
+  <div id="heroBg"></div>
+  <div class="hero-in wrap">
+    <div class="flags-row">🇺🇸 🇲🇽 🇨🇦</div>
+    <div class="kicker">June 11 — July 19, 2026 · 16 Host Cities</div>
+    <h1>FIFA WORLD CUP <span class="grad">26™</span></h1>
+    <p class="sub">48 teams. 104 matches. Three nations. One trophy. Every fixture, score, table, prediction and star performer — all in one place, updated daily.</p>
+
+    <div class="count-label">⏱ Next kickoff: <b>Canada vs Bosnia &amp; Herzegovina</b> · BMO Field, Toronto</div>
+    <div class="count" id="countdown">
+      <div class="box"><div class="n" id="cd-d">0</div><div class="l">Days</div></div>
+      <div class="box"><div class="n" id="cd-h">0</div><div class="l">Hours</div></div>
+      <div class="box"><div class="n" id="cd-m">0</div><div class="l">Mins</div></div>
+      <div class="box"><div class="n" id="cd-s">0</div><div class="l">Secs</div></div>
+    </div>
+
+    <div class="searchbar">
+      <span class="icon">🔍</span>
+      <input id="search" type="text" placeholder="Search any team or player… e.g. Mbappé, Mexico, Messi, England" autocomplete="off">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <div class="stat-chips">
+      <div class="chip"><div class="v">48</div><div class="k">Teams</div></div>
+      <div class="chip"><div class="v">104</div><div class="k">Matches</div></div>
+      <div class="chip"><div class="v">16</div><div class="k">Stadiums</div></div>
+      <div class="chip"><div class="v" id="goalsChip">5</div><div class="k">Goals so far</div></div>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn primary" href="#fixtures">📅 Full Fixture List</a>
+      <a class="btn ghost" href="#predictions">🔮 Today's Tips</a>
+      <a class="btn ghost" href="#groups">📊 Group Tables</a>
+    </div>
+  </div>
+</header>
+
+<!-- ticker -->
+<div class="ticker-wrap"><div class="ticker"><div class="ticker-track" id="ticker"></div></div></div>
+
+<!-- ================= LIVE / LATEST ================= -->
+<section id="live">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Matchday 2 of the group stage</div>
+        <h2>Latest Results &amp; <span>Today's Games</span></h2>
+        <p>Mexico and South Korea opened with wins on Day 1. The hosts keep it rolling today — Canada debut in Toronto and the USMNT kick off in L.A.</p>
+      </div>
+    </div>
+    <div class="mgrid" id="liveGrid"></div>
+  </div>
+</section>
+
+<!-- ================= FIXTURES ================= -->
+<section id="fixtures" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Every game · group stage</div>
+        <h2>Fixtures &amp; <span>Results</span></h2>
+        <p>All 72 group-stage matches, June 11–27. All kickoff times ET. Filter by matchday or group — or use the search above to follow one team.</p>
+      </div>
+    </div>
+    <div class="filters" id="mdFilters">
+      <button class="fbtn on" data-md="all">All</button>
+      <button class="fbtn" data-md="played">✅ Played</button>
+      <button class="fbtn" data-md="today">🔴 Today</button>
+      <button class="fbtn" data-md="1">Matchday 1</button>
+      <button class="fbtn" data-md="2">Matchday 2</button>
+      <button class="fbtn" data-md="3">Matchday 3</button>
+    </div>
+    <div class="filters" id="groupFilters"></div>
+    <div id="fixtureList"></div>
+    <p class="disclaimer">* Late-night kickoff in ET (prime time on the West Coast / Mexico). A handful of matchday-3 venues are pending confirmation — check FIFA.com. All times Eastern.</p>
+  </div>
+</section>
+
+<!-- ================= GROUPS ================= -->
+<section id="groups">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Live standings · auto-calculated from results</div>
+        <h2>Group <span>Tables</span></h2>
+        <p>Top two from each of the 12 groups advance, plus the 8 best third-placed teams, into a new Round of 32.</p>
+      </div>
+    </div>
+    <div class="ggrid" id="groupsGrid"></div>
+    <div class="legend"><i></i> Advances to Round of 32 (top 2 + 8 best 3rd-placed teams)</div>
+  </div>
+</section>
+
+<!-- ================= KNOCKOUT ================= -->
+<section id="knockout" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Road to MetLife · July 19</div>
+        <h2>Knockout <span>Bracket</span></h2>
+        <p>For the first time ever, a Round of 32. Single elimination from June 28 — the bracket fills in as groups conclude.</p>
+      </div>
+    </div>
+    <div class="kgrid reveal">
+      <div class="kcard"><div class="r">Round of 32</div><div class="d">Jun 28 – Jul 3</div><div class="x">16 matches<br>Group winners, runners-up + 8 best 3rds</div></div>
+      <div class="kcard"><div class="r">Round of 16</div><div class="d">Jul 4 – Jul 7</div><div class="x">8 matches<br>Independence Day football 🎆</div></div>
+      <div class="kcard"><div class="r">Quarter-finals</div><div class="d">Jul 9 – Jul 11</div><div class="x">4 matches<br>Boston · LA · Miami · Kansas City</div></div>
+      <div class="kcard"><div class="r">Semi-finals</div><div class="d">Jul 14 – Jul 15</div><div class="x">Dallas &amp; Atlanta<br>Final four</div></div>
+      <div class="kcard"><div class="r">3rd Place</div><div class="d">Jul 18</div><div class="x">Hard Rock Stadium<br>Miami</div></div>
+      <div class="kcard final"><div class="r">🏆 THE FINAL</div><div class="d">Jul 19</div><div class="x">MetLife Stadium<br>New York / New Jersey</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PREDICTIONS ================= -->
+<section id="predictions">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Odds &amp; expert leans · updated Jun 12</div>
+        <h2>Predictions &amp; <span>Tips</span></h2>
+        <p>Bookmaker favourites, model picks and an expert lean for every upcoming first-round game.</p>
+      </div>
+    </div>
+
+    <div class="odds-board reveal">
+      <div class="ob">
+        <h4>🏆 Tournament winner (FanDuel, Jun 10)</h4>
+        <div class="row"><img src="https://flagcdn.com/w40/es.png" alt="">Spain<span class="od">+470</span></div>
+        <div class="row"><img src="https://flagcdn.com/w40/fr.png" alt="">France<span class="od">+480</span></div>
+        <div class="row"><img src="https://flagcdn.com/w40/gb-eng.png" alt="">England<span class="od">+700</span></div>
+        <div class="row" style="color:var(--mut);font-weight:600;font-size:.8rem">Chasing pack: Argentina · Brazil · Portugal · Germany</div>
+      </div>
+      <div class="ob">
+        <h4>👟 Golden Boot (FanDuel, Jun 10)</h4>
+        <div class="row"><img src="https://flagcdn.com/w40/fr.png" alt="">Kylian Mbappé<span class="od">+600</span></div>
+        <div class="row"><img src="https://flagcdn.com/w40/gb-eng.png" alt="">Harry Kane<span class="od">+700</span></div>
+        <div class="row"><img src="https://flagcdn.com/w40/es.png" alt="">Mikel Oyarzabal<span class="od">+1200</span></div>
+        <div class="row"><img src="https://flagcdn.com/w40/no.png" alt="">Erling Haaland<span class="od">+1600</span></div>
+        <div class="row"><img src="https://flagcdn.com/w40/ar.png" alt="">Lionel Messi<span class="od">+1800</span></div>
+      </div>
+      <div class="ob">
+        <h4>📈 Storylines to bet on</h4>
+        <div class="row" style="font-weight:600;font-size:.86rem;line-height:1.5">Kane arrives off a 61-goal season at Bayern — won the Boot in 2018.</div>
+        <div class="row" style="font-weight:600;font-size:.86rem;line-height:1.5">Haaland scored 16 in European qualifying — but needs Norway to go deep.</div>
+        <div class="row" style="font-weight:600;font-size:.86rem;line-height:1.5">US bettors are piling on the USMNT on home soil.</div>
+      </div>
+    </div>
+
+    <div class="pgrid" id="predGrid"></div>
+    <p class="disclaimer">⚠️ Odds sourced from public sportsbooks (FanDuel and others) as of June 10–12, 2026 and move constantly. Tips are editorial opinion for entertainment — never bet more than you can afford to lose. 21+ where applicable. If you or someone you know has a gambling problem, call 1-800-GAMBLER.</p>
+  </div>
+</section>
+
+<!-- ================= TOP PERFORMERS ================= -->
+<section id="performers" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Golden Boot race · after Day 1</div>
+        <h2>Top <span>Performers</span></h2>
+        <p>Live leaderboards for goals and assists, plus the superstars expected to take over this tournament.</p>
+      </div>
+    </div>
+    <div class="perf-grid">
+      <div class="board reveal">
+        <h3>⚽ Goals</h3>
+        <div id="goalsBoard"></div>
+      </div>
+      <div class="board reveal">
+        <h3>🎯 Assists</h3>
+        <div id="assistsBoard"></div>
+      </div>
+      <div class="board reveal">
+        <h3>⭐ Ones to Watch</h3>
+        <div id="watchBoard"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STADIUMS ================= -->
+<section id="stadiums">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">3 countries · 16 cathedrals of football</div>
+        <h2>The <span>Stadiums</span></h2>
+        <p>From the Azteca — the first stadium to host three World Cups — to the 90,000-seat AT&amp;T Stadium. Real photos load live from Wikipedia.</p>
+      </div>
+    </div>
+    <div class="sgrid" id="stadiumGrid"></div>
+  </div>
+</section>
+
+<!-- ================= HIGHLIGHTS ================= -->
+<section id="highlights" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="eyebrow">Watch &amp; read · official sources</div>
+        <h2>Highlights &amp; <span>Reports</span></h2>
+        <p>Hand-picked official highlights, match reports and live blogs from FIFA, FOX, beIN SPORTS and more.</p>
+      </div>
+    </div>
+    <div class="hgrid reveal">
+      <a class="hcard" href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/korea-republic-czechia-highlights-match-report" target="_blank" rel="noopener">
+        <div class="src">FIFA.com · Official</div><h4>Korea Republic 2–1 Czechia — highlights &amp; match report</h4>
+        <p>Hwang In-beom and Oh Hyeon-gyu complete the comeback after Krejčí's header from a long throw.</p><span class="go">↗</span>
+      </a>
+      <a class="hcard" href="https://www.foxsports.com/soccer/fifa-world-cup-men-mexico-vs-south-africa-jun-11-2026-game-boxscore-647616" target="_blank" rel="noopener">
+        <div class="src">FOX Sports · Box score</div><h4>Mexico 2–0 South Africa — full stats from the Azteca opener</h4>
+        <p>Quiñones scores the tournament's first goal on 9'; Jiménez heads home the second. South Africa finish with ten men.</p><span class="go">↗</span>
+      </a>
+      <a class="hcard" href="https://www.beinsports.com/en-us/soccer/fifa-world-cup-2026/articles/-video-all-the-goals-from-south-korea-vs-czechia-at-the-2026-fifa-world-cup-2026-06-11" target="_blank" rel="noopener">
+        <div class="src">beIN SPORTS · Video</div><h4>🎥 All the goals: South Korea vs Czechia</h4>
+        <p>Every strike from Day 1's thriller in Guadalajara.</p><span class="go">↗</span>
+      </a>
+      <a class="hcard" href="https://theanalyst.com/articles/south-korea-vs-czechia-stats-2026-world-cup-live" target="_blank" rel="noopener">
+        <div class="src">Opta Analyst · Stats deep-dive</div><h4>Korea's comeback by the numbers</h4>
+        <p>Possession dominance, Son's big chance, and how the game flipped in 13 second-half minutes.</p><span class="go">↗</span>
+      </a>
+      <a class="hcard" href="https://sports.yahoo.com/soccer/live/2026-world-cup-schedule-scores-live-updates-group-stage-mexico-vs-south-africa-south-korea-czechia-150000738.html" target="_blank" rel="noopener">
+        <div class="src">Yahoo Sports · Live blog</div><h4>Day 1 as it happened — scores, reaction, analysis</h4>
+        <p>"Korea tops Czechia after wild finish, Mexico handles South Africa."</p><span class="go">↗</span>
+      </a>
+      <a class="hcard" href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/scores-fixtures" target="_blank" rel="noopener">
+        <div class="src">FIFA.com · Match centre</div><h4>Official scores &amp; fixtures hub</h4>
+        <p>Live match centre for all 104 games — lineups, stats and official highlights.</p><span class="go">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h5>⚽ WC26 Live Hub</h5>
+        Unofficial fan hub for the FIFA World Cup 26™ across the USA, Mexico and Canada. Built June 12, 2026 — results current through Matchday 1, Day 1.
+      </div>
+      <div>
+        <h5>Data sources</h5>
+        <a href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026" target="_blank" rel="noopener">FIFA.com</a> ·
+        <a href="https://www.espn.com/soccer/story/_/id/48939282/2026-fifa-world-cup-fixtures-results-match-schedule-group-stage-knockout-rounds-bracket" target="_blank" rel="noopener">ESPN</a> ·
+        <a href="https://www.skysports.com/football/news/11095/13481245/" target="_blank" rel="noopener">Sky Sports</a> ·
+        <a href="https://sports.yahoo.com/soccer/" target="_blank" rel="noopener">Yahoo Sports</a> ·
+        <a href="https://www.foxsports.com/soccer" target="_blank" rel="noopener">FOX Sports</a><br>
+        Flags by <a href="https://flagcdn.com" target="_blank" rel="noopener">flagcdn</a> · photos via Wikipedia/Wikimedia Commons (loaded live).
+      </div>
+      <div>
+        <h5>Disclaimer</h5>
+        Not affiliated with FIFA. Schedules and odds subject to change — always verify kickoff times on FIFA.com. Betting content is for entertainment only.
+      </div>
+    </div>
+    © 2026 WC26 Live Hub · Made with ⚽ by a fan, for fans
+  </div>
+</footer>
+
+<!-- team modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script>
+/* =================================================================
+   DATA — current through June 12, 2026 (after Day 1)
+   ================================================================= */
+const TEAMS = {
+  MEX:{n:"Mexico",f:"mx",g:"A"}, RSA:{n:"South Africa",f:"za",g:"A"}, KOR:{n:"Korea Republic",f:"kr",g:"A"}, CZE:{n:"Czechia",f:"cz",g:"A"},
+  CAN:{n:"Canada",f:"ca",g:"B"}, BIH:{n:"Bosnia & Herzegovina",f:"ba",g:"B"}, QAT:{n:"Qatar",f:"qa",g:"B"}, SUI:{n:"Switzerland",f:"ch",g:"B"},
+  BRA:{n:"Brazil",f:"br",g:"C"}, MAR:{n:"Morocco",f:"ma",g:"C"}, HAI:{n:"Haiti",f:"ht",g:"C"}, SCO:{n:"Scotland",f:"gb-sct",g:"C"},
+  USA:{n:"United States",f:"us",g:"D"}, PAR:{n:"Paraguay",f:"py",g:"D"}, AUS:{n:"Australia",f:"au",g:"D"}, TUR:{n:"Türkiye",f:"tr",g:"D"},
+  GER:{n:"Germany",f:"de",g:"E"}, CUW:{n:"Curaçao",f:"cw",g:"E"}, CIV:{n:"Côte d'Ivoire",f:"ci",g:"E"}, ECU:{n:"Ecuador",f:"ec",g:"E"},
+  NED:{n:"Netherlands",f:"nl",g:"F"}, JPN:{n:"Japan",f:"jp",g:"F"}, SWE:{n:"Sweden",f:"se",g:"F"}, TUN:{n:"Tunisia",f:"tn",g:"F"},
+  BEL:{n:"Belgium",f:"be",g:"G"}, EGY:{n:"Egypt",f:"eg",g:"G"}, IRN:{n:"Iran",f:"ir",g:"G"}, NZL:{n:"New Zealand",f:"nz",g:"G"},
+  ESP:{n:"Spain",f:"es",g:"H"}, CPV:{n:"Cape Verde",f:"cv",g:"H"}, KSA:{n:"Saudi Arabia",f:"sa",g:"H"}, URU:{n:"Uruguay",f:"uy",g:"H"},
+  FRA:{n:"France",f:"fr",g:"I"}, SEN:{n:"Senegal",f:"sn",g:"I"}, IRQ:{n:"Iraq",f:"iq",g:"I"}, NOR:{n:"Norway",f:"no",g:"I"},
+  ARG:{n:"Argentina",f:"ar",g:"J"}, ALG:{n:"Algeria",f:"dz",g:"J"}, AUT:{n:"Austria",f:"at",g:"J"}, JOR:{n:"Jordan",f:"jo",g:"J"},
+  POR:{n:"Portugal",f:"pt",g:"K"}, COL:{n:"Colombia",f:"co",g:"K"}, COD:{n:"DR Congo",f:"cd",g:"K"}, UZB:{n:"Uzbekistan",f:"uz",g:"K"},
+  ENG:{n:"England",f:"gb-eng",g:"L"}, CRO:{n:"Croatia",f:"hr",g:"L"}, GHA:{n:"Ghana",f:"gh",g:"L"}, PAN:{n:"Panama",f:"pa",g:"L"}
+};
+
+/* d=date, t=time ET, md=matchday, g=group, h/a=teams, v=venue, c=city, s=[score] if played, sc=scorers text */
+const MATCHES = [
+ // ---- MATCHDAY 1 ----
+ {d:"2026-06-11",t:"FT",md:1,g:"A",h:"MEX",a:"RSA",v:"Estadio Azteca",c:"Mexico City",s:[2,0],sc:"⚽ Quiñones 9' · Jiménez (2H, header) — first goal of WC26 · 🟥 Sithole (RSA)"},
+ {d:"2026-06-11",t:"FT",md:1,g:"A",h:"KOR",a:"CZE",v:"Estadio Akron",c:"Guadalajara",s:[2,1],sc:"⚽ Hwang In-beom 67' · Oh Hyeon-gyu 80' — Krejčí 59' (CZE)"},
+ {d:"2026-06-12",t:"3:00 PM",md:1,g:"B",h:"CAN",a:"BIH",v:"BMO Field",c:"Toronto",today:1},
+ {d:"2026-06-12",t:"9:00 PM",md:1,g:"D",h:"USA",a:"PAR",v:"SoFi Stadium",c:"Inglewood, LA",today:1},
+ {d:"2026-06-13",t:"3:00 PM",md:1,g:"B",h:"QAT",a:"SUI",v:"Levi's Stadium",c:"Santa Clara"},
+ {d:"2026-06-13",t:"6:00 PM",md:1,g:"C",h:"BRA",a:"MAR",v:"MetLife Stadium",c:"East Rutherford, NJ"},
+ {d:"2026-06-13",t:"9:00 PM",md:1,g:"C",h:"HAI",a:"SCO",v:"Gillette Stadium",c:"Foxborough, Boston"},
+ {d:"2026-06-13",t:"12:00 AM*",md:1,g:"D",h:"AUS",a:"TUR",v:"BC Place",c:"Vancouver"},
+ {d:"2026-06-14",t:"1:00 PM",md:1,g:"E",h:"GER",a:"CUW",v:"NRG Stadium",c:"Houston"},
+ {d:"2026-06-14",t:"4:00 PM",md:1,g:"F",h:"NED",a:"JPN",v:"AT&T Stadium",c:"Arlington, Dallas"},
+ {d:"2026-06-14",t:"7:00 PM",md:1,g:"E",h:"CIV",a:"ECU",v:"Lincoln Financial Field",c:"Philadelphia"},
+ {d:"2026-06-14",t:"10:00 PM",md:1,g:"F",h:"SWE",a:"TUN",v:"Estadio BBVA",c:"Monterrey"},
+ {d:"2026-06-15",t:"1:00 PM",md:1,g:"H",h:"ESP",a:"CPV",v:"Mercedes-Benz Stadium",c:"Atlanta"},
+ {d:"2026-06-15",t:"6:00 PM",md:1,g:"H",h:"KSA",a:"URU",v:"Hard Rock Stadium",c:"Miami Gardens"},
+ {d:"2026-06-15",t:"6:00 PM",md:1,g:"G",h:"BEL",a:"EGY",v:"Lumen Field",c:"Seattle"},
+ {d:"2026-06-15",t:"12:00 AM*",md:1,g:"G",h:"IRN",a:"NZL",v:"SoFi Stadium",c:"Inglewood, LA"},
+ {d:"2026-06-16",t:"3:00 PM",md:1,g:"I",h:"FRA",a:"SEN",v:"MetLife Stadium",c:"East Rutherford, NJ"},
+ {d:"2026-06-16",t:"6:00 PM",md:1,g:"I",h:"IRQ",a:"NOR",v:"Gillette Stadium",c:"Foxborough, Boston"},
+ {d:"2026-06-16",t:"9:00 PM",md:1,g:"J",h:"ARG",a:"ALG",v:"Arrowhead Stadium",c:"Kansas City"},
+ {d:"2026-06-16",t:"12:00 AM*",md:1,g:"J",h:"AUT",a:"JOR",v:"Levi's Stadium",c:"Santa Clara"},
+ {d:"2026-06-17",t:"1:00 PM",md:1,g:"K",h:"POR",a:"COD",v:"NRG Stadium",c:"Houston"},
+ {d:"2026-06-17",t:"4:00 PM",md:1,g:"L",h:"ENG",a:"CRO",v:"AT&T Stadium",c:"Arlington, Dallas"},
+ {d:"2026-06-17",t:"7:00 PM",md:1,g:"L",h:"GHA",a:"PAN",v:"BMO Field",c:"Toronto"},
+ {d:"2026-06-17",t:"10:00 PM",md:1,g:"K",h:"UZB",a:"COL",v:"Estadio Azteca",c:"Mexico City"},
+ // ---- MATCHDAY 2 ----
+ {d:"2026-06-18",t:"12:00 PM",md:2,g:"A",h:"CZE",a:"RSA",v:"Mercedes-Benz Stadium",c:"Atlanta"},
+ {d:"2026-06-18",t:"3:00 PM",md:2,g:"B",h:"SUI",a:"BIH",v:"SoFi Stadium",c:"Inglewood, LA"},
+ {d:"2026-06-18",t:"6:00 PM",md:2,g:"B",h:"CAN",a:"QAT",v:"BC Place",c:"Vancouver"},
+ {d:"2026-06-18",t:"9:00 PM",md:2,g:"A",h:"MEX",a:"KOR",v:"Estadio Akron",c:"Guadalajara"},
+ {d:"2026-06-19",t:"3:00 PM",md:2,g:"D",h:"USA",a:"AUS",v:"Lumen Field",c:"Seattle"},
+ {d:"2026-06-19",t:"6:00 PM",md:2,g:"C",h:"SCO",a:"MAR",v:"Gillette Stadium",c:"Foxborough, Boston"},
+ {d:"2026-06-19",t:"9:00 PM",md:2,g:"C",h:"BRA",a:"HAI",v:"Lincoln Financial Field",c:"Philadelphia"},
+ {d:"2026-06-19",t:"12:00 AM*",md:2,g:"D",h:"TUR",a:"PAR",v:"Levi's Stadium",c:"Santa Clara"},
+ {d:"2026-06-20",t:"1:00 PM",md:2,g:"F",h:"NED",a:"SWE",v:"NRG Stadium",c:"Houston"},
+ {d:"2026-06-20",t:"4:00 PM",md:2,g:"E",h:"GER",a:"CIV",v:"BMO Field",c:"Toronto"},
+ {d:"2026-06-20",t:"8:00 PM",md:2,g:"E",h:"ECU",a:"CUW",v:"Arrowhead Stadium",c:"Kansas City"},
+ {d:"2026-06-20",t:"12:00 AM*",md:2,g:"F",h:"TUN",a:"JPN",v:"Estadio BBVA",c:"Monterrey"},
+ {d:"2026-06-21",t:"12:00 PM",md:2,g:"H",h:"ESP",a:"KSA",v:"Mercedes-Benz Stadium",c:"Atlanta"},
+ {d:"2026-06-21",t:"3:00 PM",md:2,g:"G",h:"BEL",a:"IRN",v:"SoFi Stadium",c:"Inglewood, LA"},
+ {d:"2026-06-21",t:"6:00 PM",md:2,g:"H",h:"URU",a:"CPV",v:"Hard Rock Stadium",c:"Miami Gardens"},
+ {d:"2026-06-21",t:"9:00 PM",md:2,g:"G",h:"NZL",a:"EGY",v:"BC Place",c:"Vancouver"},
+ {d:"2026-06-22",t:"1:00 PM",md:2,g:"J",h:"ARG",a:"AUT",v:"AT&T Stadium",c:"Arlington, Dallas"},
+ {d:"2026-06-22",t:"5:00 PM",md:2,g:"I",h:"FRA",a:"IRQ",v:"Lincoln Financial Field",c:"Philadelphia"},
+ {d:"2026-06-22",t:"8:00 PM",md:2,g:"I",h:"NOR",a:"SEN",v:"MetLife Stadium",c:"East Rutherford, NJ"},
+ {d:"2026-06-22",t:"11:00 PM",md:2,g:"J",h:"JOR",a:"ALG",v:"Levi's Stadium",c:"Santa Clara"},
+ {d:"2026-06-23",t:"1:00 PM",md:2,g:"K",h:"POR",a:"UZB",v:"NRG Stadium",c:"Houston"},
+ {d:"2026-06-23",t:"4:00 PM",md:2,g:"L",h:"ENG",a:"GHA",v:"Gillette Stadium",c:"Foxborough, Boston"},
+ {d:"2026-06-23",t:"7:00 PM",md:2,g:"L",h:"PAN",a:"CRO",v:"BMO Field",c:"Toronto"},
+ {d:"2026-06-23",t:"10:00 PM",md:2,g:"K",h:"COL",a:"COD",v:"Estadio Akron",c:"Guadalajara"},
+ // ---- MATCHDAY 3 (simultaneous kickoffs) ----
+ {d:"2026-06-24",t:"3:00 PM",md:3,g:"B",h:"SUI",a:"CAN",v:"BC Place",c:"Vancouver"},
+ {d:"2026-06-24",t:"3:00 PM",md:3,g:"B",h:"BIH",a:"QAT"},
+ {d:"2026-06-24",t:"6:00 PM",md:3,g:"C",h:"SCO",a:"BRA"},
+ {d:"2026-06-24",t:"6:00 PM",md:3,g:"C",h:"MAR",a:"HAI"},
+ {d:"2026-06-24",t:"9:00 PM",md:3,g:"A",h:"CZE",a:"MEX",v:"Estadio Azteca",c:"Mexico City"},
+ {d:"2026-06-24",t:"9:00 PM",md:3,g:"A",h:"RSA",a:"KOR"},
+ {d:"2026-06-25",t:"4:00 PM",md:3,g:"E",h:"ECU",a:"GER"},
+ {d:"2026-06-25",t:"4:00 PM",md:3,g:"E",h:"CUW",a:"CIV"},
+ {d:"2026-06-25",t:"7:00 PM",md:3,g:"F",h:"JPN",a:"SWE"},
+ {d:"2026-06-25",t:"7:00 PM",md:3,g:"F",h:"TUN",a:"NED"},
+ {d:"2026-06-25",t:"10:00 PM",md:3,g:"D",h:"TUR",a:"USA",v:"SoFi Stadium",c:"Inglewood, LA"},
+ {d:"2026-06-25",t:"10:00 PM",md:3,g:"D",h:"PAR",a:"AUS"},
+ {d:"2026-06-26",t:"3:00 PM",md:3,g:"I",h:"NOR",a:"FRA"},
+ {d:"2026-06-26",t:"3:00 PM",md:3,g:"I",h:"SEN",a:"IRQ"},
+ {d:"2026-06-26",t:"8:00 PM",md:3,g:"H",h:"CPV",a:"KSA"},
+ {d:"2026-06-26",t:"8:00 PM",md:3,g:"H",h:"URU",a:"ESP"},
+ {d:"2026-06-26",t:"11:00 PM",md:3,g:"G",h:"EGY",a:"IRN"},
+ {d:"2026-06-26",t:"11:00 PM",md:3,g:"G",h:"NZL",a:"BEL"},
+ {d:"2026-06-27",t:"5:00 PM",md:3,g:"L",h:"PAN",a:"ENG"},
+ {d:"2026-06-27",t:"5:00 PM",md:3,g:"L",h:"CRO",a:"GHA"},
+ {d:"2026-06-27",t:"7:30 PM",md:3,g:"K",h:"COL",a:"POR"},
+ {d:"2026-06-27",t:"7:30 PM",md:3,g:"K",h:"COD",a:"UZB"},
+ {d:"2026-06-27",t:"10:00 PM",md:3,g:"J",h:"ALG",a:"AUT"},
+ {d:"2026-06-27",t:"10:00 PM",md:3,g:"J",h:"JOR",a:"ARG"}
+];
+
+/* searchable star players: name, team, position, wiki page for photo */
+const PLAYERS = [
+ {n:"Julián Quiñones",t:"MEX",p:"FW",w:"Julián_Quiñones"},{n:"Raúl Jiménez",t:"MEX",p:"FW",w:"Raúl_Jiménez"},{n:"Edson Álvarez",t:"MEX",p:"MF"},
+ {n:"Son Heung-min",t:"KOR",p:"FW",w:"Son_Heung-min"},{n:"Lee Kang-in",t:"KOR",p:"MF",w:"Lee_Kang-in"},{n:"Hwang In-beom",t:"KOR",p:"MF",w:"Hwang_In-beom"},{n:"Oh Hyeon-gyu",t:"KOR",p:"FW",w:"Oh_Hyeon-gyu"},
+ {n:"Ladislav Krejčí",t:"CZE",p:"DF",w:"Ladislav_Krejčí_(footballer,_born_1999)"},{n:"Patrik Schick",t:"CZE",p:"FW"},
+ {n:"Alphonso Davies",t:"CAN",p:"DF",w:"Alphonso_Davies"},{n:"Jonathan David",t:"CAN",p:"FW"},
+ {n:"Edin Džeko",t:"BIH",p:"FW"},{n:"Akram Afif",t:"QAT",p:"FW"},{n:"Granit Xhaka",t:"SUI",p:"MF"},{n:"Breel Embolo",t:"SUI",p:"FW"},
+ {n:"Vinícius Júnior",t:"BRA",p:"FW",w:"Vinícius_Júnior"},{n:"Raphinha",t:"BRA",p:"FW"},{n:"Rodrygo",t:"BRA",p:"FW"},{n:"Endrick",t:"BRA",p:"FW"},
+ {n:"Achraf Hakimi",t:"MAR",p:"DF"},{n:"Brahim Díaz",t:"MAR",p:"MF"},{n:"Scott McTominay",t:"SCO",p:"MF"},{n:"Andy Robertson",t:"SCO",p:"DF"},
+ {n:"Christian Pulisic",t:"USA",p:"FW",w:"Christian_Pulisic"},{n:"Weston McKennie",t:"USA",p:"MF"},{n:"Folarin Balogun",t:"USA",p:"FW"},
+ {n:"Miguel Almirón",t:"PAR",p:"MF"},{n:"Julio Enciso",t:"PAR",p:"FW (injured)"},{n:"Jackson Irvine",t:"AUS",p:"MF"},
+ {n:"Arda Güler",t:"TUR",p:"MF"},{n:"Hakan Çalhanoğlu",t:"TUR",p:"MF"},{n:"Kenan Yıldız",t:"TUR",p:"FW"},
+ {n:"Jamal Musiala",t:"GER",p:"MF"},{n:"Florian Wirtz",t:"GER",p:"MF"},{n:"Joshua Kimmich",t:"GER",p:"MF"},
+ {n:"Moisés Caicedo",t:"ECU",p:"MF"},{n:"Cody Gakpo",t:"NED",p:"FW"},{n:"Xavi Simons",t:"NED",p:"MF"},{n:"Virgil van Dijk",t:"NED",p:"DF"},
+ {n:"Takefusa Kubo",t:"JPN",p:"MF"},{n:"Kaoru Mitoma",t:"JPN",p:"FW"},{n:"Alexander Isak",t:"SWE",p:"FW"},{n:"Viktor Gyökeres",t:"SWE",p:"FW"},
+ {n:"Kevin De Bruyne",t:"BEL",p:"MF"},{n:"Jérémy Doku",t:"BEL",p:"FW"},{n:"Mohamed Salah",t:"EGY",p:"FW",w:"Mohamed_Salah"},
+ {n:"Mehdi Taremi",t:"IRN",p:"FW"},{n:"Chris Wood",t:"NZL",p:"FW"},
+ {n:"Lamine Yamal",t:"ESP",p:"FW",w:"Lamine_Yamal"},{n:"Pedri",t:"ESP",p:"MF"},{n:"Mikel Oyarzabal",t:"ESP",p:"FW",w:"Mikel_Oyarzabal"},{n:"Nico Williams",t:"ESP",p:"FW"},
+ {n:"Salem Al-Dawsari",t:"KSA",p:"FW"},{n:"Federico Valverde",t:"URU",p:"MF"},{n:"Darwin Núñez",t:"URU",p:"FW"},
+ {n:"Kylian Mbappé",t:"FRA",p:"FW",w:"Kylian_Mbappé"},{n:"Ousmane Dembélé",t:"FRA",p:"FW"},{n:"Aurélien Tchouaméni",t:"FRA",p:"MF"},
+ {n:"Sadio Mané",t:"SEN",p:"FW"},{n:"Aymen Hussein",t:"IRQ",p:"FW"},{n:"Erling Haaland",t:"NOR",p:"FW",w:"Erling_Haaland"},{n:"Martin Ødegaard",t:"NOR",p:"MF"},
+ {n:"Lionel Messi",t:"ARG",p:"FW",w:"Lionel_Messi"},{n:"Julián Álvarez",t:"ARG",p:"FW"},{n:"Lautaro Martínez",t:"ARG",p:"FW"},{n:"Alexis Mac Allister",t:"ARG",p:"MF"},
+ {n:"Riyad Mahrez",t:"ALG",p:"FW"},{n:"Marcel Sabitzer",t:"AUT",p:"MF"},{n:"Musa Al-Taamari",t:"JOR",p:"FW"},
+ {n:"Cristiano Ronaldo",t:"POR",p:"FW",w:"Cristiano_Ronaldo"},{n:"Bruno Fernandes",t:"POR",p:"MF"},{n:"Rafael Leão",t:"POR",p:"FW"},
+ {n:"Luis Díaz",t:"COL",p:"FW"},{n:"James Rodríguez",t:"COL",p:"MF"},{n:"Yoane Wissa",t:"COD",p:"FW"},{n:"Axel Tuanzebe",t:"COD",p:"DF"},{n:"Eldor Shomurodov",t:"UZB",p:"FW"},
+ {n:"Harry Kane",t:"ENG",p:"FW",w:"Harry_Kane"},{n:"Jude Bellingham",t:"ENG",p:"MF",w:"Jude_Bellingham"},{n:"Bukayo Saka",t:"ENG",p:"FW"},{n:"Cole Palmer",t:"ENG",p:"MF"},
+ {n:"Luka Modrić",t:"CRO",p:"MF"},{n:"Joško Gvardiol",t:"CRO",p:"DF"},{n:"Mohammed Kudus",t:"GHA",p:"FW"},{n:"Adalberto Carrasquilla",t:"PAN",p:"MF"}
+];
+
+/* live tournament leaderboards (after Day 1) */
+const GOALS = [
+ {n:"Julián Quiñones",t:"MEX",v:1,w:"Julián_Quiñones",note:"1st goal of WC26 · 9'"},
+ {n:"Raúl Jiménez",t:"MEX",v:1,w:"Raúl_Jiménez",note:"Header vs RSA"},
+ {n:"Hwang In-beom",t:"KOR",v:1,w:"Hwang_In-beom",note:"Equaliser 67' vs CZE"},
+ {n:"Oh Hyeon-gyu",t:"KOR",v:1,w:"Oh_Hyeon-gyu",note:"Winner 80' vs CZE"},
+ {n:"Ladislav Krejčí",t:"CZE",v:1,w:"Ladislav_Krejčí_(footballer,_born_1999)",note:"Header 59' vs KOR"}
+];
+const ASSISTS = [
+ {n:"Lee Kang-in",t:"KOR",v:1,w:"Lee_Kang-in",note:"Set up Hwang's equaliser"},
+ {n:"Hwang In-beom",t:"KOR",v:1,w:"Hwang_In-beom",note:"Crossed for Oh's winner"}
+];
+const WATCH = [
+ {n:"Kylian Mbappé",t:"FRA",v:"+600",w:"Kylian_Mbappé",note:"Golden Boot favourite — debuts Jun 16"},
+ {n:"Harry Kane",t:"ENG",v:"+700",w:"Harry_Kane",note:"61 goals for Bayern this season"},
+ {n:"Lamine Yamal",t:"ESP",v:"⭐",w:"Lamine_Yamal",note:"Spain are tournament co-favourites"},
+ {n:"Lionel Messi",t:"ARG",v:"🐐",w:"Lionel_Messi",note:"One last dance, age 38 — debuts Jun 16"},
+ {n:"Erling Haaland",t:"NOR",v:"+1600",w:"Erling_Haaland",note:"16 goals in qualifying — WC debut Jun 16"}
+];
+
+/* predictions & tips for upcoming MD1 games */
+const PREDS = [
+ {h:"CAN",a:"BIH",when:"Today · 3:00 PM ET · Toronto",fav:"Canada -125",tip:"<b>Tip:</b> Canada to win &amp; both teams to score. Bosnia have seen BTTS land in 8 of their last 9; Canada have scored in 5 of 6 at home. Model gives Canada 53%. Draw sits at +255.",conf:62},
+ {h:"USA",a:"PAR",when:"Today · 9:00 PM ET · SoFi Stadium",fav:"USA +100 (model pick)",tip:"<b>Tip:</b> USA to win + over 2.5 goals. The USMNT have kept 1 clean sheet in 14 and conceded in 8 straight — but Paraguay are missing the injured Julio Enciso. Expect goals at both ends.",conf:58},
+ {h:"QAT",a:"SUI",when:"Sat Jun 13 · 3:00 PM ET · Santa Clara",fav:"Switzerland",tip:"<b>Expert lean:</b> Switzerland to win to nil. The deepest squad in Group B against the group's outsider — Xhaka controls this one.",conf:70},
+ {h:"BRA",a:"MAR",when:"Sat Jun 13 · 6:00 PM ET · MetLife",fav:"Brazil (slight)",tip:"<b>Expert lean:</b> The pick of MD1 — 2022 semi-finalists Morocco can frustrate anyone. Lean Brazil narrowly; under 3.5 goals. Vinícius vs Hakimi is the duel of the weekend.",conf:52},
+ {h:"HAI",a:"SCO",when:"Sat Jun 13 · 9:00 PM ET · Foxborough",fav:"Scotland",tip:"<b>Expert lean:</b> Scotland to win. McTominay's arrival form carries them past debutants Haiti — but Haiti's pace on the break is live for a goal.",conf:64},
+ {h:"AUS",a:"TUR",when:"Sat Jun 13 · 12:00 AM ET · Vancouver",fav:"Türkiye (slight)",tip:"<b>Expert lean:</b> Türkiye, back at the World Cup after 24 years, ride playoff momentum. Güler &amp; Yıldız creativity edges it — but Australia never go quietly. Draw is live.",conf:48},
+ {h:"GER",a:"CUW",when:"Sun Jun 14 · 1:00 PM ET · Houston",fav:"Germany (heavy)",tip:"<b>Expert lean:</b> Germany -2.5 goals. The smallest nation ever at a World Cup meets a four-time champion. Musiala &amp; Wirtz should feast.",conf:78},
+ {h:"NED",a:"JPN",when:"Sun Jun 14 · 4:00 PM ET · Arlington",fav:"Netherlands (slight)",tip:"<b>Expert lean:</b> Sneaky banana skin — Japan beat Germany and Spain in 2022. BTTS and a narrow Dutch win, or grab the draw at value odds.",conf:50},
+ {h:"ESP",a:"CPV",when:"Mon Jun 15 · 1:00 PM ET · Atlanta",fav:"Spain (heavy)",tip:"<b>Expert lean:</b> Tournament co-favourites against debutants. Spain -2.5 and Oyarzabal anytime scorer — he's third in Golden Boot odds for a reason.",conf:80},
+ {h:"FRA",a:"SEN",when:"Tue Jun 16 · 3:00 PM ET · MetLife",fav:"France",tip:"<b>Expert lean:</b> Heavyweight opener. France win + BTTS — Mané will test that French back line. Mbappé anytime scorer is the obvious play.",conf:60},
+ {h:"ARG",a:"ALG",when:"Tue Jun 16 · 9:00 PM ET · Kansas City",fav:"Argentina",tip:"<b>Expert lean:</b> The champions begin the title defence. Argentina to win &amp; Messi to score or assist in his record sixth World Cup.",conf:72},
+ {h:"ENG",a:"CRO",when:"Wed Jun 17 · 4:00 PM ET · Arlington",fav:"England",tip:"<b>Expert lean:</b> A 2018 semi-final rematch. England to win, under 3.5 — Kane opens his Golden Boot account against an ageing Croatia midfield.",conf:61}
+];
+
+const STADIUMS = [
+ {n:"Estadio Azteca",c:"Mexico City 🇲🇽",cap:"87,523",w:"Estadio_Azteca",tag:"OPENING MATCH"},
+ {n:"MetLife Stadium",c:"New York / New Jersey 🇺🇸",cap:"82,500",w:"MetLife_Stadium",tag:"THE FINAL · JUL 19"},
+ {n:"AT&T Stadium",c:"Arlington, Dallas 🇺🇸",cap:"92,967",w:"AT&T_Stadium",tag:"9 MATCHES · SEMI"},
+ {n:"SoFi Stadium",c:"Los Angeles 🇺🇸",cap:"70,240",w:"SoFi_Stadium",tag:"USA OPENER TONIGHT"},
+ {n:"Estadio Akron",c:"Guadalajara 🇲🇽",cap:"49,850",w:"Estadio_Akron",tag:"DAY 1 THRILLER"},
+ {n:"Estadio BBVA",c:"Monterrey 🇲🇽",cap:"53,500",w:"Estadio_BBVA",tag:"EL GIGANTE DE ACERO"},
+ {n:"BMO Field",c:"Toronto 🇨🇦",cap:"45,736",w:"BMO_Field",tag:"CANADA OPENER TODAY"},
+ {n:"BC Place",c:"Vancouver 🇨🇦",cap:"54,500",w:"BC_Place",tag:"7 MATCHES"},
+ {n:"Levi's Stadium",c:"San Francisco Bay 🇺🇸",cap:"70,909",w:"Levi's_Stadium",tag:"6 MATCHES"},
+ {n:"Lumen Field",c:"Seattle 🇺🇸",cap:"69,000",w:"Lumen_Field",tag:"LOUDEST CROWD"},
+ {n:"NRG Stadium",c:"Houston 🇺🇸",cap:"72,220",w:"NRG_Stadium",tag:"7 MATCHES"},
+ {n:"Arrowhead Stadium",c:"Kansas City 🇺🇸",cap:"76,416",w:"Arrowhead_Stadium",tag:"QUARTER-FINAL"},
+ {n:"Mercedes-Benz Stadium",c:"Atlanta 🇺🇸",cap:"71,000",w:"Mercedes-Benz_Stadium",tag:"SEMI-FINAL"},
+ {n:"Hard Rock Stadium",c:"Miami 🇺🇸",cap:"65,326",w:"Hard_Rock_Stadium",tag:"3RD PLACE · JUL 18"},
+ {n:"Lincoln Financial Field",c:"Philadelphia 🇺🇸",cap:"69,796",w:"Lincoln_Financial_Field",tag:"6 MATCHES"},
+ {n:"Gillette Stadium",c:"Boston / Foxborough 🇺🇸",cap:"64,628",w:"Gillette_Stadium",tag:"QUARTER-FINAL"}
+];
+
+/* =================================================================
+   HELPERS
+   ================================================================= */
+const $=q=>document.querySelector(q), $$=q=>document.querySelectorAll(q);
+const flag=(code,w=40)=>`https://flagcdn.com/w${w}/${TEAMS[code].f}.png`;
+const fmtDate=d=>new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+
+/* real photos at runtime from Wikipedia REST API (CORS-enabled), graceful fallback */
+async function wikiImg(title){
+  try{
+    const r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(title));
+    if(!r.ok) return null;
+    const d=await r.json();
+    return (d.originalimage&&d.originalimage.source)||(d.thumbnail&&d.thumbnail.source)||null;
+  }catch(e){return null}
+}
+
+/* =================================================================
+   RENDER: match cards
+   ================================================================= */
+function matchCard(m){
+  const played=!!m.s, today=!!m.today;
+  const badge=played?'<span class="badge ft">FULL TIME</span>':today?'<span class="badge today">● TODAY</span>':'<span class="badge up">UPCOMING</span>';
+  const mid=played
+    ?`<div class="mscore">${m.s[0]} – ${m.s[1]}</div>`
+    :`<div class="mtime">${m.t}${m.t.includes("*")?"":" ET"}</div>`;
+  return `<div class="match" data-g="${m.g}" data-md="${m.md}" data-teams="${m.h},${m.a}">
+    ${badge}
+    <div class="meta"><span class="g">Group ${m.g}</span><span>${fmtDate(m.d)}</span></div>
+    <div class="mrow">
+      <div class="mteam"><img src="${flag(m.h)}" alt="${TEAMS[m.h].n}"><span class="nm">${TEAMS[m.h].n}</span></div>
+      ${mid}
+      <div class="mteam right"><span class="nm">${TEAMS[m.a].n}</span><img src="${flag(m.a)}" alt="${TEAMS[m.a].n}"></div>
+    </div>
+    ${m.v?`<div class="venue">🏟 ${m.v} · ${m.c}</div>`:'<div class="venue">🏟 Venue & kickoff — see FIFA.com</div>'}
+    ${m.sc?`<div class="scorers">${m.sc}</div>`:""}
+  </div>`;
+}
+
+/* live section: played + today */
+$("#liveGrid").innerHTML = MATCHES.filter(m=>m.s||m.today).map(matchCard).join("");
+
+/* fixtures grouped by day, with filters */
+let mdFilter="all", gFilter="all";
+function renderFixtures(){
+  let list=MATCHES.filter(m=>{
+    if(mdFilter==="played"&&!m.s)return false;
+    if(mdFilter==="today"&&!m.today)return false;
+    if(["1","2","3"].includes(mdFilter)&&String(m.md)!==mdFilter)return false;
+    if(gFilter!=="all"&&m.g!==gFilter)return false;
+    return true;
+  });
+  const days=[...new Set(list.map(m=>m.d))];
+  $("#fixtureList").innerHTML=days.map(d=>
+    `<div class="day-h">📅 ${fmtDate(d)}</div><div class="mgrid">${list.filter(m=>m.d===d).map(matchCard).join("")}</div>`
+  ).join("")||'<p style="color:var(--mut)">No matches for this filter.</p>';
+}
+$("#mdFilters").addEventListener("click",e=>{
+  if(!e.target.dataset.md)return;
+  $$("#mdFilters .fbtn").forEach(b=>b.classList.remove("on"));
+  e.target.classList.add("on");mdFilter=e.target.dataset.md;renderFixtures();
+});
+$("#groupFilters").innerHTML='<button class="fbtn on" data-g="all">All groups</button>'+
+  "ABCDEFGHIJKL".split("").map(g=>`<button class="fbtn" data-g="${g}">Group ${g}</button>`).join("");
+$("#groupFilters").addEventListener("click",e=>{
+  if(!e.target.dataset.g)return;
+  $$("#groupFilters .fbtn").forEach(b=>b.classList.remove("on"));
+  e.target.classList.add("on");gFilter=e.target.dataset.g;renderFixtures();
+});
+renderFixtures();
+
+/* =================================================================
+   RENDER: group tables (computed live from MATCHES)
+   ================================================================= */
+function standings(g){
+  const rows={};
+  Object.keys(TEAMS).filter(t=>TEAMS[t].g===g).forEach(t=>rows[t]={t,P:0,W:0,D:0,L:0,GF:0,GA:0,Pts:0});
+  MATCHES.filter(m=>m.g===g&&m.s).forEach(m=>{
+    const[hg,ag]=m.s,H=rows[m.h],A=rows[m.a];
+    H.P++;A.P++;H.GF+=hg;H.GA+=ag;A.GF+=ag;A.GA+=hg;
+    if(hg>ag){H.W++;A.L++;H.Pts+=3}else if(hg<ag){A.W++;H.L++;A.Pts+=3}else{H.D++;A.D++;H.Pts++;A.Pts++}
+  });
+  return Object.values(rows).sort((a,b)=>b.Pts-a.Pts||(b.GF-b.GA)-(a.GF-a.GA)||b.GF-a.GF||TEAMS[a.t].n.localeCompare(TEAMS[b.t].n));
+}
+$("#groupsGrid").innerHTML="ABCDEFGHIJKL".split("").map(g=>`
+  <div class="gcard reveal" id="group-${g}">
+    <h3>GROUP <b>${g}</b></h3>
+    <table>
+      <tr><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>+/-</th><th>Pts</th></tr>
+      ${standings(g).map((r,i)=>`<tr class="${i<2?"q":""}">
+        <td class="tm"><img src="${flag(r.t,40)}" alt="">${TEAMS[r.t].n}</td>
+        <td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF-r.GA>0?"+":""}${r.GF-r.GA}</td><td class="pts">${r.Pts}</td></tr>`).join("")}
+    </table>
+  </div>`).join("");
+
+/* =================================================================
+   RENDER: predictions
+   ================================================================= */
+$("#predGrid").innerHTML=PREDS.map(p=>`
+  <div class="pcard reveal">
+    <div class="ph"><img src="${flag(p.h)}" alt="">${TEAMS[p.h].n} <span style="color:var(--mut)">vs</span> ${TEAMS[p.a].n}<img src="${flag(p.a)}" alt=""></div>
+    <div class="when">${p.when} · Favourite: ${p.fav}</div>
+    <div class="tip">${p.tip}</div>
+    <div class="conf">Confidence <div class="bar"><div class="fill" style="width:${p.conf}%"></div></div> ${p.conf}%</div>
+  </div>`).join("");
+
+/* =================================================================
+   RENDER: leaderboards (with real player photos)
+   ================================================================= */
+function boardRows(arr,unit){
+  return arr.map((p,i)=>`
+   <div class="prow">
+     <span class="rank">${i+1}</span>
+     <div class="pava" ${p.w?`data-wiki="${p.w}"`:""}>${p.n.split(" ").map(x=>x[0]).slice(0,2).join("")}</div>
+     <div class="info"><div class="nm">${p.n}</div>
+       <div class="tm"><img src="${flag(p.t,20)}" alt="">${TEAMS[p.t].n}${p.note?` · ${p.note}`:""}</div></div>
+     <span class="num">${p.v}</span>
+   </div>`).join("");
+}
+$("#goalsBoard").innerHTML=boardRows(GOALS);
+$("#assistsBoard").innerHTML=boardRows(ASSISTS)+`<div class="prow" style="color:var(--mut);font-size:.82rem">More names join the board as Matchday 1 rolls on…</div>`;
+$("#watchBoard").innerHTML=boardRows(WATCH);
+
+/* =================================================================
+   RENDER: stadiums
+   ================================================================= */
+$("#stadiumGrid").innerHTML=STADIUMS.map(s=>`
+  <div class="scard reveal">
+    <div class="bg" data-wiki="${s.w}"></div>
+    <span class="cc">${s.tag}</span>
+    <div class="ov"><div class="nm">${s.n}</div><div class="ct">${s.c}</div><div class="cp">Capacity ≈ ${s.cap}</div></div>
+  </div>`).join("");
+
+/* load real photos (stadium cards, avatars, hero) */
+(async()=>{
+  const hero=await wikiImg("Estadio_Azteca");
+  if(hero){const el=$("#heroBg");el.style.backgroundImage=`url(${hero})`;el.style.opacity=.35}
+  for(const el of $$("[data-wiki]")){
+    wikiImg(el.dataset.wiki).then(u=>{
+      if(!u)return;
+      el.style.backgroundImage=`url(${u})`;
+      el.style.backgroundSize="cover";el.style.backgroundPosition="center top";
+      if(el.classList.contains("pava"))el.textContent="";
+    });
+  }
+})();
+
+/* =================================================================
+   ticker
+   ================================================================= */
+const tickItems=[
+ `<b>FT</b> 🇲🇽 Mexico 2–0 South Africa 🇿🇦 — Quiñones nets the first goal of WC26`,
+ `<b>FT</b> 🇰🇷 Korea Republic 2–1 Czechia 🇨🇿 — comeback win in Guadalajara`,
+ `<span class="up">TODAY</span> 🇨🇦 Canada vs Bosnia &amp; Herzegovina — 3:00 PM ET, Toronto`,
+ `<span class="up">TODAY</span> 🇺🇸 USA vs Paraguay — 9:00 PM ET, SoFi Stadium`,
+ `<b>ODDS</b> Spain +470 · France +480 · England +700 to lift the trophy`,
+ `<b>GOLDEN BOOT</b> Mbappé +600 leads the market`,
+ `<b>TOMORROW</b> Brazil vs Morocco headlines at MetLife 🍿`
+];
+const track=tickItems.map(x=>`<span>${x}</span><span style="color:#2c3360">●</span>`).join("");
+$("#ticker").innerHTML=track+track; /* duplicated for seamless loop */
+
+/* =================================================================
+   countdown to next kickoff (Canada vs Bosnia, Jun 12 3PM ET = 19:00 UTC)
+   ================================================================= */
+const KICKOFF=new Date("2026-06-12T19:00:00Z");
+function tick(){
+  let ms=KICKOFF-new Date();
+  if(ms<0){$(".count-label").innerHTML="🔴 <b>Matchday is LIVE</b> — Canada vs Bosnia under way in Toronto";ms=0}
+  const s=Math.floor(ms/1000);
+  $("#cd-d").textContent=Math.floor(s/86400);
+  $("#cd-h").textContent=String(Math.floor(s/3600)%24).padStart(2,"0");
+  $("#cd-m").textContent=String(Math.floor(s/60)%60).padStart(2,"0");
+  $("#cd-s").textContent=String(s%60).padStart(2,"0");
+}
+tick();setInterval(tick,1000);
+
+/* =================================================================
+   SEARCH — teams & players
+   ================================================================= */
+const sIndex=[
+  ...Object.keys(TEAMS).map(c=>({type:"team",key:c,label:TEAMS[c].n,sub:`Group ${TEAMS[c].g}`,flag:flag(c,40)})),
+  ...PLAYERS.map(p=>({type:"player",key:p.t,label:p.n,sub:`${p.p} · ${TEAMS[p.t].n}`,flag:flag(p.t,40)}))
+];
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const sInput=$("#search"),sBox=$("#searchResults");
+sInput.addEventListener("input",()=>{
+  const q=norm(sInput.value.trim());
+  if(q.length<2){sBox.classList.remove("open");return}
+  const hits=sIndex.filter(x=>norm(x.label).includes(q)||norm(x.sub).includes(q)).slice(0,9);
+  sBox.innerHTML=hits.length?hits.map(h=>`
+    <div class="sr-item" data-team="${h.key}">
+      <img src="${h.flag}" alt=""><div><div class="t">${h.label}</div><div class="s">${h.sub}</div></div>
+      <span class="sr-tag ${h.type}">${h.type}</span>
+    </div>`).join(""):'<div class="sr-item"><div class="s">No team or player found — try "Mbappé" or "Brazil"</div></div>';
+  sBox.classList.add("open");
+});
+document.addEventListener("click",e=>{
+  const it=e.target.closest(".sr-item");
+  if(it&&it.dataset.team){openTeam(it.dataset.team);sBox.classList.remove("open");sInput.value=""}
+  else if(!e.target.closest(".searchbar"))sBox.classList.remove("open");
+});
+
+/* team modal */
+function openTeam(code){
+  const t=TEAMS[code];
+  const fx=MATCHES.filter(m=>m.h===code||m.a===code);
+  const pl=PLAYERS.filter(p=>p.t===code);
+  $("#modalBox").innerHTML=`
+    <button class="close" onclick="document.getElementById('modalBg').classList.remove('open')">✕</button>
+    <div class="mh"><img src="${flag(code,80)}" alt=""><h3>${t.n}</h3></div>
+    <div class="gp">Group ${t.g} · FIFA World Cup 26™</div>
+    <h5>Group fixtures</h5>
+    ${fx.map(m=>`<div class="fx"><span>${TEAMS[m.h].n} vs ${TEAMS[m.a].n}</span>
+      <span class="sc">${m.s?m.s.join(" – "):fmtDate(m.d).replace(/^\w+, /,"")+(m.t&&m.t!=="FT"?" · "+m.t:"")}</span></div>`).join("")}
+    ${pl.length?`<h5>Key players</h5>${pl.map(p=>`<span class="pl">${p.n} · ${p.p}</span>`).join("")}`:""}
+    <h5>Current group table position</h5>
+    <div class="fx"><span>${standings(t.g).findIndex(r=>r.t===code)+1} of 4 in Group ${t.g}</span>
+      <span class="sc">${standings(t.g).find(r=>r.t===code).Pts} pts</span></div>`;
+  $("#modalBg").classList.add("open");
+}
+$("#modalBg").addEventListener("click",e=>{if(e.target.id==="modalBg")e.target.classList.remove("open")});
+
+/* =================================================================
+   scroll reveal
+   ================================================================= */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("vis");io.unobserve(e.target)}}),{threshold:.08});
+$$(".reveal").forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
