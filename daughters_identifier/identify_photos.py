@@ -1,23 +1,39 @@
 """
 שלב 2: זיהוי תמונות הבנות בתמונות הגן
+תומך בשני מצבים: pickle (פשוט) ו-ChromaDB (vector store מלא)
 """
 
 import face_recognition
 import pickle
 import shutil
 from pathlib import Path
-from typing import Optional
 import numpy as np
 
 ENCODINGS_FILE = Path("daughters_encodings.pkl")
 INCOMING_DIR = Path("incoming")
 MATCHED_DIR = Path("matched")
-TOLERANCE = 0.55  # ככל שנמוך יותר, הזיהוי מחמיר יותר (0.4–0.6 מומלץ)
+TOLERANCE = 0.55
 
 
 def load_daughters():
+    """טוען מ-ChromaDB אם קיים, אחרת מ-pickle"""
+    try:
+        from vector_store import get_collection
+        collection = get_collection()
+        if collection.count() > 0:
+            all_data = collection.get(include=["metadatas", "embeddings"])
+            daughters = {}
+            for metadata, embedding in zip(all_data["metadatas"], all_data["embeddings"]):
+                name = metadata["name"]
+                if name not in daughters:
+                    daughters[name] = []
+                daughters[name].append(np.array(embedding))
+            return daughters
+    except Exception:
+        pass
+
     if not ENCODINGS_FILE.exists():
-        raise FileNotFoundError("לא נמצא קובץ נתוני הבנות. הרץ setup_daughters.py קודם.")
+        raise FileNotFoundError("לא נמצאו נתוני בנות. הרץ setup_daughters.py או vector_store.py --register")
     with open(ENCODINGS_FILE, "rb") as f:
         return pickle.load(f)
 
