@@ -71,8 +71,9 @@ def register_all_from_reference_dir() -> dict:
     for img_path in sorted(REFERENCE_DIR.iterdir()):
         if img_path.suffix.lower() not in image_extensions:
             continue
-        name = img_path.stem
-        print(f"  מעבד: {name}...", end=" ")
+        stem = img_path.stem
+        name = stem.rsplit("_", 1)[0] if stem[-1].isdigit() and "_" in stem else stem
+        print(f"  מעבד: {name} ({img_path.name})...", end=" ")
         idx = registered.get(name, 0)
         success = register_face(name, str(img_path), photo_index=idx)
         if success:

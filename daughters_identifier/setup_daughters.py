@@ -41,7 +41,9 @@ def register_daughters():
         if img_path.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp"}:
             continue
 
-        name = img_path.stem
+        # gafan_1 → gafan, gafan_2 → gafan
+        stem = img_path.stem
+        name = stem.rsplit("_", 1)[0] if stem[-1].isdigit() and "_" in stem else stem
         print(f"  מעבד תמונה של {name}... ", end="", flush=True)
 
         embedding = get_embedding(str(img_path))
