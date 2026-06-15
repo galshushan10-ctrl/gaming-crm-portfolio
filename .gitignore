@@ -6,3 +6,10 @@ __pycache__/
 *.pyc
 automation_ready.csv
 gaming_rfm_report.xlsx
+
+# daughters identifier – פרטיות
+daughters_identifier/reference_photos/
+daughters_identifier/incoming/
+daughters_identifier/matched/
+daughters_identifier/chroma_db/
+
