@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S&amp;P 500 Live — לוח מעקב אישי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --surface:#fcfcfb; --page:#f9f9f7; --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --baseline:#c3c2b7; --good:#006300; --critical:#d03b3b; --border:rgba(11,11,11,.10);
+  --blue:#2a78d6; --aqua:#1baf7a; --yellow:#eda100; --violet:#4a3aa7; --surface-2:#f3f2ee;
+}
+:root[data-theme="dark"], :root:not([data-theme="light"]) {
+  --surface:#1a1a19; --page:#0d0d0d; --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --baseline:#383835; --good:#0ca30c; --critical:#e66767; --border:rgba(255,255,255,.10);
+  --blue:#3987e5; --aqua:#199e70; --yellow:#c98500; --violet:#9085e9; --surface-2:#222220;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --surface:#fcfcfb; --page:#f9f9f7; --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+    --grid:#e1e0d9; --baseline:#c3c2b7; --good:#006300; --critical:#d03b3b; --border:rgba(11,11,11,.10);
+    --blue:#2a78d6; --aqua:#1baf7a; --yellow:#eda100; --violet:#4a3aa7; --surface-2:#f3f2ee;
+  }
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'Assistant',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--page); color:var(--ink); min-height:100vh; transition:background .2s,color .2s;
+}
+.ltr-num{direction:ltr;unicode-bidi:isolate;display:inline-block;font-variant-numeric:tabular-nums;}
+a{color:var(--blue);}
+
+/* ---------- header ---------- */
+header{
+  position:sticky; top:0; z-index:20; background:var(--surface);
+  border-bottom:1px solid var(--border); padding:14px 24px;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+header .brand{display:flex; flex-direction:column; gap:2px;}
+header .brand h1{font-size:19px; font-weight:800; letter-spacing:.2px;}
+header .brand p{font-size:12px; color:var(--muted);}
+header .spacer{flex:1;}
+.mode-pill{
+  font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; letter-spacing:.3px;
+}
+.mode-pill.demo{background:rgba(237,161,0,.15); color:var(--yellow); border:1px solid var(--yellow);}
+.mode-pill.live{background:rgba(12,163,12,.12); color:var(--good); border:1px solid var(--good);}
+.updated-txt{font-size:11px; color:var(--muted);}
+.btn{
+  background:var(--blue); color:#fff; border:none; border-radius:8px; padding:9px 16px;
+  font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; transition:opacity .15s, transform .1s;
+}
+.btn:hover{opacity:.88;} .btn:active{transform:scale(.97);}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--border);}
+.btn.small{padding:6px 12px; font-size:12px;}
+.btn.danger{background:var(--critical);}
+.icon-btn{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--ink);
+  border-radius:8px; width:36px; height:36px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
+}
+.spin{animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes flash{0%{background:var(--surface-2);}100%{background:transparent;}}
+.flash{animation:flash 900ms ease-out;}
+
+/* ---------- tabs ---------- */
+nav.tabs{
+  position:sticky; top:65px; z-index:19; background:var(--page); padding:10px 24px 0;
+  display:flex; gap:6px; overflow-x:auto; border-bottom:1px solid var(--border);
+}
+nav.tabs button{
+  background:transparent; border:none; color:var(--muted); font-family:inherit;
+  font-size:13px; font-weight:700; padding:10px 14px; cursor:pointer; white-space:nowrap;
+  border-bottom:2px solid transparent; transition:color .15s,border-color .15s;
+}
+nav.tabs button.active{color:var(--ink); border-color:var(--blue);}
+nav.tabs button:hover{color:var(--ink);}
+
+.container{max-width:1280px; margin:0 auto; padding:24px;}
+.view{display:none;}
+.view.active{display:block;}
+
+/* ---------- cards / grid ---------- */
+.kpi-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-bottom:22px;}
+.kpi{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px;}
+.kpi .label{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; font-weight:700;}
+.kpi .value{font-size:28px; font-weight:800; line-height:1.1;}
+.kpi .delta{font-size:13px; font-weight:700; margin-top:8px; display:flex; align-items:center; gap:4px;}
+.kpi .sub{font-size:11px; color:var(--muted); margin-top:6px;}
+.delta.up{color:var(--good);} .delta.down{color:var(--critical);} .delta.flat{color:var(--muted);}
+
+.card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:20px;}
+.card h2{font-size:14px; font-weight:800; margin-bottom:4px;}
+.card .card-sub{font-size:12px; color:var(--muted); margin-bottom:16px;}
+.card-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+
+/* ---------- table ---------- */
+table{width:100%; border-collapse:collapse; font-size:13px;}
+th{text-align:right; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.6px;
+   padding:8px 10px; border-bottom:1px solid var(--grid); font-weight:700;}
+td{padding:11px 10px; border-bottom:1px solid var(--grid); color:var(--ink-2);}
+tr:last-child td{border-bottom:none;}
+tr.clickable{cursor:pointer;}
+tr.clickable:hover td{background:var(--surface-2);}
+td.num, th.num{text-align:left;}
+.note{font-size:11px; color:var(--muted); margin-top:4px;}
+
+/* ---------- pills / selects ---------- */
+.pill-row{display:flex; gap:6px; flex-wrap:wrap;}
+.pill{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--ink-2);
+  border-radius:20px; padding:7px 14px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;
+}
+.pill.active{background:var(--blue); color:#fff; border-color:var(--blue);}
+select, input[type=text], input[type=password], input[type=number], input[type=date]{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--ink);
+  border-radius:8px; padding:9px 12px; font-family:inherit; font-size:13px;
+}
+label.field{display:flex; flex-direction:column; gap:5px; font-size:12px; color:var(--muted); font-weight:700;}
+
+.chart-wrap{position:relative; height:280px;}
+.legend-row{display:flex; gap:18px; margin-bottom:10px; font-size:12px; color:var(--ink-2);}
+.legend-row .dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin-inline-end:6px;}
+
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+@media(max-width:860px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+.disclaimer{background:var(--surface-2); border:1px dashed var(--border); border-radius:10px; padding:12px 14px; font-size:12px; color:var(--muted); line-height:1.6;}
+.badge{font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; background:var(--surface-2); color:var(--muted); border:1px solid var(--border);}
+
+form.inline-form{display:flex; gap:10px; flex-wrap:wrap; align-items:end;}
+.hint{font-size:11px; color:var(--muted); margin-top:6px; line-height:1.6;}
+footer{text-align:center; padding:30px; font-size:11px; color:var(--muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>S&amp;P 500 Live 📈</h1>
+    <p>לוח מעקב אישי — מדד, שער דולר/שקל, תחזיות וסימולטור</p>
+  </div>
+  <div class="spacer"></div>
+  <span id="modePill" class="mode-pill demo">מצב הדגמה</span>
+  <span id="updatedTxt" class="updated-txt">—</span>
+  <button id="refreshBtn" class="icon-btn" title="עדכן עכשיו">↻</button>
+  <button id="themeBtn" class="icon-btn" title="החלף ערכת נושא">◐</button>
+</header>
+
+<nav class="tabs" id="tabsNav">
+  <button data-view="overview" class="active">סקירה</button>
+  <button data-view="periods">תקופות</button>
+  <button data-view="forecast">תחזית</button>
+  <button data-view="simulator">סימולטור</button>
+  <button data-view="savings">החיסכון שלי</button>
+  <button data-view="settings">הגדרות</button>
+</nav>
+
+<div class="container">
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <div class="view active" id="view-overview">
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>תשואות לפי תקופה</h2>
+          <p class="card-sub">תשואת המדד מול שינוי שער הדולר/שקל — כדי לראות כמה מהתשואה שלך בפועל (בשקלים) מגיעה מהמדד וכמה מהשער</p>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+      <table>
+        <thead><tr>
+          <th>תקופה</th>
+          <th class="num">תשואת S&amp;P 500</th>
+          <th class="num">שינוי דולר/שקל</th>
+          <th class="num">תשואה מותאמת שקל</th>
+        </tr></thead>
+        <tbody id="returnsTableBody"></tbody>
+      </table>
+      </div>
+      <p class="note">לחץ על שורה כדי לראות גרף מפורט בלשונית "תקופות". ‏* מסומן כאשר אין נתונים היסטוריים מלאים לכל התקופה.</p>
+    </div>
+  </div>
+
+  <!-- ===================== PERIODS ===================== -->
+  <div class="view" id="view-periods">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>השוואת תקופה מפורטת</h2>
+          <p class="card-sub">שני הגרפים מנורמלים ל-100 בתחילת התקופה, כדי להשוות תנועה יחסית באותו ציר</p>
+        </div>
+      </div>
+      <div class="pill-row" id="periodPills" style="margin-bottom:12px;"></div>
+      <div class="pill-row" id="hourlyLookbackPills" style="margin-bottom:14px; display:none;"></div>
+
+      <div class="legend-row">
+        <span><span class="dot" style="background:var(--blue)"></span>S&amp;P 500</span>
+        <span><span class="dot" style="background:var(--aqua)"></span>USD/ILS</span>
+      </div>
+      <div class="chart-wrap"><canvas id="periodChart"></canvas></div>
+
+      <div class="grid-3" style="margin-top:18px;" id="periodStats"></div>
+    </div>
+  </div>
+
+  <!-- ===================== FORECAST ===================== -->
+  <div class="view" id="view-forecast">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>תחזית סטטיסטית</h2>
+          <p class="card-sub">הערכה המבוססת על תשואה ותנודתיות היסטורית (הליכה אקראית) — לא ייעוץ השקעות</p>
+        </div>
+        <div class="pill-row" id="forecastHorizonPills"></div>
+      </div>
+
+      <div class="grid-3" id="forecastCards"></div>
+
+      <div class="disclaimer" style="margin-top:16px;">
+        ⚠️ התחזית מחושבת מהתשואה הממוצעת והתנודתיות ההיסטורית של המדד ושל שער הדולר/שקל בלבד (מודל הליכה אקראית פשוט).
+        היא אינה מביאה בחשבון אירועים כלכליים, מדיניות ריבית, גיאופוליטיקה או כל גורם עתידי אחר, ואינה מהווה המלצה
+        או ייעוץ השקעות. תשואות עבר אינן מבטיחות תשואות עתיד.
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SIMULATOR ===================== -->
+  <div class="view" id="view-simulator">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>סימולטור תרחישים</h2>
+          <p class="card-sub">הזן שינוי משוער במדד ובשער הדולר ותראה איך זה משפיע על החיסכון שלך בשקלים</p>
+        </div>
+        <button class="btn small ghost" id="fillFromForecastBtn">מלא מהתחזית הבסיסית</button>
+      </div>
+
+      <form class="inline-form" id="simForm">
+        <label class="field">שינוי S&amp;P 500 צפוי (%)
+          <input type="number" id="simSp" step="0.1" value="0">
+        </label>
+        <label class="field">שינוי דולר/שקל צפוי (%)
+          <input type="number" id="simUsd" step="0.1" value="0">
+        </label>
+        <label class="field">סכום חיסכון (₪)
+          <input type="number" id="simAmount" step="100" value="100000">
+        </label>
+        <label class="field">אחוז חשיפה למדד (%)
+          <input type="number" id="simExposure" step="1" min="0" max="100" value="100">
+        </label>
+      </form>
+
+      <div class="grid-3" style="margin-top:18px;" id="simResults"></div>
+    </div>
+  </div>
+
+  <!-- ===================== SAVINGS ===================== -->
+  <div class="view" id="view-savings">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>החיסכון שלי</h2>
+          <p class="card-sub">הזנה ידנית — האפליקציה אינה מתחברת לחשבון הבנק/בית ההשקעות שלך. הנתונים נשמרים בדפדפן שלך בלבד ולא נשלחים לשום מקום.</p>
+        </div>
+      </div>
+
+      <form class="inline-form" id="savingsForm">
+        <label class="field">שם המכשיר/קרן
+          <input type="text" id="svName" placeholder="לדוגמה: קרן השתלמות">
+        </label>
+        <label class="field">סכום
+          <input type="number" id="svAmount" step="100" min="0">
+        </label>
+        <label class="field">מטבע
+          <select id="svCurrency"><option value="ILS">₪ שקל</option><option value="USD">$ דולר</option></select>
+        </label>
+        <label class="field">חשיפה למדד S&amp;P (%)
+          <input type="number" id="svExposure" min="0" max="100" value="100">
+        </label>
+        <label class="field">תאריך עדכון אחרון
+          <input type="date" id="svDate">
+        </label>
+        <button type="submit" class="btn small">הוסף</button>
+      </form>
+
+      <div style="overflow-x:auto; margin-top:18px;">
+      <table>
+        <thead><tr>
+          <th>מכשיר</th><th class="num">סכום מקורי</th><th class="num">חשיפה</th>
+          <th class="num">עדכון אחרון</th><th class="num">הערכה להיום</th><th></th>
+        </tr></thead>
+        <tbody id="savingsTableBody"></tbody>
+        <tfoot><tr>
+          <td colspan="4" style="font-weight:800;">סה"כ</td>
+          <td class="num" id="savingsTotal" style="font-weight:800;">—</td><td></td>
+        </tr></tfoot>
+      </table>
+      </div>
+      <p class="note" id="savingsEmptyNote">עדיין לא הוספת חיסכון. הוסף שורה למעלה כדי להתחיל לעקוב.</p>
+    </div>
+  </div>
+
+  <!-- ===================== SETTINGS ===================== -->
+  <div class="view" id="view-settings">
+    <div class="card">
+      <h2>מקור נתונים — S&amp;P 500</h2>
+      <p class="card-sub">מפתח API חינמי מ-Twelve Data. נשמר בדפדפן שלך בלבד (localStorage) ולא נשלח לשום שרת חוץ מ-twelvedata.com.</p>
+      <form class="inline-form" id="apiKeyForm">
+        <label class="field" style="min-width:320px;">מפתח API של Twelve Data
+          <input type="password" id="apiKeyInput" placeholder="הדבק כאן את המפתח שלך">
+        </label>
+        <button type="submit" class="btn small">שמור והתחבר</button>
+        <button type="button" class="btn small ghost" id="clearKeyBtn">נקה מפתח</button>
+      </form>
+      <p class="hint">
+        איך משיגים מפתח חינמי: היכנס ל-
+        <a href="https://twelvedata.com/pricing" target="_blank" rel="noopener">twelvedata.com/pricing</a>
+        ובחר בתוכנית Basic (חינמית, ללא כרטיס אשראי) — 800 קריאות ביום, 8 בדקה. זה מספיק בהחלט לשימוש אישי.
+        <br>נתוני שער הדולר/שקל ההיסטוריים מגיעים מ-Frankfurter.app (חינמי לחלוטין, ללא מפתח).
+      </p>
+      <p id="apiKeyStatus" class="note" style="margin-top:10px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>עדכון אוטומטי</h2>
+      <div class="inline-form">
+        <label class="field">
+          <span style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="autoRefreshToggle" style="width:16px;height:16px;">
+            עדכון חי אוטומטי
+          </span>
+        </label>
+        <label class="field">תדירות
+          <select id="refreshIntervalSelect">
+            <option value="60">כל דקה</option>
+            <option value="300" selected>כל 5 דקות</option>
+            <option value="900">כל 15 דקות</option>
+            <option value="1800">כל חצי שעה</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint">עדכון אוטומטי מושך רק את המחיר החי (Quote), לא את כל ההיסטוריה, כדי לחסוך במכסת הקריאות היומית. אפשר תמיד ללחוץ על כפתור ↻ בכותרת לעדכון מלא מיידי.</p>
+      <p class="note" id="creditsNote" style="margin-top:10px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>נתונים</h2>
+      <p class="card-sub">איפוס מחיקת הנתונים המקומיים בדפדפן זה (מפתח API, חיסכון שנשמר, מטמון).</p>
+      <button class="btn small danger" id="resetAllBtn">מחק את כל הנתונים המקומיים</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>נבנה כפרויקט אישי · הנתונים למטרות מעקב בלבד ואינם ייעוץ השקעות · S&amp;P 500 Live Dashboard</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
