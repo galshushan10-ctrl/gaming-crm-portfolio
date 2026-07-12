@@ -1,132 +1,56 @@
-# Gaming CRM Automation Toolkit
+# S&P 500 Live Dashboard 📈
 
-AI-powered CRM & retention automation system built for mobile/social casino games (Huuuge Casino model).  
-Covers the full lifecycle: segmentation → churn prediction → chip economy scoring → campaign automation → A/B testing.
+לוח מעקב אישי ל-S&P 500: מחיר חי, תשואות לפי תקופה (יומי/שעתי/שבועי/רבעוני/YTD/שנים אחורה),
+השפעת שער הדולר/שקל על התשואה בפועל, תחזית סטטיסטית, סימולטור תרחישים, ומעקב חיסכון אישי ידני.
 
----
+דף סטטי אחד (`index.html` + `app.js`) — אין שרת, אין build step. אפשר לפתוח ישירות בדפדפן
+או לארח בחינם ב-GitHub Pages.
 
-## What This Does
+## הרצה מקומית
 
-A retention manager's daily toolkit — runs automatically, outputs actionable segments and campaign-ready data.
-
-```
-Player Data
-    ↓
-RFM Segmentation       → who are they?
-    ↓
-Churn Prediction       → who is about to leave?
-    ↓
-Chip Economy Model     → when are they ready to buy?
-    ↓
-Campaign Automation    → what do we send, to whom, on which channel?
-    ↓
-A/B Testing            → which message wins?
-    ↓
-Google Sheets Dashboard + HTML Dashboard
-```
-
----
-
-## Modules
-
-| File | What it does |
-|------|-------------|
-| `rfm_google_sheets.py` | Generates 1,000 synthetic players + RFM segmentation → Google Sheets |
-| `churn_model.py` | Personalized churn detection based on each player's own login cadence |
-| `chip_economy.py` | Chip balance scoring + purchase propensity + monetization state per player |
-| `braze_client.py` | Braze API wrapper — mock mode by default, production-ready with API key |
-| `ab_test_tracker.py` | Deterministic A/B variant assignment + statistical validity checks |
-| `results_simulator.py` | Simulates open/click/conversion rates based on propensity scores |
-| `run_campaigns.py` | Main runner — orchestrates everything end to end |
-| `build_dashboard.py` | Generates self-contained HTML dashboard |
-
----
-
-## Key Concepts
-
-### Personalized Churn Detection
-Instead of a fixed "7 days inactive = churned" threshold, each player has their own cadence:
-
-```
-personal_cadence = 90 / sessions_last_90d
-overdue_ratio    = days_since_last_activity / personal_cadence
-```
-
-A daily player is at risk after 2 days away.  
-A weekly player is fine after 6 days away.  
-Cold-start players (< 5 sessions) use the population p60 cadence as a benchmark.
-
-### Chip Economy & Purchase Propensity
-Purchase propensity peaks at 15–25% of a player's normal chip balance — not at zero.  
-At zero chips, frustration is high and churn risk spikes. The consolation mechanic bridges this.
-
-```
-balance_pct 20–50% + moderate frustration → PURCHASE_OFFER
-balance_pct < 10%  + high frustration     → CONSOLATION → then offer (30min delay)
-balance_pct < 5%   + low frustration      → BROKE_OFFER (immediate)
-balance_pct > 80%                         → VIP_TEASER (no monetization push)
-```
-
-### Six Player Types
-```
-Active Payer           → retain + upsell
-Revenue Churning Payer → URGENT: still logging in but stopped buying
-Lapsed Payer           → URGENT: was paying, now gone
-F2P Active             → convert: first purchase offer
-F2P Lapsing            → last window before full churn
-Non-entrant            → win-back email series
-```
-
-### A/B Testing
-Every campaign has two variants. Assignment is deterministic (hash of player_id) — the same player always gets the same variant. Statistical validity is flagged automatically (min 100 per variant).
-
----
-
-## How to Run
+פתח את `index.html` בדפדפן, או:
 
 ```bash
-pip install -r requirements.txt
-
-# Full pipeline
-python3 rfm_google_sheets.py   # creates Google Sheet
-python3 churn_model.py         # adds churn prediction
-python3 chip_economy.py        # adds chip economy + propensity
-python3 run_campaigns.py       # sends campaigns (mock mode)
-python3 build_dashboard.py     # opens HTML dashboard
+python3 -m http.server 8080
+# ואז http://localhost:8080
 ```
 
-### Production Mode (with Braze)
-```bash
-export BRAZE_API_KEY="your-key"
-export BRAZE_BASE_URL="https://rest.iad-01.braze.com"
-python3 run_campaigns.py
-```
-Zero code changes — only environment variables.
+## חיבור לנתונים אמיתיים
+
+בלי מפתח API האפליקציה עולה **במצב הדגמה** — נתונים סינתטיים מתויגים בבירור, כדי שאפשר יהיה
+לראות איך היא נראית מיד. כדי לקבל נתונים אמיתיים:
+
+1. עבור ללשונית **הגדרות**.
+2. היכנס ל-[twelvedata.com/pricing](https://twelvedata.com/pricing) והירשם לתוכנית **Basic** (חינמית,
+   ללא כרטיס אשראי) — 800 קריאות ביום, 8 בדקה.
+3. הדבק את המפתח בשדה "מפתח API של Twelve Data" ולחץ "שמור והתחבר".
+
+המפתח נשמר רק ב-`localStorage` של הדפדפן שלך ונשלח אך ורק ל-`twelvedata.com`. שום דבר לא
+נשלח לשרת אחר.
+
+נתוני שער הדולר/שקל ההיסטוריים (יומי) מגיעים תמיד מ-[Frankfurter.app](https://frankfurter.app) —
+חינמי לחלוטין וללא מפתח, כך שהם עובדים אפילו לפני שמגדירים מפתח.
+
+האפליקציה מנסה קודם לעקוב אחרי המדד עצמו (`SPX`), ואם התוכנית החינמית לא כוללת אותו — עוברת
+אוטומטית ל-ETF‏ `SPY` (עוקב אחרי S&P 500 כמעט 1:1) כפרוקסי.
+
+## החיסכון שלי
+
+האפליקציה **אינה** מתחברת לחשבון בנק/בית השקעות. זו הזנה ידנית בלבד: אתה מזין את הסכום, אחוז
+החשיפה למדד S&P 500, ותאריך העדכון האחרון — והאפליקציה מחשבת הערכה מתעדכנת של השווי לפי התשואה
+המותאמת-שקל של המדד מאז אותו תאריך. הנתונים נשמרים ב-`localStorage` בלבד.
+
+## פריסה (Hosting)
+
+הכי פשוט: GitHub Pages. ב-Settings → Pages של הריפו, בחר את הענף הזה ואת התיקייה **/ (root)**.
+זה דף סטטי לחלוטין — אין מגבלה בהוסטינג בכל שירות סטטי (Netlify, Vercel, GitHub Pages וכו').
+
+## הבהרה
+
+הכלי נועד למעקב אישי בלבד. התחזיות מבוססות על הליכה אקראית פשוטה מנתוני עבר (ממוצע ותנודתיות),
+אינן מביאות בחשבון גורמים כלכליים/גיאופוליטיים עתידיים, ואינן מהוות ייעוץ השקעות.
 
 ---
 
-## Outputs
-
-- **Google Sheets** — 8 sheets: Player Data, Segment Summary, KPI Dashboard, Churn Prediction, Chip Economy, Campaign Results, A/B Test Results, A/B Test Plan
-- **automation_ready.csv** — Braze/HubSpot import-ready file with offer type, channel, variant per player
-- **dashboard.html** — Self-contained visual dashboard (no server needed)
-
----
-
-## Tech Stack
-
-`Python` · `pandas` · `scikit-learn` · `gspread` · `Google Sheets API` · `Braze REST API` · `Chart.js`
-
----
-
-## Business Impact
-
-This system enables:
-- **Churn prevention** — catch players before they leave based on personal behavior, not arbitrary thresholds
-- **Monetization timing** — reach players exactly when they're ready to buy
-- **Segment-specific strategies** — 6 player types × tailored offer × A/B variant = relevant communication
-- **Automation** — runs daily via GitHub Actions, no manual work required
-
----
-
-*Built as a CRM & Retention portfolio — gaming vertical. eCommerce version in progress.*
+*הריפו כולל גם ערכת כלים ישנה יותר ל-CRM/retention לגיימינג (הסקריפטים ב-`*.py` ו-`dashboard.html`
+בשורש) — לא קשורה לפרויקט הזה, נשארה כפי שהיא.*
