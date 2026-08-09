@@ -120,21 +120,76 @@ const BZSeg = (function () {
     }
   }
 
-  /* ---------- public ------------------------------------------------------ */
+  /* ---------- filter groups (Segment Builder 2.0) -------------------------- */
+  /* Filters inside a group join with AND or OR; groups join with AND or OR.
+     The old "Braze is AND-only" folklore describes the legacy builder and is
+     no longer true — nested boolean logic is supported.                      */
 
-  function evaluate(filters, users) {
-    users = users || window.BZ.users;
-    if (!filters || !filters.length) return users.slice();
-    return users.filter((u) => filters.every((f) => matches(u, f)));
+  /* Accepts a segment object {groups, groupJoin}, or a bare filter array
+     (treated as one AND group), so every call site keeps working.           */
+  function norm(spec) {
+    if (!spec) return { groups: [], groupJoin: 'AND' };
+    if (Array.isArray(spec)) return { groups: spec.length ? [{ join: 'AND', filters: spec }] : [], groupJoin: 'AND' };
+    if (spec.groups) return { groups: spec.groups, groupJoin: spec.groupJoin || 'AND' };
+    if (spec.filters) return norm(spec.filters);
+    return { groups: [], groupJoin: 'AND' };
   }
 
-  function count(filters, users) { return evaluate(filters, users).length; }
+  function matchGroup(user, group) {
+    const fs = group.filters || [];
+    if (!fs.length) return true;
+    return group.join === 'OR' ? fs.some((f) => matches(user, f)) : fs.every((f) => matches(user, f));
+  }
+
+  function matchSpec(user, spec) {
+    const { groups, groupJoin } = norm(spec);
+    if (!groups.length) return true;
+    return groupJoin === 'OR'
+      ? groups.some((g) => matchGroup(user, g))
+      : groups.every((g) => matchGroup(user, g));
+  }
+
+  /* Flatten to a single list — for counting rows and for leave-one-out. */
+  function flat(spec) { return norm(spec).groups.reduce((a, g) => a.concat(g.filters || []), []); }
+
+  /* ---------- public ------------------------------------------------------ */
+
+  function evaluate(spec, users) {
+    users = users || window.BZ.users;
+    const n = norm(spec);
+    if (!n.groups.length) return users.slice();
+    return users.filter((u) => matchSpec(u, n));
+  }
+
+  function count(spec, users) { return evaluate(spec, users).length; }
 
   /* Braze shows the segment as a share of the total user base. */
-  function reach(filters) {
+  function reach(spec) {
     const total = window.BZ.users.length;
-    const n = count(filters);
+    const n = count(spec);
     return { count: n, total, pct: total ? (n / total) * 100 : 0 };
+  }
+
+  /* The sentence Braze prints under the builder. */
+  function describeSpec(spec) {
+    const { groups, groupJoin } = norm(spec);
+    if (!groups.length) return '';
+    return groups
+      .map((g) => {
+        const inner = (g.filters || []).map(describe).join(`  ${g.join}  `);
+        return groups.length > 1 ? '( ' + inner + ' )' : inner;
+      })
+      .join(`  ${groupJoin}  `);
+  }
+
+  /* Migrate a seeded/stored segment to the group model, in place. */
+  function upgrade(seg) {
+    if (!seg.groups) {
+      seg.groups = (seg.filters && seg.filters.length) ? [{ join: 'AND', filters: seg.filters }] : [];
+      seg.groupJoin = seg.groupJoin || 'AND';
+    }
+    delete seg.filters;
+    return seg;
   }
 
   /* Human-readable description, mirroring the sentence Braze prints. */
@@ -149,8 +204,8 @@ const BZSeg = (function () {
   }
 
   /* Segment reachability by channel — the check people forget before launch. */
-  function reachability(filters) {
-    const list = evaluate(filters);
+  function reachability(spec) {
+    const list = evaluate(spec);
     return {
       total: list.length,
       email: list.filter((u) => u.email_subscribe !== 'unsubscribed').length,
@@ -160,8 +215,8 @@ const BZSeg = (function () {
   }
 
   /* Distribution of a field across the matched audience — powers the mini charts. */
-  function breakdown(filters, field, topN) {
-    const list = evaluate(filters);
+  function breakdown(spec, field, topN) {
+    const list = evaluate(spec);
     const counts = {};
     list.forEach((u) => {
       const v = getValue(u, field);
@@ -171,7 +226,12 @@ const BZSeg = (function () {
     return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, topN || 8);
   }
 
-  return { FIELDS, OPS, fieldMeta, evaluate, count, reach, reachability, breakdown, describe, matches, getValue, eventCount };
+    /* Upgrade every seeded segment at load. */
+  (window.BZ.segments || []).forEach(upgrade);
+
+  return { FIELDS, OPS, fieldMeta, evaluate, count, reach, reachability, breakdown,
+           describe, describeSpec, matches, getValue, eventCount,
+           norm, flat, upgrade, matchSpec };
 })();
 
 window.BZSeg = BZSeg;

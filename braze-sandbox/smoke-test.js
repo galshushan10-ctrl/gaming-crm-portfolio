@@ -105,9 +105,9 @@ const check = (name, cond, detail) => {
       ]),
       il: c([{ field: 'country', op: 'equals', value: 'IL' }]),
       ilManual: BZ.users.filter(u => u.country === 'IL').length,
-      abandon: c(BZ.segments.find(s => s.id === 'seg-abandoners').filters),
-      upcoming: c(BZ.segments.find(s => s.id === 'seg-upcoming-stay').filters),
-      reach: BZSeg.reachability(BZ.segments.find(s => s.id === 'seg-abandoners').filters),
+      abandon: c(BZ.segments.find(s => s.id === 'seg-abandoners')),
+      upcoming: c(BZ.segments.find(s => s.id === 'seg-upcoming-stay')),
+      reach: BZSeg.reachability(BZ.segments.find(s => s.id === 'seg-abandoners')),
       nullDate: c([{ field: 'custom.next_stay_date', op: 'date_in_next_days', value: 14 }]),
       neverBooked: c([{ field: 'custom.total_stays', op: 'equals', value: 0 }]),
       neverBookedManual: BZ.users.filter(u => u.custom.total_stays === 0).length,
@@ -154,7 +154,7 @@ const check = (name, cond, detail) => {
   await page.locator('.bz-cvaddbtn').first().click();
   await page.waitForTimeout(120);
   const pickerOpen = await page.locator('.bz-steppicker__item').count();
-  check('step picker opens with all step types', pickerOpen === 8, 'got ' + pickerOpen);
+  check('step picker opens with all step types', pickerOpen === 11, 'got ' + pickerOpen);
   await page.locator('.bz-steppicker__item[data-kind="audience_paths"]').click();
   await page.waitForTimeout(180);
   const stepsAfter = await page.locator('.bz-cvstep').count();
@@ -190,17 +190,128 @@ const check = (name, cond, detail) => {
   const countAfter = await page.locator('.bz-audiencebar__num').innerText();
   check('removing a filter changes the live audience count', countBefore !== countAfter, `${countBefore} -> ${countAfter}`);
 
-  // Campaign wizard: walk all five steps
+  // Campaign wizard: channel picker -> email -> 2 build modes -> drag & drop
   await page.evaluate(() => { location.hash = '#/campaigns'; });
-  await page.waitForTimeout(120);
-  await page.locator('[data-act="new-campaign"]').click();
   await page.waitForTimeout(150);
-  for (let i = 0; i < 4; i++) {
+  await page.locator('[data-act="new-campaign"]').click();
+  await page.waitForTimeout(200);
+
+  const tiles = await page.locator('[data-chan]').count();
+  check('channel picker is the first step', tiles >= 9, 'tiles: ' + tiles);
+  for (const ch of ['email', 'push', 'sms', 'whatsapp', 'inapp']) {
+    check(`channel picker offers ${ch}`, await page.locator(`[data-chan="${ch}"]`).count() === 1);
+  }
+  check('Feature Flag is NOT in the channel picker (created from Messaging)',
+    await page.locator('[data-chan="featureflag"]').count() === 0);
+
+  await page.fill('[data-w="name"]', 'Smoke test campaign');
+  await page.locator('[data-chan="email"]').click();
+  await page.waitForTimeout(250);
+  const modes = await page.locator('[data-emode]').count();
+  check('email offers exactly two build modes (Drag & Drop, HTML)', modes === 2, 'got ' + modes);
+
+  await page.locator('[data-emode="dragdrop"]').click();
+  await page.waitForTimeout(350);
+  check('drag & drop builder renders a canvas', await page.locator('.bz-eb__canvas').count() === 1);
+  const paletteCats = await page.evaluate(() => BZEmailBuilder.CATEGORIES.map(c => c.label).join(','));
+  check('palette uses Braze categories basic/media/advanced', paletteCats === 'Basic,Media,Advanced', paletteCats);
+  check('palette has Title and Paragraph (not "Heading"/"Text")',
+    await page.locator('[data-newblock="title"]').count() === 1 &&
+    await page.locator('[data-newblock="paragraph"]').count() === 1);
+
+  const blocksBefore = await page.locator('.bz-eb__block').count();
+  await page.locator('[data-newblock="button"]').first().click();
+  await page.waitForTimeout(250);
+  check('clicking a palette block adds it to the canvas',
+    await page.locator('.bz-eb__block').count() === blocksBefore + 1);
+
+  const compiled = await page.evaluate(() => {
+    const w = BZApp.wizard;
+    const html = BZEmailBuilder.compile(w.design);
+    const r = BZUI.renderLiquid(html, BZ.userById('AUR-100000'), {});
+    return { len: html.length, errs: r.errors.length, hasTable: /<table/.test(html), rendered: r.html.length };
+  });
+  check('design compiles to table-based email HTML', compiled.hasTable && compiled.len > 500, JSON.stringify(compiled));
+  check('compiled HTML renders through Liquid with no errors', compiled.errs === 0);
+
+  // continue through the wizard to Review
+  await page.locator('[data-w-nav="1"]').click();   // -> Target Audience
+  await page.waitForTimeout(200);
+  for (let i = 0; i < 3; i++) {
     await page.locator('[data-w-nav="1"]').click();
-    await page.waitForTimeout(120);
+    await page.waitForTimeout(180);
   }
   const checksShown = await page.locator('.bz-checkline').count();
   check('wizard reaches Review with pre-launch checks', checksShown >= 7, 'checkline count: ' + checksShown);
+
+  // Non-email channel composer + device preview
+  await page.evaluate(() => { location.hash = '#/campaigns'; });
+  await page.waitForTimeout(150);
+  await page.locator('[data-act="new-campaign"]').click();
+  await page.waitForTimeout(180);
+  await page.locator('[data-chan="whatsapp"]').click();
+  await page.waitForTimeout(250);
+  check('WhatsApp composer renders a device preview', await page.locator('.bz-wa__bubble').count() === 1);
+  const waText = await page.locator('.bz-wa__bubble').innerText();
+  check('WhatsApp positional variables resolve to real profile data',
+    /Maya/.test(waText) && !/\{\{1\}\}/.test(waText), waText.slice(0, 80));
+
+  await page.evaluate(() => { location.hash = '#/campaigns'; });
+  await page.waitForTimeout(150);
+  await page.locator('[data-act="new-campaign"]').click();
+  await page.waitForTimeout(180);
+  await page.locator('[data-chan="sms"]').click();
+  await page.waitForTimeout(250);
+  check('SMS composer shows a segment/character counter',
+    /segment/i.test(await page.locator('.bz-eb__meta').innerText()));
+
+  // Segment Builder 2.0: AND/OR groups
+  console.log('\nSegment Builder 2.0 (AND/OR)');
+  const orLogic = await page.evaluate(() => {
+    const gold = { field: 'custom.loyalty_tier', op: 'equals', value: 'Gold' };
+    const plat = { field: 'custom.loyalty_tier', op: 'equals', value: 'Platinum' };
+    const andSpec = { groups: [{ join: 'AND', filters: [gold, plat] }], groupJoin: 'AND' };
+    const orSpec  = { groups: [{ join: 'OR',  filters: [gold, plat] }], groupJoin: 'AND' };
+    const twoGroups = {
+      groups: [
+        { join: 'OR', filters: [gold, plat] },
+        { join: 'AND', filters: [{ field: 'country', op: 'equals', value: 'IL' }] },
+      ], groupJoin: 'AND',
+    };
+    const orGroups = { groups: twoGroups.groups, groupJoin: 'OR' };
+    return {
+      and: BZSeg.count(andSpec), or: BZSeg.count(orSpec),
+      manualOr: BZ.users.filter(u => ['Gold','Platinum'].includes(u.custom.loyalty_tier)).length,
+      nested: BZSeg.count(twoGroups),
+      manualNested: BZ.users.filter(u => ['Gold','Platinum'].includes(u.custom.loyalty_tier) && u.country === 'IL').length,
+      orGroups: BZSeg.count(orGroups),
+      manualOrGroups: BZ.users.filter(u => ['Gold','Platinum'].includes(u.custom.loyalty_tier) || u.country === 'IL').length,
+      desc: BZSeg.describeSpec(twoGroups),
+    };
+  });
+  check('AND within a group still yields zero for two tiers', orLogic.and === 0, 'got ' + orLogic.and);
+  check('OR within a group matches either tier', orLogic.or === orLogic.manualOr, `${orLogic.or} vs ${orLogic.manualOr}`);
+  check('groups joined by AND nest correctly', orLogic.nested === orLogic.manualNested, `${orLogic.nested} vs ${orLogic.manualNested}`);
+  check('groups joined by OR nest correctly', orLogic.orGroups === orLogic.manualOrGroups, `${orLogic.orGroups} vs ${orLogic.manualOrGroups}`);
+  check('describeSpec parenthesises groups', /\(.*\).*AND.*\(.*\)/.test(orLogic.desc), orLogic.desc);
+
+  // toggling the join badge in the UI moves the count
+  await page.evaluate(() => { location.hash = '#/segments/seg-club-gold'; });
+  await page.waitForTimeout(250);
+  await page.evaluate(() => {
+    const s = BZ.segments.find(x => x.id === 'seg-club-gold');
+    s.groups = [{ join: 'AND', filters: [
+      { field: 'custom.loyalty_tier', op: 'equals', value: 'Gold' },
+      { field: 'custom.loyalty_tier', op: 'equals', value: 'Platinum' }] }];
+    BZApp.render();
+  });
+  await page.waitForTimeout(200);
+  const beforeJoin = await page.locator('.bz-audiencebar__num').innerText();
+  await page.locator('[data-join-filters]').first().click();
+  await page.waitForTimeout(250);
+  const afterJoin = await page.locator('.bz-audiencebar__num').innerText();
+  check('clicking the join badge flips AND->OR and moves the count',
+    beforeJoin.trim() === '0' && afterJoin.trim() !== '0', `${beforeJoin} -> ${afterJoin}`);
 
   // Case study: solution toggle
   await page.evaluate(() => { location.hash = '#/learn/c-liquid'; });
@@ -228,7 +339,7 @@ const check = (name, cond, detail) => {
   await page.waitForTimeout(400);
   const segResult = await page.evaluate(() => {
     const s = BZ.segments[BZ.segments.length - 1];
-    return { n: BZ.segments.length, filters: s.filters.map(f => f.field + ':' + f.op), hash: location.hash, count: BZSeg.count(s.filters) };
+    return { n: BZ.segments.length, filters: BZSeg.flat(s).map(f => f.field + ':' + f.op), hash: location.hash, count: BZSeg.count(s), groups: s.groups.length };
   });
   check('operator created a new segment', segResult.n === segsBefore + 1);
   check('operator navigated to the new segment', segResult.hash.startsWith('#/segments/'));
@@ -240,6 +351,7 @@ const check = (name, cond, detail) => {
     segResult.filters.includes('custom.total_stays:gte') && segResult.filters.includes('custom.last_stay_date:date_before_days_ago'));
   check('extracted has_app', segResult.filters.includes('custom.has_app:is_true'));
   check('segment count is computed, not invented', typeof segResult.count === 'number');
+  check('operator segments use the filter-group model', segResult.groups === 1, 'groups: ' + segResult.groups);
 
   // ACTION: live count query
   await page.fill('#bz-op-in', 'how many users are Gold or Platinum in Germany?');
@@ -297,7 +409,7 @@ const check = (name, cond, detail) => {
   // ANSWER: knowledge retrieval routes to the right topic
   const kb = [
     ['what is the difference between action paths and audience paths', 'Action Paths'],
-    ['why are my filters anded', 'ANDed'],
+    ['can i use OR between filters', 'filter group'],
     ['what conversion window should i use', 'Conversion'],
     ['explain incrementality', 'Incrementality'],
     ['is 0 truthy in liquid', 'truthiness'],

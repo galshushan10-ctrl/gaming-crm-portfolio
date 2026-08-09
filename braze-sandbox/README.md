@@ -15,7 +15,7 @@ then rebuild the single file:
 
 ```bash
 python3 build.py          # -> dist/braze-sandbox.html
-node smoke-test.js        # 95 assertions: both engines, every route, operator actions
+node smoke-test.js        # 119 assertions: engines, routes, composers, builder, operator
 ```
 
 The smoke test needs `npm install playwright`; it points at the pre-installed Chromium
@@ -34,10 +34,16 @@ It reproduces the behaviours that catch people out — integer division truncati
 empty string and `0` being truthy, missing attributes rendering silently — and a linter
 flags the common production mistakes.
 
-**Segmentation** (`js/segments.js`) — filter predicates evaluated over 240 seeded
-profiles. Every audience count on screen is computed, not hard-coded, so changing a
-filter moves the number for a real reason. Includes per-channel reachability, which is
-the number you should actually report to a stakeholder.
+**Segmentation** (`js/segments.js`) — Segment Builder 2.0 semantics: filters join with
+AND *or* OR inside a filter group, and groups join with AND *or* OR between them, giving
+real nested boolean logic. Predicates run over 240 seeded profiles, so every audience
+count is computed rather than hard-coded — including per-group counts and per-channel
+reachability, which is the number you should actually report to a stakeholder.
+
+**Email building** (`js/emailbuilder.js`, `js/compose.js`) — a working drag-and-drop
+editor whose blocks compile to real table-based email HTML, which then runs through the
+Liquid engine. Plus composers and device previews for Push, SMS/MMS/RCS, WhatsApp,
+In-App, Content Card, Banner, LINE and Webhook.
 
 ## BrazeAI Operator
 
@@ -70,10 +76,12 @@ lint results — is computed, not scripted.
 
 | Area | What you can do |
 |---|---|
-| Campaigns | Five-step wizard (Compose → Target → Delivery → Conversion → Review), all three delivery types, A/B results with a holdout and incremental lift |
-| Canvases | Full Canvas Flow builder — add, configure, delete and branch. Message, Delay, Action Paths, Audience Paths, Experiment Paths, Webhook, Update User Profile, Exit. Entry settings with re-eligibility and conversion windows |
+| Campaigns | List with Status/Tag/Filters/Columns, idle banner and campaign-type pills. Creation starts at the **message-type picker** (Multichannel, Email, Push, In-App, Content Card, Banner, SMS/MMS/RCS, WhatsApp, LINE, Webhook), then the five-step composer |
+| Email building | Two build modes exactly as Braze offers them — **Drag & Drop Editor** and **HTML Editor** (template / upload / blank inside it). The visual builder has Content / Rows / Settings tabs and Basic / Media / Advanced block categories |
+| Other channels | Push, SMS (with GSM-7 vs Unicode segment counting), WhatsApp (positional template variables), In-App, Content Card, Banner, LINE, Webhook — each with a device preview |
+| Canvases | Full Canvas Flow builder — add, configure, delete and branch. Message, Delay, Action Paths, Audience Paths, Experiment Paths, Decision Split, Agent, Feature Flag, Webhook, Update User Profile, Exit. Entry settings with re-eligibility and conversion windows |
 | Email Templates | HTML + Liquid editor with live preview against a real profile, personalization palette, snippet library, per-user "Send test", and an **Edge case** button that previews against a null-heavy profile |
-| Segments | Filter builder with live counts, tier/country breakdowns, and a sample of matched users |
+| Segments | Filter-group builder with AND/OR join badges, per-group counts, live totals, breakdowns and a sample of matched users |
 | Users | Profile explorer: standard and custom attributes, event timeline, subscription groups, message history |
 | Catalogs, Content Blocks, Subscription Groups, Custom Data | The supporting objects, populated |
 | Analytics | Campaign league table, funnels, channel mix |
@@ -89,7 +97,7 @@ Work through `#/learn` top to bottom alongside the sandbox — each course ends 
 you complete in the screens.
 
 1. **Foundations** — the object model, attribute vs event, campaign vs Canvas
-2. **Segmentation** — the AND-only trap, nested segments, reachability, lookback windows
+2. **Segmentation** — AND/OR filter groups, nested logic, reachability, lookback windows
 3. **Personalization & Liquid** — namespaces, conditionals, filters, catalogs, Connected Content
 4. **Campaigns** — delivery types, conversion windows, A/B tests and control groups
 5. **Canvas Flow** — entry criteria, every step type, Action vs Audience Paths, quiet hours
@@ -108,6 +116,33 @@ Two profiles are pinned for the lessons:
 
 - `AUR-100000` **Maya Levi** — Platinum, 21 stays, upcoming Jerusalem booking. Everything populated.
 - `AUR-100001` **Jonas Weber** — Blue, zero stays, nulls across the board, one live abandoned booking. Deliberately hostile: if a template survives Jonas, it survives production.
+
+## Fidelity notes
+
+Built against a screenshot of a live production Braze dashboard plus current
+documentation. Corrections made in the latest pass, each of which a naive replica gets
+wrong:
+
+- **Segmentation is no longer AND-only.** Segment Builder 2.0 supports OR within a filter
+  group and between groups. Older training (and an earlier version of this sandbox) taught
+  the AND-only workaround — that described the legacy builder.
+- **The email composer has two tiles, not three.** Drag & Drop and HTML. Choosing a saved
+  template or uploading a file are options *inside* the HTML editor.
+- **Feature Flags are not in the campaign channel picker** — they are created from
+  Messaging → Feature Flags.
+- **SMS / MMS / RCS is one channel family**, chosen inside the composer.
+- **In-App Message cannot be part of a Multichannel campaign.**
+- **Blocks are Title and Paragraph**, not "Heading" and "Text", grouped Basic / Media /
+  Advanced. Braze recommends Liquid control flow lives in an HTML block.
+- **Re-eligibility ≠ re-entry** in Canvas — two distinct settings.
+- **Catalogs, Templates, Content Blocks and Media Library live under Content**
+  (Creative Studio); Custom Attributes and Custom Events live under Data Settings.
+- **Campaign statuses** are Active / Idle / Draft / Stopped / Archived. "Scheduled" is not
+  a status — scheduling shows in the Entry schedule column.
+
+Still uncertain, and deliberately not invented: exact ordering and wording of the channel
+tiles, the numeric threshold at which a campaign becomes Idle, and the exact field labels
+on the drag-and-drop Settings tab.
 
 ## A note on fidelity
 

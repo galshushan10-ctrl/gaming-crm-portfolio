@@ -656,6 +656,280 @@ body.bz-op-open .bz-op__fab { display: none; }
   .bz-op { transition: none; }
 }
 
+/* ---------- Channel & mode pickers -------------------------------------- */
+
+.bz-chanpicker { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin-top: 8px; }
+.bz-chantile {
+  border: 1px solid var(--bz-line-2); border-radius: var(--bz-radius-lg);
+  background: #fff; padding: 14px; cursor: pointer; text-align: left;
+}
+.bz-chantile:hover { border-color: var(--bz-purple); box-shadow: var(--bz-shadow); }
+.bz-chantile.is-selected { border-color: var(--bz-purple); background: var(--bz-purple-soft); box-shadow: 0 0 0 3px var(--bz-purple-soft); }
+.bz-chantile__ico {
+  width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--bz-purple-soft); color: var(--bz-purple-dark); font-size: 17px; margin-bottom: 9px;
+}
+.bz-chantile__t { font-weight: 700; font-size: 14px; }
+.bz-chantile__d { font-size: 12.5px; color: var(--bz-ink-3); line-height: 1.5; margin-top: 4px; }
+
+.bz-modepicker { display: grid; gap: 10px; }
+.bz-modetile {
+  display: flex; gap: 14px; align-items: flex-start; text-align: left;
+  border: 1px solid var(--bz-line-2); border-radius: var(--bz-radius-lg);
+  background: #fff; padding: 16px; cursor: pointer;
+}
+.bz-modetile:hover { border-color: var(--bz-purple); background: var(--bz-purple-soft); }
+.bz-modetile__ico {
+  width: 40px; height: 40px; flex: 0 0 40px; border-radius: 9px; display: grid; place-items: center;
+  background: var(--bz-purple-soft); color: var(--bz-purple-dark); font-size: 17px; font-family: var(--bz-mono);
+}
+.bz-modetile__t { font-weight: 700; font-size: 14.5px; }
+.bz-modetile__d { font-size: 12.5px; color: var(--bz-ink-3); line-height: 1.55; margin-top: 4px; }
+
+/* ---------- Drag & drop email builder ----------------------------------- */
+
+.bz-eb { display: flex; height: 100%; min-height: 0; }
+.bz-eb__canvaswrap {
+  flex: 1; overflow: auto; padding: 24px; min-width: 0;
+  background: repeating-conic-gradient(#EDEDF3 0% 25%, #F7F7FA 0% 50%) 50% / 16px 16px;
+}
+.bz-eb__canvas { margin: 0 auto; box-shadow: var(--bz-shadow-lg); min-height: 200px; max-width: 100%; }
+
+.bz-eb__panel { width: 320px; flex: 0 0 320px; border-left: 1px solid var(--bz-line); background: #fff; display: flex; flex-direction: column; overflow: hidden; }
+.bz-eb__panelhead { padding: 12px 14px; border-bottom: 1px solid var(--bz-line); display: flex; align-items: center; gap: 8px; background: var(--bz-bg-2); }
+.bz-eb__panelbody { padding: 14px; overflow-y: auto; flex: 1; }
+.bz-eb__paneltabs { display: flex; border-bottom: 1px solid var(--bz-line); flex: 0 0 auto; }
+.bz-eb__paneltab {
+  flex: 1; padding: 10px 6px; border: none; background: none; cursor: pointer;
+  font-size: 12.5px; font-weight: 700; color: var(--bz-ink-3);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.bz-eb__paneltab.is-active { color: var(--bz-purple-dark); border-bottom-color: var(--bz-purple); }
+
+.bz-eb__palette { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.bz-eb__ptile {
+  border: 1px solid var(--bz-line-2); border-radius: var(--bz-radius); background: #fff;
+  padding: 10px 4px; text-align: center; cursor: grab; font-size: 11.5px; font-weight: 600; color: var(--bz-ink-2);
+}
+.bz-eb__ptile:hover { border-color: var(--bz-purple); background: var(--bz-purple-soft); color: var(--bz-purple-dark); }
+.bz-eb__ptile:active { cursor: grabbing; }
+.bz-eb__pico { font-size: 16px; margin-bottom: 4px; font-family: var(--bz-mono); }
+
+.bz-eb__layouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.bz-eb__layout {
+  border: 1px solid var(--bz-line-2); border-radius: var(--bz-radius); background: #fff;
+  padding: 9px; cursor: pointer; font-size: 11.5px; font-weight: 600; color: var(--bz-ink-2);
+}
+.bz-eb__layout:hover { border-color: var(--bz-purple); background: var(--bz-purple-soft); }
+.bz-eb__layoutviz { display: flex; gap: 3px; height: 22px; margin-bottom: 6px; }
+.bz-eb__layoutviz span { background: var(--bz-purple-line); border-radius: 2px; }
+
+.bz-eb__row { position: relative; outline: 1px dashed transparent; }
+.bz-eb__row:hover { outline-color: var(--bz-purple-line); }
+.bz-eb__row.is-selected { outline: 2px solid var(--bz-purple); }
+.bz-eb__rowbar {
+  position: absolute; top: -1px; right: -1px; z-index: 3;
+  display: none; align-items: center; gap: 3px;
+  background: var(--bz-ink); color: #fff; font-size: 10.5px; padding: 3px 6px; border-radius: 0 0 0 5px;
+}
+.bz-eb__row:hover > .bz-eb__rowbar, .bz-eb__row.is-selected > .bz-eb__rowbar { display: flex; }
+.bz-eb__cols { display: flex; align-items: stretch; }
+.bz-eb__col { min-height: 40px; position: relative; }
+.bz-eb__col.is-over { background: var(--bz-purple-soft); outline: 2px dashed var(--bz-purple); }
+
+.bz-eb__block { position: relative; outline: 1px solid transparent; }
+.bz-eb__block:hover { outline-color: var(--bz-purple-line); }
+.bz-eb__block.is-selected { outline: 2px solid var(--bz-purple); }
+.bz-eb__blocktag, .bz-eb__blockctl {
+  position: absolute; top: 0; z-index: 4; display: none;
+  background: var(--bz-purple); color: #fff; font-size: 10px; font-weight: 700;
+  padding: 2px 6px; letter-spacing: .4px; text-transform: uppercase;
+}
+.bz-eb__blocktag { left: 0; border-radius: 0 0 4px 0; }
+.bz-eb__blockctl { right: 0; border-radius: 0 0 0 4px; text-transform: none; padding: 1px 3px; display: none; gap: 1px; }
+.bz-eb__block:hover > .bz-eb__blocktag, .bz-eb__block.is-selected > .bz-eb__blocktag,
+.bz-eb__block:hover > .bz-eb__blockctl, .bz-eb__block.is-selected > .bz-eb__blockctl { display: flex; }
+.bz-eb__mini {
+  border: none; background: rgba(255,255,255,.2); color: #fff; cursor: pointer;
+  width: 18px; height: 18px; border-radius: 3px; font-size: 11px; line-height: 1; padding: 0;
+}
+.bz-eb__mini:hover { background: rgba(255,255,255,.42); }
+
+.bz-eb__dropzone {
+  margin: 8px; padding: 18px; border: 2px dashed var(--bz-line-2); border-radius: var(--bz-radius);
+  text-align: center; color: var(--bz-ink-4); font-size: 12.5px;
+}
+.bz-eb__empty { padding: 50px 24px; text-align: center; color: var(--bz-ink-3); }
+.bz-eb__meta { display: flex; gap: 14px; font-size: 12px; color: var(--bz-ink-3); margin-top: 10px; justify-content: center; }
+.bz-eb__code {
+  background: var(--bz-ink); color: #E8E8F0; padding: 12px 14px; border-radius: var(--bz-radius);
+  font-family: var(--bz-mono); font-size: 12px; line-height: 1.55; overflow-x: auto; white-space: pre-wrap;
+}
+
+/* ---------- Device previews --------------------------------------------- */
+
+.bz-device { margin: 0 auto; }
+.bz-device--phone { width: 300px; max-width: 100%; }
+.bz-device__screen {
+  border: 10px solid #1B1B22; border-radius: 30px; background: #fff;
+  min-height: 460px; padding: 16px 12px; position: relative; overflow: hidden;
+  box-shadow: var(--bz-shadow-lg);
+}
+.bz-device__screen--lock {
+  background: linear-gradient(160deg, #2C1D4A, #5B10A0 60%, #A24BEE);
+  color: #fff; padding-top: 40px;
+}
+.bz-device__screen--app { background: var(--bz-bg-2); }
+.bz-device__screen--wa { background: #ECE5DD; }
+
+.bz-lock__time { font-size: 44px; font-weight: 300; text-align: center; letter-spacing: -1px; }
+.bz-lock__date { font-size: 13px; text-align: center; opacity: .85; margin-bottom: 26px; }
+
+.bz-push { background: rgba(255,255,255,.92); color: var(--bz-ink); border-radius: 14px; padding: 10px 12px; backdrop-filter: blur(6px); }
+.bz-push__app { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .5px; color: var(--bz-ink-3); margin-bottom: 4px; }
+.bz-push__icon { width: 15px; height: 15px; border-radius: 4px; background: var(--bz-purple); color: #fff; display: grid; place-items: center; font-size: 9px; }
+.bz-push__now { margin-left: auto; font-weight: 500; }
+.bz-push__title { font-weight: 700; font-size: 13.5px; }
+.bz-push__body { font-size: 13px; line-height: 1.4; margin-top: 2px; }
+.bz-push__actions { display: flex; gap: 6px; margin-top: 6px; }
+.bz-push__actions span { flex: 1; background: rgba(255,255,255,.82); color: var(--bz-ink); border-radius: 10px; padding: 7px; text-align: center; font-size: 12px; font-weight: 600; }
+
+.bz-sms__hdr { text-align: center; font-size: 12px; font-weight: 700; color: var(--bz-ink-3); padding-bottom: 14px; border-bottom: 1px solid var(--bz-line); margin-bottom: 16px; }
+.bz-sms__bubble { background: var(--bz-bg-3); border-radius: 16px 16px 16px 4px; padding: 10px 13px; font-size: 13.5px; line-height: 1.5; }
+
+.bz-wa__hdr { background: #075E54; color: #fff; margin: -16px -12px 14px; padding: 12px; font-size: 13.5px; font-weight: 700; }
+.bz-wa__hdr span { display: block; font-size: 10.5px; font-weight: 400; opacity: .8; }
+.bz-wa__bubble { background: #fff; border-radius: 8px; padding: 9px 10px; font-size: 13.5px; box-shadow: 0 1px 1px rgba(0,0,0,.12); }
+.bz-wa__title { font-weight: 700; margin-bottom: 4px; }
+.bz-wa__body { line-height: 1.5; }
+.bz-wa__footer { font-size: 11.5px; color: var(--bz-ink-4); margin-top: 6px; }
+.bz-wa__btn { border-top: 1px solid var(--bz-line); margin-top: 8px; padding-top: 8px; text-align: center; color: #0A7CFF; font-size: 13.5px; font-weight: 600; }
+
+.bz-iam__scrim { position: absolute; inset: 0; background: rgba(27,27,34,.45); }
+.bz-iam { position: relative; background: #fff; border-radius: 14px; padding: 20px 18px; text-align: center; margin-top: 90px; box-shadow: var(--bz-shadow-lg); }
+.bz-iam__title { font-weight: 700; font-size: 17px; }
+.bz-iam__body { font-size: 13.5px; color: var(--bz-ink-2); line-height: 1.55; margin: 8px 0 16px; }
+.bz-iam__cta { background: var(--bz-purple); color: #fff; border-radius: 7px; padding: 11px; font-weight: 700; font-size: 14px; }
+.bz-iam__cta2 { color: var(--bz-ink-3); font-size: 13px; margin-top: 10px; }
+
+.bz-cc__feedhdr { font-weight: 700; font-size: 15px; margin-bottom: 12px; }
+.bz-cc { background: #fff; border-radius: 10px; padding: 14px; box-shadow: var(--bz-shadow); margin-bottom: 10px; }
+.bz-cc__title { font-weight: 700; font-size: 14px; }
+.bz-cc__body { font-size: 13px; color: var(--bz-ink-2); line-height: 1.5; margin-top: 4px; }
+.bz-cc--ghost { height: 74px; background: #fff; opacity: .5; }
+
+/* ---------- Campaign list controls (matches the real Campaigns screen) --- */
+
+.bz-listbar { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 14px; }
+.bz-listbar__f { min-width: 180px; }
+.bz-listbar__search { margin-left: auto; display: flex; }
+.bz-listbar__search .bz-input { border-radius: var(--bz-radius) 0 0 var(--bz-radius); min-width: 240px; }
+.bz-listbar__search button { border-radius: 0 var(--bz-radius) var(--bz-radius) 0; border-left: none; }
+
+.bz-appliedchips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+.bz-appliedchip {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--bz-purple-soft); color: var(--bz-purple-dark);
+  border: 1px solid var(--bz-purple-line); border-radius: var(--bz-radius);
+  padding: 4px 10px; font-size: 12.5px; font-weight: 600;
+}
+.bz-appliedchip button { border: none; background: none; color: inherit; cursor: pointer; font-size: 13px; padding: 0; line-height: 1; }
+
+.bz-banner {
+  display: flex; align-items: center; gap: 11px;
+  background: var(--bz-amber-soft); border: 1px solid #EBD9B4; color: #7A4A00;
+  border-radius: var(--bz-radius-lg); padding: 12px 16px; margin-bottom: 18px; font-size: 13.5px;
+}
+.bz-banner__ico {
+  width: 21px; height: 21px; flex: 0 0 21px; border-radius: 50%;
+  background: #E0A32E; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 13px;
+}
+.bz-banner a { color: #7A4A00; text-decoration: underline; font-weight: 700; }
+.bz-banner button { margin-left: auto; border: none; background: none; cursor: pointer; color: inherit; font-size: 15px; }
+
+.bz-results { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+.bz-viewonly {
+  display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;
+  background: var(--bz-bg-3); color: var(--bz-ink-3); border: 1px solid var(--bz-line-2);
+  border-radius: 999px; padding: 3px 11px; font-size: 12px; font-weight: 700; margin-left: 10px;
+}
+.bz-typepill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #EFEBFF; color: #4B2E9E; border-radius: var(--bz-radius);
+  padding: 3px 9px; font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.bz-chip--idle { background: #FDF1DD; color: #B26A00; }
+.bz-tagrow { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+
+/* ---------- Filter groups (Segment Builder 2.0) -------------------------- */
+
+.bz-fgroup {
+  border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg);
+  background: var(--bz-bg-2); padding: 12px 14px;
+}
+.bz-fgroup__head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.bz-fgroup__label { font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--bz-ink-4); }
+.bz-fgroup .bz-filterrow { background: #fff; }
+
+.bz-groupjoin { display: flex; justify-content: center; padding: 10px 0; position: relative; }
+.bz-groupjoin::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--bz-line);
+}
+.bz-joinbtn {
+  position: relative; z-index: 1;
+  background: var(--bz-purple-soft); color: var(--bz-purple-dark);
+  border: 1px solid var(--bz-purple-line); border-radius: 5px;
+  font-size: 11px; font-weight: 800; letter-spacing: .4px;
+  padding: 3px 8px; min-width: 42px; cursor: pointer;
+}
+.bz-joinbtn:hover { background: var(--bz-purple); color: #fff; border-color: var(--bz-purple); }
+.bz-joinbtn--lg { font-size: 12px; padding: 5px 14px; background: #fff; }
+
+/* ---------- Nav v2 (matches the live rail) ------------------------------ */
+
+.bz-nav__collapse { padding: 12px 14px 4px; }
+.bz-nav__collapsebtn {
+  border: none; background: none; cursor: pointer; color: var(--bz-ink-4);
+  font-size: 15px; padding: 2px 4px; border-radius: 4px;
+}
+.bz-nav__collapsebtn:hover { background: var(--bz-bg-3); color: var(--bz-ink-2); }
+
+.bz-workspace { display: flex; align-items: center; gap: 9px; }
+.bz-workspace__ring {
+  width: 26px; height: 26px; flex: 0 0 26px; border-radius: 50%;
+  background: conic-gradient(#FF3366, #801ED7, #1F6FEB, #0A9D5C, #FF3366);
+  position: relative;
+}
+.bz-workspace__ring::after {
+  content: ""; position: absolute; inset: 5px; border-radius: 50%; background: #fff;
+}
+.bz-workspace__name { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.bz-nav__divider { height: 1px; background: var(--bz-line); margin: 8px 14px; }
+.bz-nav__caret { font-size: 10px; color: var(--bz-ink-4); }
+.bz-nav__item.is-parent { color: #FF3366; font-weight: 700; }
+.bz-nav__item.is-parent .bz-nav__caret { color: #FF3366; }
+.bz-nav__sub { padding: 1px 0 5px; }
+.bz-nav__subitem {
+  display: block; padding: 6px 18px 6px 44px; margin: 1px 8px; border-radius: var(--bz-radius);
+  font-size: 13px; color: var(--bz-ink-3);
+}
+.bz-nav__subitem:hover { background: var(--bz-bg-2); color: var(--bz-ink); text-decoration: none; }
+.bz-nav__subitem.is-active { background: var(--bz-purple-soft); color: var(--bz-purple-dark); font-weight: 600; }
+
+.bz-nav__brandpanel {
+  margin-top: auto; background: linear-gradient(150deg, #5B10A0, #3F1DCB);
+  padding: 16px 14px 14px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+}
+.bz-nav__wordmark { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -.5px; }
+
+/* Sticky wizard footer — keeps clear of the floating Ask BrazeAI button. */
+.bz-wizfoot {
+  padding: 12px 26px; border-top: 1px solid var(--bz-line); background: #fff;
+  flex: 0 0 auto; padding-right: 210px;
+}
+body.bz-op-open .bz-wizfoot { padding-right: 26px; }
+
 </style>
 </head>
 <body>
@@ -1272,24 +1546,27 @@ function series(n, base, drift) {
 BZ.campaigns = [
   {
     id: 'cmp-abandon', name: 'Abandoned booking — 4h reminder', status: 'active',
+    campaignType: 'Email', entrySchedule: 'Action-Based', stopDate: null,
     channels: ['Email'], deliveryType: 'action_based',
     trigger: { event: 'booking_started', delay: '4 hours', exception: 'booking_completed' },
     segmentId: 'seg-abandoners', templateId: 'tpl-abandon',
     conversionEvents: [{ event: 'booking_completed', window: '72 hours', primary: true }],
     stats: { sent: 18420, delivered: 18093, opens: 7961, clicks: 1683, conversions: 421, revenue: 168400, unsubscribes: 62, bounces: 327 },
-    createdBy: 'Maya (CRM)', updated: daysFromNow(-3), tags: ['always-on', 'revenue'],
+    createdBy: 'Maya (CRM)', updated: daysFromNow(-3), tags: ['01_Level_L2', '05_Tracking_Test_Control', '06_Audience_General', '07_Geo_Global', '08_Incentive_No_Reward'],
   },
   {
     id: 'cmp-prearrival', name: 'Pre-arrival — check-in online', status: 'active',
+    campaignType: 'Multichannel', entrySchedule: 'Action-Based', stopDate: null,
     channels: ['Email', 'Push'], deliveryType: 'action_based',
     trigger: { event: 'next_stay_date is in 3 days', delay: 'send at 10:00 local time' },
     segmentId: 'seg-upcoming-stay', templateId: 'tpl-prearrival',
     conversionEvents: [{ event: 'checked_in', window: '7 days', primary: true }],
     stats: { sent: 9640, delivered: 9578, opens: 6033, clicks: 2411, conversions: 1889, revenue: 0, unsubscribes: 9, bounces: 62 },
-    createdBy: 'Maya (CRM)', updated: daysFromNow(-11), tags: ['lifecycle'],
+    createdBy: 'Maya (CRM)', updated: daysFromNow(-11), tags: ['01_Level_L1', '05_Tracking_None', '06_Audience_General', '07_Geo_Global', '09_Lifecycle_PreArrival'],
   },
   {
-    id: 'cmp-summer', name: 'Summer Escapes — Eilat & Dead Sea', status: 'active',
+    id: 'cmp-summer', name: 'Summer Escapes — Eilat & Dead Sea', status: 'idle',
+    campaignType: 'Email', entrySchedule: 'One Time', stopDate: daysFromNow(-19),
     channels: ['Email'], deliveryType: 'scheduled',
     trigger: { schedule: 'One-time · 2026-07-14 09:00 local' },
     segmentId: 'seg-family-il', templateId: 'tpl-winback',
@@ -1303,43 +1580,47 @@ BZ.campaigns = [
       ],
     },
     stats: { sent: 12000, delivered: 11764, opens: 4752, clicks: 1107, conversions: 301, revenue: 219700, unsubscribes: 148, bounces: 236 },
-    createdBy: 'Omer (Growth)', updated: daysFromNow(-26), tags: ['seasonal'],
+    createdBy: 'Omer (Growth)', updated: daysFromNow(-26), tags: ['01_Level_L4', '05_Tracking_Test_Control', '06_Audience_Closed List', '07_Geo_IL', '08_Incentive_Discount'],
   },
   {
-    id: 'cmp-points', name: 'Points expiring in 30 days', status: 'scheduled',
+    id: 'cmp-points', name: 'Points expiring in 30 days', status: 'active',
+    campaignType: 'Email', entrySchedule: 'Recurring', stopDate: null,
     channels: ['Email'], deliveryType: 'scheduled',
     trigger: { schedule: 'Recurring · monthly on the 1st, 08:00 local' },
     segmentId: 'seg-points-expiry', templateId: 'tpl-winback',
     conversionEvents: [{ event: 'points_redeemed', window: '30 days', primary: true }, { event: 'booking_completed', window: '30 days', primary: false }],
     stats: { sent: 0, delivered: 0, opens: 0, clicks: 0, conversions: 0, revenue: 0, unsubscribes: 0, bounces: 0 },
-    createdBy: 'Maya (CRM)', updated: daysFromNow(-2), tags: ['loyalty'],
+    createdBy: 'Maya (CRM)', updated: daysFromNow(-2), tags: ['01_Level_L3', '05_Tracking_None', '06_Audience_General', '07_Geo_Global', '08_Incentive_Points'],
   },
   {
     id: 'cmp-poststay', name: 'Post-stay review request', status: 'active',
+    campaignType: 'Email', entrySchedule: 'Action-Based', stopDate: null,
     channels: ['Email'], deliveryType: 'action_based',
     trigger: { event: 'checked_out', delay: '18 hours' },
     segmentId: 'seg-all', templateId: 'tpl-poststay',
     conversionEvents: [{ event: 'review_submitted', window: '5 days', primary: true }],
     stats: { sent: 24310, delivered: 24019, opens: 11048, clicks: 4083, conversions: 2941, revenue: 0, unsubscribes: 41, bounces: 291 },
-    createdBy: 'Maya (CRM)', updated: daysFromNow(-40), tags: ['lifecycle'],
+    createdBy: 'Maya (CRM)', updated: daysFromNow(-40), tags: ['01_Level_L1', '05_Tracking_None', '06_Audience_General', '07_Geo_Global', '09_Lifecycle_PostStay'],
   },
   {
     id: 'cmp-nyx', name: 'NYX Urban — city break flash sale', status: 'draft',
+    campaignType: 'Multichannel', entrySchedule: 'One Time', stopDate: null,
     channels: ['Email', 'SMS'], deliveryType: 'scheduled',
     trigger: { schedule: 'Not scheduled' },
     segmentId: 'seg-business', templateId: 'tpl-winback',
     conversionEvents: [{ event: 'booking_completed', window: '48 hours', primary: true }],
     stats: { sent: 0, delivered: 0, opens: 0, clicks: 0, conversions: 0, revenue: 0, unsubscribes: 0, bounces: 0 },
-    createdBy: 'Omer (Growth)', updated: daysFromNow(-1), tags: ['flash'],
+    createdBy: 'Omer (Growth)', updated: daysFromNow(-1), tags: ['01_Level_L4', '05_Tracking_None', '06_Audience_Closed List', '07_Geo_EU', '08_Incentive_Discount'],
   },
   {
     id: 'cmp-winback-old', name: 'Win-back Q1 — 20% off', status: 'stopped',
+    campaignType: 'Email', entrySchedule: 'One Time', stopDate: daysFromNow(-158),
     channels: ['Email'], deliveryType: 'scheduled',
     trigger: { schedule: 'One-time · 2026-02-18 09:00 local' },
     segmentId: 'seg-lapsed', templateId: 'tpl-winback',
     conversionEvents: [{ event: 'booking_completed', window: '14 days', primary: true }],
     stats: { sent: 31200, delivered: 29844, opens: 8654, clicks: 1441, conversions: 288, revenue: 141600, unsubscribes: 604, bounces: 1356 },
-    createdBy: 'Maya (CRM)', updated: daysFromNow(-172), tags: ['winback'],
+    createdBy: 'Maya (CRM)', updated: daysFromNow(-172), tags: ['01_Level_L4', '05_Tracking_Test_Control', '06_Audience_General', '07_Geo_Global', '08_Incentive_Discount'],
   },
 ];
 
@@ -2345,21 +2626,76 @@ const BZSeg = (function () {
     }
   }
 
-  /* ---------- public ------------------------------------------------------ */
+  /* ---------- filter groups (Segment Builder 2.0) -------------------------- */
+  /* Filters inside a group join with AND or OR; groups join with AND or OR.
+     The old "Braze is AND-only" folklore describes the legacy builder and is
+     no longer true — nested boolean logic is supported.                      */
 
-  function evaluate(filters, users) {
-    users = users || window.BZ.users;
-    if (!filters || !filters.length) return users.slice();
-    return users.filter((u) => filters.every((f) => matches(u, f)));
+  /* Accepts a segment object {groups, groupJoin}, or a bare filter array
+     (treated as one AND group), so every call site keeps working.           */
+  function norm(spec) {
+    if (!spec) return { groups: [], groupJoin: 'AND' };
+    if (Array.isArray(spec)) return { groups: spec.length ? [{ join: 'AND', filters: spec }] : [], groupJoin: 'AND' };
+    if (spec.groups) return { groups: spec.groups, groupJoin: spec.groupJoin || 'AND' };
+    if (spec.filters) return norm(spec.filters);
+    return { groups: [], groupJoin: 'AND' };
   }
 
-  function count(filters, users) { return evaluate(filters, users).length; }
+  function matchGroup(user, group) {
+    const fs = group.filters || [];
+    if (!fs.length) return true;
+    return group.join === 'OR' ? fs.some((f) => matches(user, f)) : fs.every((f) => matches(user, f));
+  }
+
+  function matchSpec(user, spec) {
+    const { groups, groupJoin } = norm(spec);
+    if (!groups.length) return true;
+    return groupJoin === 'OR'
+      ? groups.some((g) => matchGroup(user, g))
+      : groups.every((g) => matchGroup(user, g));
+  }
+
+  /* Flatten to a single list — for counting rows and for leave-one-out. */
+  function flat(spec) { return norm(spec).groups.reduce((a, g) => a.concat(g.filters || []), []); }
+
+  /* ---------- public ------------------------------------------------------ */
+
+  function evaluate(spec, users) {
+    users = users || window.BZ.users;
+    const n = norm(spec);
+    if (!n.groups.length) return users.slice();
+    return users.filter((u) => matchSpec(u, n));
+  }
+
+  function count(spec, users) { return evaluate(spec, users).length; }
 
   /* Braze shows the segment as a share of the total user base. */
-  function reach(filters) {
+  function reach(spec) {
     const total = window.BZ.users.length;
-    const n = count(filters);
+    const n = count(spec);
     return { count: n, total, pct: total ? (n / total) * 100 : 0 };
+  }
+
+  /* The sentence Braze prints under the builder. */
+  function describeSpec(spec) {
+    const { groups, groupJoin } = norm(spec);
+    if (!groups.length) return '';
+    return groups
+      .map((g) => {
+        const inner = (g.filters || []).map(describe).join(`  ${g.join}  `);
+        return groups.length > 1 ? '( ' + inner + ' )' : inner;
+      })
+      .join(`  ${groupJoin}  `);
+  }
+
+  /* Migrate a seeded/stored segment to the group model, in place. */
+  function upgrade(seg) {
+    if (!seg.groups) {
+      seg.groups = (seg.filters && seg.filters.length) ? [{ join: 'AND', filters: seg.filters }] : [];
+      seg.groupJoin = seg.groupJoin || 'AND';
+    }
+    delete seg.filters;
+    return seg;
   }
 
   /* Human-readable description, mirroring the sentence Braze prints. */
@@ -2374,8 +2710,8 @@ const BZSeg = (function () {
   }
 
   /* Segment reachability by channel — the check people forget before launch. */
-  function reachability(filters) {
-    const list = evaluate(filters);
+  function reachability(spec) {
+    const list = evaluate(spec);
     return {
       total: list.length,
       email: list.filter((u) => u.email_subscribe !== 'unsubscribed').length,
@@ -2385,8 +2721,8 @@ const BZSeg = (function () {
   }
 
   /* Distribution of a field across the matched audience — powers the mini charts. */
-  function breakdown(filters, field, topN) {
-    const list = evaluate(filters);
+  function breakdown(spec, field, topN) {
+    const list = evaluate(spec);
     const counts = {};
     list.forEach((u) => {
       const v = getValue(u, field);
@@ -2396,7 +2732,12 @@ const BZSeg = (function () {
     return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, topN || 8);
   }
 
-  return { FIELDS, OPS, fieldMeta, evaluate, count, reach, reachability, breakdown, describe, matches, getValue, eventCount };
+    /* Upgrade every seeded segment at load. */
+  (window.BZ.segments || []).forEach(upgrade);
+
+  return { FIELDS, OPS, fieldMeta, evaluate, count, reach, reachability, breakdown,
+           describe, describeSpec, matches, getValue, eventCount,
+           norm, flat, upgrade, matchSpec };
 })();
 
 window.BZSeg = BZSeg;
@@ -2486,21 +2827,38 @@ const BZCourses = [
   id: 'c-segmentation',
   icon: '🎯',
   title: 'Segmentation — building audiences that hold up',
-  blurb: 'Filter logic, the AND-only trap, nested segments, reachability, and how to keep a segment from silently becoming zero.',
+  blurb: 'AND/OR filter groups, nested boolean logic, reachability, and how to keep a segment from silently becoming zero.',
   minutes: 30,
   body: `
-<h2>Filters are ANDed. All of them.</h2>
-<p>The Braze segment builder joins every filter with <strong>AND</strong>. There is no OR between rows. This is the single most surprising thing about it for anyone coming from SQL or from Salesforce Marketing Cloud.</p>
-<p>You get OR in exactly three ways:</p>
-<ol>
-  <li><strong>Multi-value operators</strong> — "is any of" on one filter is an OR across those values. <code>loyalty_tier is any of [Gold, Platinum]</code> is one row.</li>
-  <li><strong>Audience Paths in a Canvas</strong> — each path is its own filter set, evaluated top-down, first match wins. This is the usual production answer.</li>
-  <li><strong>Separate segments</strong>, targeted by separate campaigns.</li>
-</ol>
+<h2>AND, OR, and filter groups</h2>
+<p>Braze's <strong>Segment Builder 2.0</strong> supports nested boolean logic, and this is the single most common thing people get wrong — usually because they learned the old rules.</p>
+<ul>
+  <li><strong>Within a filter group</strong>, filters join with <strong>AND</strong> or <strong>OR</strong>.</li>
+  <li><strong>Between filter groups</strong>, groups join with <strong>AND</strong> or <strong>OR</strong>.</li>
+</ul>
+<p>That gives you real nesting. "Gold or Platinum members who also have a stay in the next 7 days" is two groups:</p>
+<pre><code>( loyalty_tier = Gold   OR   loyalty_tier = Platinum )
+                    AND
+( next_stay_date is in the next 7 days )</code></pre>
 
 <div class="bz-callout bz-callout--warn">
-  <div class="bz-callout__t">Real incident</div>
-  <p>A marketer wanted "Gold members OR guests with a stay in the next 7 days". They built both filters in one segment, saw the count drop to 34, assumed the data was broken, and escalated to the data team. Nothing was broken: the segment was Gold members <em>who also</em> have a stay in 7 days. Always read your filter list out loud with "and" between each line.</p>
+  <div class="bz-callout__t">Advice you will still be given that is now wrong</div>
+  <p>A great deal of Braze training, agency blog content and internal documentation says <em>"Braze segments are AND-only — there is no OR between filters, so use Audience Paths in a Canvas instead."</em> That was accurate for years, and it is why the workaround is so widely taught. It no longer describes the product.</p>
+  <p>Do not correct a colleague aggressively on this one. They learned it when it was true. But do not build a three-Canvas workaround for something one OR now solves.</p>
+</div>
+
+<h3>When to use OR, and when not to</h3>
+<p>Having OR does not mean reaching for it. A multi-value operator is usually cleaner:</p>
+<table>
+  <tr><th>Instead of</th><th>Write</th><th>Why</th></tr>
+  <tr><td>Three rows joined by OR on <code>loyalty_tier</code></td><td><code>tier is any of [Gold, Platinum]</code></td><td>One row, reads as a sentence, and impossible to mis-join later</td></tr>
+  <tr><td>OR across unrelated conditions in one group</td><td>Two filter groups joined by OR</td><td>Groups make the intent legible to whoever inherits it</td></tr>
+</table>
+<p>The old failure mode has not disappeared, it has just moved: two rows saying <code>tier = Gold</code> and <code>tier = Platinum</code> joined by <strong>AND</strong> still gives you <strong>zero</strong>, because nobody is both. Read every group aloud with its join word between the lines.</p>
+
+<div class="bz-callout bz-callout--tip">
+  <div class="bz-callout__t">Do this in the sandbox</div>
+  <p>Open any segment and click a purple join badge to flip it between AND and OR. Watch the count move. Then add a second filter group and flip the badge between the groups — that is the nesting the old builder could not do.</p>
 </div>
 
 <h2>Segment vs filter-at-send-time</h2>
@@ -2537,7 +2895,7 @@ Promotions &amp; Offers is subscribed</code></pre>
 loyalty_tier               is any of     Gold, Platinum
 next_stay_date             is in the next X days   21
 has_app                    is true</code></pre>
-<p>Note row 2: one filter with "is any of", <em>not</em> two rows — two rows would demand the user be Gold AND Platinum simultaneously, giving you zero.</p>
+<p>Note row 2: one filter with "is any of". You <em>could</em> write two rows joined by OR now that Segment Builder 2.0 allows it, but "is any of" is one row and reads better. What you must not do is leave two tier rows joined by AND — that demands the user be Gold and Platinum simultaneously, which gives you zero.</p>
 <p>The live count appears in the purple bar as you build. Then check the reachability strip underneath: push-reachable will be lower than the total, because <code>has_app is true</code> does not imply <code>push_subscribe is opted_in</code>. That distinction is the whole point of this exercise.</p>`,
     },
     {
@@ -3440,14 +3798,17 @@ const BZCanvas = (function () {
     { kind: 'delay',            label: 'Delay',               icon: '⏱',  desc: 'Wait a duration, or until a date.' },
     { kind: 'action_paths',     label: 'Action Paths',        icon: '⚡', desc: 'Branch on what the user does, within a window.' },
     { kind: 'audience_paths',   label: 'Audience Paths',      icon: '👥', desc: 'Branch on who the user is. No waiting.' },
-    { kind: 'experiment_paths', label: 'Experiment Paths',    icon: '🧪', desc: 'Random split with an optional control.' },
+    { kind: 'experiment_paths', label: 'Experiment Paths',    icon: '🧪', desc: 'Random split with an optional control group.' },
+    { kind: 'decision_split',   label: 'Decision Split',      icon: '⑂',  desc: 'Yes/no branch on a single polar question.' },
+    { kind: 'agent',            label: 'Agent',               icon: '🤖', desc: 'Run an AI agent from the Agent Console; route on its output variable.' },
+    { kind: 'feature_flag',     label: 'Feature Flag',        icon: '⚑',  desc: 'Turn a flag on or off for users reaching this step.' },
     { kind: 'webhook',          label: 'Webhook',             icon: '🔗', desc: 'POST to an external endpoint.' },
     { kind: 'update_user',      label: 'Update User Profile', icon: '📝', desc: 'Write a custom attribute mid-journey.' },
     { kind: 'exit',             label: 'Exit',                icon: '🚪', desc: 'End of the journey.' },
   ];
   const typeOf = (kind) => STEP_TYPES.find((t) => t.kind === kind) || { label: kind, icon: '●' };
 
-  const BRANCH_KINDS = ['action_paths', 'audience_paths', 'experiment_paths'];
+  const BRANCH_KINDS = ['action_paths', 'audience_paths', 'experiment_paths', 'decision_split'];
 
   /* ---------- step tree helpers ------------------------------------------- */
 
@@ -3485,6 +3846,12 @@ const BZCanvas = (function () {
       s.config = { evaluate: 'On entry to step' };
       s.paths = [{ label: 'Gold / Platinum', steps: [] }, { label: 'Everybody else', steps: [] }];
     }
+    if (kind === 'decision_split') {
+      s.config = { question: 'Is in segment: Aurelia Club — Gold & Platinum' };
+      s.paths = [{ label: 'Yes', steps: [] }, { label: 'No', steps: [] }];
+    }
+    if (kind === 'agent') s.config = { agent: 'Content Optimizer', outputVar: 'agent_choice' };
+    if (kind === 'feature_flag') s.config = { flagKey: 'new_checkout_flow', enabled: 'true' };
     if (kind === 'experiment_paths') {
       s.config = { control: 10 };
       s.paths = [{ label: 'Path 1 (45%)', steps: [] }, { label: 'Path 2 (45%)', steps: [] }, { label: 'Control — holdout (10%)', steps: [] }];
@@ -3499,6 +3866,9 @@ const BZCanvas = (function () {
     const cls = s.kind === 'action_paths' ? 'action'
       : s.kind === 'audience_paths' ? 'audience'
       : s.kind === 'experiment_paths' ? 'experiment'
+      : s.kind === 'decision_split' ? 'action'
+      : s.kind === 'agent' ? 'experiment'
+      : s.kind === 'feature_flag' ? 'update'
       : s.kind === 'update_user' ? 'update' : s.kind;
 
     let meta = '';
@@ -3511,6 +3881,9 @@ const BZCanvas = (function () {
     else if (s.kind === 'experiment_paths') meta = (s.paths || []).length + ' paths';
     else if (s.kind === 'webhook')       meta = U.esc(s.config.method + ' ' + s.config.url);
     else if (s.kind === 'update_user')   meta = U.esc(s.config.attribute + ' = ' + s.config.value);
+    else if (s.kind === 'decision_split') meta = U.esc(s.config.question);
+    else if (s.kind === 'agent')          meta = U.esc(s.config.agent + ' → ' + s.config.outputVar);
+    else if (s.kind === 'feature_flag')   meta = U.esc(s.config.flagKey + ' = ' + s.config.enabled);
 
     const st = s.stats;
     const statsHtml = st && st.sent ? `<div class="bz-cvstep__stats">
@@ -3589,10 +3962,13 @@ const BZCanvas = (function () {
           ${reach ? `<div class="bz-hint">${U.num(reach.count)} users match this segment right now (${reach.pct.toFixed(1)}% of the base). The trigger <em>and</em> this filter must both pass.</div>` : ''}
         </div>
         <div class="bz-field">
-          <label class="bz-label">Re-eligibility</label>
+          <label class="bz-label">Entry Controls</label>
           <label class="bz-checkline"><input type="checkbox" data-entry="reelig" ${e.reeligibility.allow ? 'checked' : ''}>
-            <span>Allow users to re-enter this Canvas${e.reeligibility.cooldown ? ' — cooldown ' + U.esc(e.reeligibility.cooldown) : ''}</span></label>
-          <div class="bz-hint">Off for onboarding. On, with a short cooldown, for anything tied to a booking. On with a long cooldown for win-back.</div>
+            <span><strong>Allow users to re-enter Canvas</strong>${e.reeligibility.cooldown ? ' — cooldown ' + U.esc(e.reeligibility.cooldown) : ''}</span></label>
+          <div class="bz-hint"><strong>Re-eligibility</strong> is whether a user may enter again <em>after exiting</em>, governed by that time window.
+            It is a different setting from <strong>re-entry</strong>, which is whether a user already inside the Canvas may start a concurrent path.
+            Conflating the two is a classic interview trip-up.</div>
+          <div class="bz-hint">Off for onboarding. On with a short cooldown for anything tied to a booking. On with a long cooldown for win-back.</div>
         </div>
         <div class="bz-field">
           <label class="bz-label">Conversion events</label>
@@ -3601,7 +3977,8 @@ const BZCanvas = (function () {
             <code class="bz-mono bz-small">${U.esc(c.event)}</code>
             <span class="bz-muted bz-small">within ${U.esc(c.window)}</span>
           </div>`).join('')}
-          <div class="bz-hint">The window must cover your real lag to conversion. Too short under-credits; too long claims bookings you did not cause.</div>
+          <div class="bz-hint">Up to <strong>four</strong> conversion events per Canvas; the first is primary.
+            The window must cover your real lag to conversion — too short under-credits, too long claims bookings you did not cause.</div>
         </div>
         <div class="bz-field">
           <label class="bz-label">Delivery settings</label>
@@ -3659,6 +4036,26 @@ const BZCanvas = (function () {
           <input class="bz-input" type="number" data-cfg="config.control" value="${U.esc(step.config.control)}">
           <div class="bz-hint">The holdout receives nothing. It is what turns "converted at 3%" into "caused 1.2pp more than doing nothing".</div>
         </div>` + pathsEditor(step);
+    } else if (step.kind === 'decision_split') {
+      body = `<div class="bz-field"><label class="bz-label">Question</label>
+          <input class="bz-input" data-cfg="config.question" value="${U.esc(step.config.question)}">
+          <div class="bz-hint">A Decision Split answers one yes/no question — segment membership, an attribute test, message engagement.
+          For more than two outcomes use Audience Paths instead.</div>
+        </div>` + pathsEditor(step);
+    } else if (step.kind === 'agent') {
+      body = `<div class="bz-field"><label class="bz-label">Agent</label>
+          <select class="bz-select" data-cfg="config.agent">${['Content Optimizer', 'Send-Time Optimizer', 'Subject Line Writer'].map((a) =>
+            `<option ${a === step.config.agent ? 'selected' : ''}>${a}</option>`).join('')}</select>
+          <div class="bz-hint">Agents are built in the Agent Console and dropped into a Canvas here.</div></div>
+        <div class="bz-field"><label class="bz-label">Output variable</label>
+          <input class="bz-input" data-cfg="config.outputVar" value="${U.esc(step.config.outputVar)}">
+          <div class="bz-hint">The agent writes its result here; a later Audience Paths step can route on it.</div></div>`;
+    } else if (step.kind === 'feature_flag') {
+      body = `<div class="bz-field"><label class="bz-label">Flag key</label>
+          <input class="bz-input" data-cfg="config.flagKey" value="${U.esc(step.config.flagKey)}"></div>
+        <div class="bz-field"><label class="bz-label">Set to</label>
+          <select class="bz-select" data-cfg="config.enabled">${['true', 'false'].map((v) =>
+            `<option ${v === step.config.enabled ? 'selected' : ''}>${v}</option>`).join('')}</select></div>`;
     } else if (step.kind === 'webhook') {
       body = `<div class="bz-field"><label class="bz-label">Method</label>
           <select class="bz-select" data-cfg="config.method">${['POST', 'PUT', 'GET'].map((m) => `<option ${m === step.config.method ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
@@ -4134,6 +4531,983 @@ const BZEditor = (function () {
 window.BZEditor = BZEditor;
 
 
+/* ===== js/emailbuilder.js ===== */
+/* ==========================================================================
+   Braze Sandbox — Drag & Drop email editor
+   Mirrors Braze's visual email builder: a block palette, a WYSIWYG canvas of
+   rows and columns, and a property panel. The design compiles to real
+   table-based email HTML, which then runs through the Liquid engine, so what
+   you build here is previewable against an actual profile.
+   ========================================================================== */
+
+const BZEmailBuilder = (function () {
+  'use strict';
+  const U = window.BZUI;
+
+  /* ---------- design model -------------------------------------------------- */
+
+  function newDesign() {
+    return {
+      settings: {
+        contentWidth: 600,
+        pageBackground: '#F3F4F7',
+        contentBackground: '#FFFFFF',
+        fontFamily: "Helvetica, Arial, sans-serif",
+        textColor: '#43434E',
+        linkColor: '#801ED7',
+      },
+      rows: [],
+    };
+  }
+
+  const LAYOUTS = [
+    { id: '1', label: '1 column',  cols: [100] },
+    { id: '2', label: '2 columns', cols: [50, 50] },
+    { id: '3', label: '3 columns', cols: [33.33, 33.33, 33.34] },
+    { id: '1-2', label: '1:2',     cols: [33.33, 66.67] },
+    { id: '2-1', label: '2:1',     cols: [66.67, 33.33] },
+  ];
+
+  /* ---------- block registry ------------------------------------------------ */
+
+  const BLOCKS = {
+    paragraph: {
+      label: 'Paragraph', icon: '¶', cat: 'basic',
+      make: () => ({ type: 'paragraph', id: U.uid('b'),
+        html: "<p>Write your copy here. Personalization works: {{\${first_name} | default: 'there'}}.</p>",
+        align: 'left', size: 15, lineHeight: 1.65, color: '', padding: '18 24' }),
+    },
+    title: {
+      label: 'Title', icon: 'T', cat: 'basic',
+      make: () => ({ type: 'title', id: U.uid('b'),
+        text: "Hello {{\${first_name} | default: 'there'}}", level: 1,
+        align: 'left', size: 26, color: '#0F1B2D', padding: '24 24 8' }),
+    },
+    image: {
+      label: 'Image', icon: '🖼', cat: 'media',
+      make: () => ({ type: 'image', id: U.uid('b'),
+        src: '{{items[0].image_url}}', alt: 'Hotel', width: 100, align: 'center',
+        href: '', radius: 8, padding: '12 24' }),
+    },
+    button: {
+      label: 'Button', icon: '▭', cat: 'basic',
+      make: () => ({ type: 'button', id: U.uid('b'),
+        label: 'Complete my booking', href: 'https://aureliahotels.com/book',
+        bg: '#801ED7', color: '#FFFFFF', radius: 6, align: 'center',
+        padH: 30, padV: 14, size: 15, padding: '10 24 26' }),
+    },
+    divider: {
+      label: 'Divider', icon: '—', cat: 'basic',
+      make: () => ({ type: 'divider', id: U.uid('b'), color: '#E3E3EB', thickness: 1, padding: '8 24' }),
+    },
+    spacer: {
+      label: 'Spacer', icon: '↕', cat: 'basic', make: () => ({ type: 'spacer', id: U.uid('b'), height: 24 }),
+    },
+    html: {
+      label: 'HTML', icon: '</>', cat: 'advanced',
+      make: () => ({ type: 'html', id: U.uid('b'), code: '<!-- Raw HTML. Liquid works here too. -->\n<p style="text-align:center">Custom block</p>' }),
+    },
+    content_block: {
+      label: 'Content Block', icon: '🧩', cat: 'advanced',
+      make: () => ({ type: 'content_block', id: U.uid('b'), name: 'aurelia_footer' }),
+    },
+    video: {
+      label: 'Video', icon: '▶', cat: 'media',
+      make: () => ({ type: 'video', id: U.uid('b'), thumb: '', href: 'https://aureliahotels.com/tour',
+        caption: 'Take the tour', padding: '12 24', align: 'center' }),
+    },
+    icons: {
+      label: 'Icons', icon: '✦', cat: 'media',
+      make: () => ({ type: 'icons', id: U.uid('b'), align: 'center', padding: '12 24',
+        items: [{ label: 'Free WiFi' }, { label: 'Spa' }, { label: 'Breakfast' }] }),
+    },
+    menu: {
+      label: 'Menu', icon: '☰', cat: 'advanced',
+      make: () => ({ type: 'menu', id: U.uid('b'), align: 'center', padding: '10 24',
+        items: [{ label: 'Destinations', url: '#' }, { label: 'Offers', url: '#' }, { label: 'Aurelia Club', url: '#' }] }),
+    },
+    product: {
+      label: 'Product', icon: '🛍', cat: 'advanced',
+      make: () => ({ type: 'product', id: U.uid('b'), catalog: 'hotels',
+        idExpr: '{{custom_attribute.${abandoned_hotel_id}}}', padding: '12 24' }),
+    },
+    social: {
+      label: 'Social', icon: '◎', cat: 'media',
+      make: () => ({ type: 'social', id: U.uid('b'), align: 'center', padding: '12 24',
+        links: [{ n: 'Facebook', u: 'https://facebook.com/aurelia' }, { n: 'Instagram', u: 'https://instagram.com/aurelia' }, { n: 'X', u: 'https://x.com/aurelia' }] }),
+    },
+  };
+
+  /* Braze groups blocks into basic / media / advanced. */
+  const CATEGORIES = [
+    { id: 'basic',    label: 'Basic',    keys: ['title', 'paragraph', 'button', 'divider', 'spacer'] },
+    { id: 'media',    label: 'Media',    keys: ['image', 'video', 'social', 'icons'] },
+    { id: 'advanced', label: 'Advanced', keys: ['html', 'menu', 'content_block', 'product'] },
+  ];
+
+  /* ---------- compile design -> email HTML ---------------------------------- */
+
+  const pad = (s) => {
+    const p = String(s || '0').trim().split(/\s+/).map(Number);
+    if (p.length === 1) return `${p[0]}px`;
+    if (p.length === 2) return `${p[0]}px ${p[1]}px`;
+    if (p.length === 3) return `${p[0]}px ${p[1]}px ${p[2]}px`;
+    return `${p[0]}px ${p[1]}px ${p[2]}px ${p[3]}px`;
+  };
+
+  function blockHtml(b, st) {
+    switch (b.type) {
+      case 'title':
+        return `<h${b.level} style="margin:0;padding:${pad(b.padding)};font-family:${st.fontFamily};font-size:${b.size}px;line-height:1.3;font-weight:700;color:${b.color || st.textColor};text-align:${b.align};">${b.text}</h${b.level}>`;
+      case 'paragraph':
+        return `<div style="padding:${pad(b.padding)};font-family:${st.fontFamily};font-size:${b.size}px;line-height:${b.lineHeight};color:${b.color || st.textColor};text-align:${b.align};">${b.html}</div>`;
+      case 'image': {
+        const img = `<img src="${b.src}" alt="${b.alt || ''}" width="${Math.round((st.contentWidth - 48) * (b.width / 100))}" style="display:block;max-width:100%;height:auto;border:0;border-radius:${b.radius}px;margin:${b.align === 'center' ? '0 auto' : b.align === 'right' ? '0 0 0 auto' : '0'};">`;
+        return `<div style="padding:${pad(b.padding)};text-align:${b.align};">${b.href ? `<a href="${b.href}" target="_blank">${img}</a>` : img}</div>`;
+      }
+      case 'button':
+        return `<div style="padding:${pad(b.padding)};text-align:${b.align};">
+  <a href="${b.href}" target="_blank" style="display:inline-block;padding:${b.padV}px ${b.padH}px;border-radius:${b.radius}px;background:${b.bg};color:${b.color};font-family:${st.fontFamily};font-size:${b.size}px;font-weight:700;text-decoration:none;">${b.label}</a>
+</div>`;
+      case 'divider':
+        return `<div style="padding:${pad(b.padding)};"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:${b.thickness}px solid ${b.color};font-size:0;line-height:0;">&nbsp;</td></tr></table></div>`;
+      case 'spacer':
+        return `<div style="height:${b.height}px;font-size:0;line-height:0;">&nbsp;</div>`;
+      case 'html':
+        return b.code;
+      case 'content_block':
+        return `{{content_blocks.\${${b.name}}}}`;
+      case 'video':
+        return `<div style="padding:${pad(b.padding)};text-align:${b.align};">
+  <a href="${b.href}" target="_blank" style="display:inline-block;position:relative;text-decoration:none;">
+    <div style="width:${st.contentWidth - 96}px;max-width:100%;height:190px;background:#1B1B22;border-radius:8px;color:#fff;font-family:${st.fontFamily};font-size:34px;line-height:190px;text-align:center;">▶</div>
+    <div style="font-family:${st.fontFamily};font-size:13px;color:${st.linkColor};margin-top:8px;">${b.caption}</div>
+  </a>
+</div>`;
+      case 'icons':
+        return `<div style="padding:${pad(b.padding)};text-align:${b.align};font-family:${st.fontFamily};font-size:12.5px;color:${st.textColor};">
+  ${b.items.map((i) => `<span style="display:inline-block;margin:0 12px;">◆<br>${i.label}</span>`).join('')}
+</div>`;
+      case 'menu':
+        return `<div style="padding:${pad(b.padding)};text-align:${b.align};font-family:${st.fontFamily};font-size:13px;">
+  ${b.items.map((i) => `<a href="${i.url}" style="color:${st.linkColor};text-decoration:none;margin:0 10px;">${i.label}</a>`).join('')}
+</div>`;
+      case 'product':
+        return `{% catalog_items ${b.catalog} ${b.idExpr} %}
+{% if items.size == 0 %}{% abort_message('No catalog row for this user') %}{% endif %}
+<div style="padding:${pad(b.padding)};font-family:${st.fontFamily};">
+  <img src="{{items[0].image_url}}" alt="{{items[0].name}}" width="${st.contentWidth - 48}" style="display:block;max-width:100%;border-radius:8px;">
+  <div style="font-weight:700;font-size:16px;color:${st.textColor};margin-top:10px;">{{items[0].name}}</div>
+  <div style="font-size:14px;color:${st.textColor};">{{items[0].city}} · from €{{items[0].price_from}} per night</div>
+</div>`;
+      case 'social':
+        return `<div style="padding:${pad(b.padding)};text-align:${b.align};font-family:${st.fontFamily};font-size:13px;">
+  ${b.links.map((l) => `<a href="${l.u}" style="color:${st.linkColor};text-decoration:none;margin:0 8px;">${l.n}</a>`).join('')}
+</div>`;
+      default: return '';
+    }
+  }
+
+  function compile(design) {
+    const st = design.settings;
+    const rows = design.rows.map((r) => {
+      const cells = r.columns.map((col) =>
+        `<td width="${col.width}%" valign="top" style="width:${col.width}%;">${col.blocks.map((b) => blockHtml(b, st)).join('\n')}</td>`
+      ).join('\n');
+      const bg = r.background || st.contentBackground;
+      return `<tr><td style="background:${bg};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+${cells}
+  </tr></table>
+</td></tr>`;
+    }).join('\n');
+
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${st.pageBackground};">
+<tr><td align="center" style="padding:0;">
+<table role="presentation" width="${st.contentWidth}" cellpadding="0" cellspacing="0" border="0" style="width:${st.contentWidth}px;max-width:100%;background:${st.contentBackground};">
+${rows}
+</table>
+</td></tr>
+</table>`;
+  }
+
+  /* ---------- starter designs ----------------------------------------------- */
+
+  function starterDesign(kind) {
+    const d = newDesign();
+    const row = (blocks, background) => ({ id: U.uid('r'), background, columns: [{ width: 100, blocks }] });
+
+    const header = BLOCKS.content_block.make(); header.name = 'aurelia_header';
+    const footer = BLOCKS.content_block.make(); footer.name = 'aurelia_footer';
+    d.rows.push(row([header]));
+
+    if (kind === 'blank') {
+      const t = BLOCKS.paragraph.make();
+      d.rows.push(row([t]));
+    } else {
+      const h = BLOCKS.title.make();
+      const t = BLOCKS.paragraph.make();
+      const img = BLOCKS.image.make();
+      const btn = BLOCKS.button.make();
+      img.src = window.BZ.catalogs.hotels.items[2].image_url;
+      img.alt = 'Aurelia Club Eilat';
+      t.html = "<p>Your dates are still available — from €210 per night. Members save an extra 10%, applied at checkout.</p>";
+      d.rows.push(row([h, img, t, btn]));
+    }
+    d.rows.push(row([footer]));
+    return d;
+  }
+
+  /* ---------- editor state --------------------------------------------------- */
+
+  let selected = null;      // block id
+  let selectedRow = null;   // row id
+  let panelTab = 'content'; // content | rows | settings
+
+  /* ---------- canvas rendering (editable preview) ---------------------------- */
+
+  function canvasHtml(design) {
+    const st = design.settings;
+    if (!design.rows.length) {
+      return `<div class="bz-eb__empty">
+        <p><strong>Empty canvas.</strong></p>
+        <p>Drag a block from the right, or click one to append it.</p>
+      </div>`;
+    }
+    return design.rows.map((r, ri) => `
+      <div class="bz-eb__row ${r.id === selectedRow ? 'is-selected' : ''}" data-row="${r.id}" style="background:${r.background || st.contentBackground}">
+        <div class="bz-eb__rowbar">
+          <span>Row ${ri + 1} · ${r.columns.length} col${r.columns.length > 1 ? 's' : ''}</span>
+          <span class="bz-spacer"></span>
+          <button class="bz-eb__mini" data-row-up="${r.id}" title="Move up">↑</button>
+          <button class="bz-eb__mini" data-row-down="${r.id}" title="Move down">↓</button>
+          <button class="bz-eb__mini" data-row-del="${r.id}" title="Delete row">✕</button>
+        </div>
+        <div class="bz-eb__cols">
+          ${r.columns.map((col, ci) => `
+            <div class="bz-eb__col" data-drop="${r.id}:${ci}" style="width:${col.width}%">
+              ${col.blocks.map((b) => `
+                <div class="bz-eb__block ${b.id === selected ? 'is-selected' : ''}" data-block="${b.id}">
+                  <div class="bz-eb__blocktag">${U.esc(BLOCKS[b.type] ? BLOCKS[b.type].label : b.type)}</div>
+                  <div class="bz-eb__blockctl">
+                    <button class="bz-eb__mini" data-b-up="${b.id}" title="Move up">↑</button>
+                    <button class="bz-eb__mini" data-b-down="${b.id}" title="Move down">↓</button>
+                    <button class="bz-eb__mini" data-b-dup="${b.id}" title="Duplicate">⧉</button>
+                    <button class="bz-eb__mini" data-b-del="${b.id}" title="Delete">✕</button>
+                  </div>
+                  ${blockHtml(b, st)}
+                </div>`).join('')}
+              ${col.blocks.length ? '' : '<div class="bz-eb__dropzone">Drop a block here</div>'}
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  /* ---------- property panel -------------------------------------------------- */
+
+  const field = (label, inner, hint) =>
+    `<div class="bz-field"><label class="bz-label">${U.esc(label)}</label>${inner}${hint ? `<div class="bz-hint">${hint}</div>` : ''}</div>`;
+  const txt = (key, val, ph) => `<input class="bz-input bz-input--sm" data-prop="${key}" value="${U.esc(val ?? '')}" placeholder="${U.esc(ph || '')}">`;
+  const area = (key, val) => `<textarea class="bz-textarea" data-prop="${key}" style="min-height:110px">${U.esc(val ?? '')}</textarea>`;
+  const numf = (key, val, min, max) => `<input class="bz-input bz-input--sm" type="number" data-prop="${key}" value="${U.esc(val)}" min="${min ?? 0}" max="${max ?? 999}">`;
+  const colorf = (key, val) => `<div class="bz-row"><input type="color" data-prop="${key}" value="${U.esc(val || '#000000')}" style="width:38px;height:30px;border:1px solid var(--bz-line-2);border-radius:5px;padding:2px;background:#fff">${txt(key, val)}</div>`;
+  const sel = (key, val, opts) => `<select class="bz-select bz-select--sm" data-prop="${key}">${opts.map((o) => {
+    const [v, l] = Array.isArray(o) ? o : [o, o];
+    return `<option value="${U.esc(v)}" ${String(v) === String(val) ? 'selected' : ''}>${U.esc(l)}</option>`;
+  }).join('')}</select>`;
+
+  function blockProps(b) {
+    switch (b.type) {
+      case 'title': return field('Text', txt('text', b.text)) +
+        field('Level', sel('level', b.level, [[1, 'H1'], [2, 'H2'], [3, 'H3']])) +
+        field('Size (px)', numf('size', b.size, 10, 60)) +
+        field('Align', sel('align', b.align, ['left', 'center', 'right'])) +
+        field('Colour', colorf('color', b.color)) +
+        field('Padding', txt('padding', b.padding, 'top right bottom left'), 'Space-separated, CSS order.');
+      case 'paragraph': return field('Content (HTML)', area('html', b.html), 'Liquid works here — try <code>{{custom_attribute.${loyalty_tier}}}</code>.') +
+        field('Size (px)', numf('size', b.size, 9, 32)) +
+        field('Line height', txt('lineHeight', b.lineHeight)) +
+        field('Align', sel('align', b.align, ['left', 'center', 'right', 'justify'])) +
+        field('Colour', colorf('color', b.color)) +
+        field('Padding', txt('padding', b.padding));
+      case 'image': return field('Source', txt('src', b.src), 'A URL, or Liquid such as <code>{{items[0].image_url}}</code> after a catalog lookup.') +
+        field('Alt text', txt('alt', b.alt), 'Required — many clients block images by default.') +
+        field('Link to', txt('href', b.href, 'https://…')) +
+        field('Width (%)', numf('width', b.width, 10, 100)) +
+        field('Corner radius', numf('radius', b.radius, 0, 40)) +
+        field('Align', sel('align', b.align, ['left', 'center', 'right'])) +
+        field('Padding', txt('padding', b.padding));
+      case 'button': return field('Label', txt('label', b.label)) +
+        field('Link', txt('href', b.href)) +
+        field('Background', colorf('bg', b.bg)) +
+        field('Text colour', colorf('color', b.color)) +
+        field('Corner radius', numf('radius', b.radius, 0, 40)) +
+        field('Font size', numf('size', b.size, 10, 26)) +
+        field('Padding X / Y', `<div class="bz-row">${numf('padH', b.padH, 4, 80)}${numf('padV', b.padV, 4, 40)}</div>`) +
+        field('Align', sel('align', b.align, ['left', 'center', 'right'])) +
+        field('Outer padding', txt('padding', b.padding));
+      case 'divider': return field('Colour', colorf('color', b.color)) +
+        field('Thickness', numf('thickness', b.thickness, 1, 10)) +
+        field('Padding', txt('padding', b.padding));
+      case 'spacer': return field('Height (px)', numf('height', b.height, 2, 160));
+      case 'html': return field('HTML', area('code', b.code), 'Escape hatch for anything the visual blocks cannot express.');
+      case 'content_block': return field('Content Block', sel('name', b.name, window.BZ.contentBlocks.map((c) => c.name)),
+        'Edit the block once under Content Blocks and every template using it updates.');
+      case 'video': return field('Link', txt('href', b.href)) +
+        field('Caption', txt('caption', b.caption)) +
+        field('Align', sel('align', b.align, ['left', 'center', 'right'])) +
+        field('Padding', txt('padding', b.padding));
+      case 'icons': return field('Items', area('_icons', b.items.map((i) => i.label).join('\n')), 'One label per line.') +
+        field('Align', sel('align', b.align, ['left', 'center', 'right'])) +
+        field('Padding', txt('padding', b.padding));
+      case 'menu': return field('Items', area('_menu', b.items.map((i) => i.label + ' | ' + i.url).join('\n')), 'One per line: <code>Label | URL</code>') +
+        field('Align', sel('align', b.align, ['left', 'center', 'right'])) +
+        field('Padding', txt('padding', b.padding));
+      case 'product': return field('Catalog', sel('catalog', b.catalog, Object.keys(window.BZ.catalogs))) +
+        field('Item id expression', txt('idExpr', b.idExpr), 'Liquid resolving to a catalog row id. The block ships with an <code>abort_message</code> guard already in place.') +
+        field('Padding', txt('padding', b.padding));
+      case 'social': return field('Links', area('_links', b.links.map((l) => l.n + ' | ' + l.u).join('\n')), 'One per line: <code>Name | URL</code>') +
+        field('Align', sel('align', b.align, ['left', 'center', 'right'])) +
+        field('Padding', txt('padding', b.padding));
+      default: return '<p class="bz-muted bz-small">No properties.</p>';
+    }
+  }
+
+  function panelHtml(design) {
+    const b = selected ? findBlock(design, selected) : null;
+
+    if (b) {
+      return `<div class="bz-eb__panelhead">
+          <strong>${U.esc(BLOCKS[b.block.type] ? BLOCKS[b.block.type].label : b.block.type)}</strong>
+          <span class="bz-spacer"></span>
+          <button class="bz-btn bz-btn--sm bz-btn--ghost" data-eb="deselect">Done</button>
+        </div>
+        <div class="bz-eb__panelbody">${blockProps(b.block)}</div>`;
+    }
+
+    const tabs = `<div class="bz-eb__paneltabs">
+      ${[['content', 'Content'], ['rows', 'Rows'], ['settings', 'Settings']].map(([id, l]) =>
+        `<button class="bz-eb__paneltab ${panelTab === id ? 'is-active' : ''}" data-ptab="${id}">${l}</button>`).join('')}
+    </div>`;
+
+    if (panelTab === 'content') {
+      return tabs + `<div class="bz-eb__panelbody">
+        <p class="bz-hint bz-mb8">Drag a block onto the canvas, or click to append it to the last row.</p>
+        ${CATEGORIES.map((cat) => `
+          <div class="bz-label bz-mt16">${U.esc(cat.label)}</div>
+          <div class="bz-eb__palette">
+            ${cat.keys.map((k) => `<div class="bz-eb__ptile" draggable="true" data-newblock="${k}">
+              <div class="bz-eb__pico">${BLOCKS[k].icon}</div><div>${U.esc(BLOCKS[k].label)}</div>
+            </div>`).join('')}
+          </div>`).join('')}
+        <div class="bz-callout bz-mt16" style="font-size:12.5px">
+          <div class="bz-callout__t">Where Liquid goes</div>
+          <p>Put conditionals, loops and Connected Content in an <strong>HTML</strong> block. Personalization tags work anywhere, but Braze recommends control flow live in HTML so the visual blocks stay intact.</p>
+        </div>
+        <div class="bz-field bz-mt16">
+          <label class="bz-label">Personalization</label>
+          <div class="bz-persotags">
+            ${[['${first_name}', 'First name'], ['custom_attribute.${loyalty_tier}', 'Tier'],
+               ['custom_attribute.${points_balance}', 'Points'], ['custom_attribute.${next_stay_hotel}', 'Next hotel'],
+               ['custom_attribute.${next_stay_date}', 'Next stay date'], ['event_properties.${hotel_name}', 'Event: hotel']]
+              .map(([t, l]) => `<button class="bz-persotag" data-copy="{{${t}}}" title="${U.esc(l)}">{{${U.esc(t)}}}</button>`).join('')}
+          </div>
+          <div class="bz-hint">Click to copy, then paste into any text or HTML block.</div>
+        </div>`;
+    }
+
+    if (panelTab === 'rows') {
+      return tabs + `<div class="bz-eb__panelbody">
+        <p class="bz-hint bz-mb8">Add a row, then drop blocks into its columns.</p>
+        <div class="bz-eb__layouts">
+          ${LAYOUTS.map((l) => `<button class="bz-eb__layout" data-newrow="${l.id}">
+            <div class="bz-eb__layoutviz">${l.cols.map((w) => `<span style="flex:${w}"></span>`).join('')}</div>
+            <div>${U.esc(l.label)}</div></button>`).join('')}
+        </div>
+        ${selectedRow ? (() => {
+          const r = design.rows.find((x) => x.id === selectedRow);
+          return r ? `<div class="bz-field bz-mt16"><label class="bz-label">Selected row background</label>${colorf('_rowbg', r.background || design.settings.contentBackground)}</div>` : '';
+        })() : '<p class="bz-hint bz-mt16">Click a row on the canvas to style it.</p>'}
+      </div>`;
+    }
+
+    const st = design.settings;
+    return tabs + `<div class="bz-eb__panelbody">
+      ${field('Content width (px)', numf('_s_contentWidth', st.contentWidth, 320, 900), 'Braze defaults to 600px. Anything wider risks clipping in Outlook.')}
+      ${field('Page background', colorf('_s_pageBackground', st.pageBackground))}
+      ${field('Content background', colorf('_s_contentBackground', st.contentBackground))}
+      ${field('Font family', sel('_s_fontFamily', st.fontFamily, [
+        ['Helvetica, Arial, sans-serif', 'Helvetica / Arial'],
+        ['Georgia, serif', 'Georgia'],
+        ['"Times New Roman", serif', 'Times New Roman'],
+        ['Verdana, sans-serif', 'Verdana'],
+        ['Tahoma, sans-serif', 'Tahoma'],
+      ]), 'Web fonts are unreliable in email. Stick to a system stack.')}
+      ${field('Default text colour', colorf('_s_textColor', st.textColor))}
+      ${field('Link colour', colorf('_s_linkColor', st.linkColor))}
+    </div>`;
+  }
+
+  /* ---------- tree helpers ----------------------------------------------------- */
+
+  function findBlock(design, id) {
+    for (const r of design.rows) for (const c of r.columns) {
+      const i = c.blocks.findIndex((b) => b.id === id);
+      if (i > -1) return { block: c.blocks[i], list: c.blocks, index: i, row: r };
+    }
+    return null;
+  }
+
+  function addBlock(design, kind, rowId, colIdx) {
+    const b = BLOCKS[kind].make();
+    let col;
+    if (rowId != null) {
+      const r = design.rows.find((x) => x.id === rowId);
+      col = r && r.columns[colIdx];
+    }
+    if (!col) {
+      if (!design.rows.length) design.rows.push({ id: U.uid('r'), columns: [{ width: 100, blocks: [] }] });
+      col = design.rows[design.rows.length - 1].columns[0];
+    }
+    col.blocks.push(b);
+    selected = b.id;
+    return b;
+  }
+
+  function addRow(design, layoutId) {
+    const l = LAYOUTS.find((x) => x.id === layoutId) || LAYOUTS[0];
+    const r = { id: U.uid('r'), columns: l.cols.map((w) => ({ width: w, blocks: [] })) };
+    design.rows.push(r);
+    selectedRow = r.id;
+    return r;
+  }
+
+  const move = (list, i, d) => {
+    const j = i + d;
+    if (j < 0 || j >= list.length) return;
+    list.splice(j, 0, list.splice(i, 1)[0]);
+  };
+
+  /* ---------- public view ------------------------------------------------------- */
+
+  function view(design) {
+    return `<div class="bz-eb">
+      <div class="bz-eb__canvaswrap" id="bz-eb-canvas">
+        <div class="bz-eb__canvas" style="width:${design.settings.contentWidth}px;background:${design.settings.contentBackground}">
+          ${canvasHtml(design)}
+        </div>
+      </div>
+      <div class="bz-eb__panel" id="bz-eb-panel">${panelHtml(design)}</div>
+    </div>`;
+  }
+
+  /* Wire up a rendered builder. onChange() is called after any mutation. */
+  function bind(root, design, onChange) {
+    let dragKind = null;
+
+    root.addEventListener('dragstart', (e) => {
+      const t = e.target.closest('[data-newblock]');
+      if (!t) return;
+      dragKind = t.dataset.newblock;
+      e.dataTransfer.effectAllowed = 'copy';
+      try { e.dataTransfer.setData('text/plain', dragKind); } catch (err) { /* Safari */ }
+    });
+    root.addEventListener('dragover', (e) => {
+      const z = e.target.closest('[data-drop]');
+      if (!z || !dragKind) return;
+      e.preventDefault();
+      z.classList.add('is-over');
+    });
+    root.addEventListener('dragleave', (e) => {
+      const z = e.target.closest('[data-drop]');
+      if (z) z.classList.remove('is-over');
+    });
+    root.addEventListener('drop', (e) => {
+      const z = e.target.closest('[data-drop]');
+      if (!z || !dragKind) return;
+      e.preventDefault();
+      z.classList.remove('is-over');
+      const [rowId, ci] = z.dataset.drop.split(':');
+      addBlock(design, dragKind, rowId, Number(ci));
+      dragKind = null;
+      onChange();
+    });
+
+    root.addEventListener('click', (e) => {
+      const q = (a) => e.target.closest('[' + a + ']');
+      let t;
+
+      if ((t = q('data-ptab'))) { panelTab = t.dataset.ptab; return onChange(); }
+      if ((t = q('data-eb'))) { if (t.dataset.eb === 'deselect') { selected = null; return onChange(); } }
+      if ((t = q('data-newblock'))) { addBlock(design, t.dataset.newblock); return onChange(); }
+      if ((t = q('data-newrow'))) { addRow(design, t.dataset.newrow); return onChange(); }
+      if ((t = q('data-copy'))) {
+        const v = t.dataset.copy;
+        if (navigator.clipboard) navigator.clipboard.writeText(v).catch(() => {});
+        U.toast('Copied ' + v);
+        return;
+      }
+
+      if ((t = q('data-row-del'))) { design.rows = design.rows.filter((r) => r.id !== t.dataset.rowDel); return onChange(); }
+      if ((t = q('data-row-up'))) { move(design.rows, design.rows.findIndex((r) => r.id === t.dataset.rowUp), -1); return onChange(); }
+      if ((t = q('data-row-down'))) { move(design.rows, design.rows.findIndex((r) => r.id === t.dataset.rowDown), 1); return onChange(); }
+
+      if ((t = q('data-b-del'))) { const f = findBlock(design, t.dataset.bDel); if (f) f.list.splice(f.index, 1); selected = null; return onChange(); }
+      if ((t = q('data-b-up'))) { const f = findBlock(design, t.dataset.bUp); if (f) move(f.list, f.index, -1); return onChange(); }
+      if ((t = q('data-b-down'))) { const f = findBlock(design, t.dataset.bDown); if (f) move(f.list, f.index, 1); return onChange(); }
+      if ((t = q('data-b-dup'))) {
+        const f = findBlock(design, t.dataset.bDup);
+        if (f) { const copy = JSON.parse(JSON.stringify(f.block)); copy.id = U.uid('b'); f.list.splice(f.index + 1, 0, copy); selected = copy.id; }
+        return onChange();
+      }
+
+      if ((t = q('data-block'))) { selected = t.dataset.block; selectedRow = null; return onChange(); }
+      if ((t = q('data-row'))) { selectedRow = t.dataset.row; selected = null; panelTab = 'rows'; return onChange(); }
+    });
+
+    /* property edits — patch in place so inputs keep focus, then repaint preview */
+    const applyProp = (el) => {
+      const key = el.dataset.prop;
+      if (!key) return;
+      let val = el.type === 'number' ? Number(el.value) : el.value;
+
+      if (key.startsWith('_s_')) { design.settings[key.slice(3)] = val; return; }
+      if (key === '_rowbg') { const r = design.rows.find((x) => x.id === selectedRow); if (r) r.background = val; return; }
+
+      const f = selected && findBlock(design, selected);
+      if (!f) return;
+      if (key === '_icons') { f.block.items = String(val).split('\n').map((l) => l.trim()).filter(Boolean).map((label) => ({ label })); return; }
+      if (key === '_menu') {
+        f.block.items = String(val).split('\n').map((line) => {
+          const [label, url] = line.split('|').map((x) => x.trim());
+          return label ? { label, url: url || '#' } : null;
+        }).filter(Boolean);
+        return;
+      }
+      if (key === '_links') {
+        f.block.links = String(val).split('\n').map((line) => {
+          const [n, u] = line.split('|').map((s) => s.trim());
+          return n ? { n, u: u || '#' } : null;
+        }).filter(Boolean);
+        return;
+      }
+      f.block[key] = val;
+    };
+
+    root.addEventListener('input', (e) => {
+      if (!e.target.dataset.prop) return;
+      applyProp(e.target);
+      /* repaint only the canvas so the property inputs keep focus and caret */
+      const wrap = root.querySelector('#bz-eb-canvas .bz-eb__canvas');
+      if (wrap) {
+        wrap.style.width = design.settings.contentWidth + 'px';
+        wrap.style.background = design.settings.contentBackground;
+        wrap.innerHTML = canvasHtml(design);
+      }
+      onChange(true);   // true = canvas already repainted, skip full re-render
+    });
+    root.addEventListener('change', (e) => {
+      if (!e.target.dataset.prop) return;
+      if (e.target.tagName === 'SELECT' || e.target.type === 'color') { applyProp(e.target); onChange(); }
+    });
+  }
+
+  const select = (id) => { selected = id; };
+  const reset = () => { selected = null; selectedRow = null; panelTab = 'content'; };
+
+  return { newDesign, starterDesign, compile, view, bind, select, reset, BLOCKS, CATEGORIES, LAYOUTS, findBlock };
+})();
+
+window.BZEmailBuilder = BZEmailBuilder;
+
+
+/* ===== js/compose.js ===== */
+/* ==========================================================================
+   Braze Sandbox — message composers
+   The channel picker shown when you click "Create Campaign", plus a composer
+   per channel with a realistic device preview. Email additionally offers the
+   three build modes Braze gives you: Drag & Drop, HTML, or a saved template.
+   ========================================================================== */
+
+const BZCompose = (function () {
+  'use strict';
+  const U = window.BZUI;
+
+  /* ---------- channel catalog ----------------------------------------------- */
+  /* Order and naming follow Braze's "Create Campaign" message-type picker.     */
+
+  /* Feature Flags are deliberately absent: they are created from
+     Messaging > Feature Flags, not from the campaign channel picker.         */
+  const CHANNELS = [
+    { id: 'multichannel', label: 'Multichannel', icon: '◫', group: 'Multichannel',
+      desc: 'Reach users through more than one channel in a single launch — for example an email and a push together. In-App Message cannot be included.' },
+    { id: 'email', label: 'Email', icon: '✉', group: 'Single channel',
+      desc: 'Highest reach, richest creative, easiest to attribute. Build with the drag-and-drop editor or the HTML editor.' },
+    { id: 'push', label: 'Push Notification', icon: '🔔', group: 'Single channel',
+      desc: 'iOS, Android and Web. Immediate and high-signal, but app-only and very easy to over-use.' },
+    { id: 'inapp', label: 'In-App Message', icon: '▣', group: 'Single channel',
+      desc: 'Shown while the user is in your app. Cannot be pushed, and cannot be part of a multichannel campaign.' },
+    { id: 'contentcard', label: 'Content Card', icon: '▤', group: 'Single channel',
+      desc: 'Persistent card in an in-app feed. Non-intrusive, stays until dismissed or expired.' },
+    { id: 'banner', label: 'Banner', icon: '▭', group: 'Single channel',
+      desc: 'Renders into a placement you define under Settings → Banners Placements, then pick that placement here.' },
+    { id: 'sms', label: 'SMS, MMS, RCS', icon: '💬', group: 'Single channel',
+      desc: 'One channel family — you choose SMS, MMS or RCS inside the composer. Highest open rate, real per-message cost, strictest consent rules.' },
+    { id: 'whatsapp', label: 'WhatsApp', icon: '🟢', group: 'Single channel',
+      desc: 'Template-based and pre-approved by Meta. Outside the 24-hour customer service window you may only send approved templates.' },
+    { id: 'line', label: 'LINE', icon: '🟩', group: 'Single channel',
+      desc: 'Messaging channel for markets where LINE is dominant, chiefly Japan, Taiwan and Thailand.' },
+    { id: 'webhook', label: 'Webhook', icon: '🔗', group: 'Single channel',
+      desc: 'POST to any endpoint as if it were a message channel. For downstream systems, not for reaching a person.' },
+  ];
+
+  const channel = (id) => CHANNELS.find((c) => c.id === id) || CHANNELS[1];
+
+  /* ---------- email build modes ---------------------------------------------- */
+
+  /* Braze offers exactly TWO editing experiences. Choosing a saved template or
+     uploading a file are options *inside* the HTML editor, not sibling tiles. */
+  const EMAIL_MODES = [
+    { id: 'dragdrop', label: 'Drag & Drop Editor', icon: '⬚',
+      desc: 'Create custom, personalized email without writing HTML. Blocks and rows compile to responsive table markup for you.' },
+    { id: 'html', label: 'HTML Editor', icon: '</>',
+      desc: 'Select an existing email template, upload a template from a file, or start from a blank template. Full control over the markup.' },
+  ];
+
+  /* The three starting points offered once you pick the HTML editor. */
+  const HTML_SOURCES = [
+    { id: 'template', label: 'Select an existing template', desc: 'Start from a saved template in Content → Templates.' },
+    { id: 'upload', label: 'Upload a template from a file', desc: 'Paste or import coded HTML your designer produced.' },
+    { id: 'blank', label: 'Use a blank template', desc: 'Start from an empty document.' },
+  ];
+
+  /* ---------- per-channel message defaults ------------------------------------ */
+
+  function newMessage(channelId) {
+    const base = { channel: channelId };
+    switch (channelId) {
+      case 'email': return Object.assign(base, {
+        mode: null,
+        fromName: 'Aurelia Hotels', fromEmail: 'stay@aureliahotels.com', replyTo: 'hello@aureliahotels.com',
+        subject: "Your stay is coming up, {{${first_name} | default: 'there'}}",
+        preheader: 'Check in online and skip the front desk queue',
+        body: '', design: null, templateId: null,
+      });
+      case 'push': return Object.assign(base, {
+        platforms: ['iOS', 'Android'],
+        title: 'Your room is ready',
+        alert: "{{${first_name} | default: 'Hi' }}, check in online and head straight up.",
+        image: '', deepLink: 'aurelia://checkin', sound: 'default', badge: 1,
+        buttons: [{ text: 'Check in', link: 'aurelia://checkin' }],
+      });
+      case 'sms': return Object.assign(base, {
+        smsType: 'SMS', subscriptionGroup: 'sg-sms', senderId: 'AURELIA',
+        body: "Aurelia: {{${first_name}}}, your room at {{custom_attribute.${next_stay_hotel}}} is ready. Check in: https://aur.ly/ci\nReply STOP to opt out.",
+      });
+      case 'whatsapp': return Object.assign(base, {
+        subscriptionGroup: 'sg-sms', templateName: 'pre_arrival_checkin_v3', language: 'en',
+        header: 'Your stay starts tomorrow',
+        body: "Hi {{1}}, your booking at {{2}} is confirmed for {{3}}. Tap below to check in online.",
+        footer: 'Aurelia Hotels · Reply STOP to opt out',
+        buttons: [{ type: 'URL', text: 'Check in online', value: 'https://aureliahotels.com/checkin' }],
+        variables: ['{{${first_name}}}', '{{custom_attribute.${next_stay_hotel}}}', "{{custom_attribute.${next_stay_date} | date: '%B %e'}}"],
+      });
+      case 'inapp': return Object.assign(base, {
+        messageType: 'Modal', title: 'Members save 10%',
+        body: 'Book direct and your Aurelia Club rate is applied automatically at checkout.',
+        image: '', primaryCta: 'See member rates', primaryLink: 'aurelia://offers', secondaryCta: 'Not now',
+      });
+      case 'contentcard': return Object.assign(base, {
+        cardType: 'Captioned Image', title: 'Your points expire soon',
+        body: "You have {{custom_attribute.${points_balance} | number_with_delimiter}} points. Use them before 31 December.",
+        link: 'aurelia://loyalty', pinned: false,
+      });
+      case 'webhook': return Object.assign(base, {
+        method: 'POST', url: 'https://hooks.aureliahotels.com/braze/event',
+        headers: 'Content-Type: application/json',
+        payload: '{\n  "external_id": "{{${user_id}}}",\n  "tier": "{{custom_attribute.${loyalty_tier}}}"\n}',
+      });
+      case 'banner': return Object.assign(base, {
+        placement: 'home_top', html: '<div style="padding:14px;text-align:center;font:600 14px Helvetica,Arial,sans-serif">Members save 10% booking direct</div>',
+      });
+      case 'line': return Object.assign(base, {
+        messageType: 'Text', body: "{{${first_name}}}, your stay at {{custom_attribute.${next_stay_hotel}}} starts soon.",
+      });
+      default: return base;
+    }
+  }
+
+  /* ---------- channel picker --------------------------------------------------- */
+
+  function pickerHtml(selectedId) {
+    const groups = ['Multichannel', 'Single channel'];
+    return groups.map((g) => `
+      <div class="bz-mb16">
+        <div class="bz-label">${U.esc(g)}</div>
+        <div class="bz-chanpicker">
+          ${CHANNELS.filter((c) => c.group === g).map((c) => `
+            <button class="bz-chantile ${c.id === selectedId ? 'is-selected' : ''}" data-chan="${c.id}">
+              <div class="bz-chantile__ico">${c.icon}</div>
+              <div class="bz-chantile__t">${U.esc(c.label)}</div>
+              <div class="bz-chantile__d">${U.esc(c.desc)}</div>
+            </button>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  /* ---------- email mode picker -------------------------------------------------- */
+
+  function emailModeHtml() {
+    return `<div class="bz-modepicker">
+      ${EMAIL_MODES.map((m) => `<button class="bz-modetile" data-emode="${m.id}">
+        <div class="bz-modetile__ico">${m.icon}</div>
+        <div><div class="bz-modetile__t">${U.esc(m.label)}</div>
+        <div class="bz-modetile__d">${U.esc(m.desc)}</div></div>
+      </button>`).join('')}
+    </div>
+    <div class="bz-callout bz-mt16">
+      <div class="bz-callout__t">Which one in practice</div>
+      <p>Drag &amp; Drop for anything you own end to end — it keeps the markup responsive and stops you hand-editing tables. HTML when a designer hands you coded output, or when you need markup the visual blocks cannot express.</p>
+      <p>You can convert Drag &amp; Drop → HTML at any point. You cannot convert back: once it is raw HTML, Braze can no longer reconstruct the blocks.</p>
+    </div>`;
+  }
+
+  function htmlSourceHtml() {
+    return `<div class="bz-modepicker">
+      ${HTML_SOURCES.map((s) => `<button class="bz-modetile" data-hsrc="${s.id}">
+        <div class="bz-modetile__ico">▤</div>
+        <div><div class="bz-modetile__t">${U.esc(s.label)}</div>
+        <div class="bz-modetile__d">${U.esc(s.desc)}</div></div>
+      </button>`).join('')}
+    </div>`;
+  }
+
+  /* ---------- device previews ------------------------------------------------------ */
+
+  function renderFor(text, user, extra) {
+    return U.renderLiquid(String(text || ''), user, extra || {}).html;
+  }
+
+  function pushPreview(m, user) {
+    const title = renderFor(m.title, user), alert = renderFor(m.alert, user);
+    return `<div class="bz-device bz-device--phone">
+      <div class="bz-device__screen bz-device__screen--lock">
+        <div class="bz-lock__time">9:41</div>
+        <div class="bz-lock__date">Sunday, 9 August</div>
+        <div class="bz-push">
+          <div class="bz-push__app"><span class="bz-push__icon">A</span> AURELIA <span class="bz-push__now">now</span></div>
+          <div class="bz-push__title">${U.esc(title)}</div>
+          <div class="bz-push__body">${U.esc(alert)}</div>
+        </div>
+        ${(m.buttons || []).length ? `<div class="bz-push__actions">${m.buttons.map((b) => `<span>${U.esc(b.text)}</span>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  /* GSM-7 fits 160 chars per segment; any character outside it forces UCS-2
+     and drops the limit to 70. A curly apostrophe is enough to do it.       */
+  const NON_GSM = /[^\u0000-\u007F]/;
+
+  function smsPreview(m, user) {
+    const body = renderFor(m.body, user);
+    const chars = body.length;
+    const segments = Math.ceil(chars / (NON_GSM.test(body) ? 70 : 160)) || 1;
+    return `<div class="bz-device bz-device--phone">
+      <div class="bz-device__screen">
+        <div class="bz-sms__hdr">${U.esc(m.senderId || 'AURELIA')}</div>
+        <div class="bz-sms__bubble">${U.esc(body).replace(/\n/g, '<br>')}</div>
+      </div>
+    </div>
+    <div class="bz-eb__meta">
+      <span>${chars} characters</span>
+      <span>${segments} segment${segments > 1 ? 's' : ''}</span>
+      <span>${NON_GSM.test(body) ? 'Unicode (70/segment)' : 'GSM-7 (160/segment)'}</span>
+    </div>
+    ${segments > 1 ? `<div class="bz-callout bz-callout--warn bz-mt8"><div class="bz-callout__t">Costs ${segments}×</div>
+      <p>You are billed per segment, not per message. Personalization makes length variable — a long hotel name can silently push a whole send into a second segment.</p></div>` : ''}
+    ${!/stop/i.test(body) ? `<div class="bz-callout bz-callout--warn bz-mt8"><div class="bz-callout__t">No opt-out</div>
+      <p>SMS marketing must carry an opt-out instruction. Add "Reply STOP to opt out".</p></div>` : ''}`;
+  }
+
+  function whatsappPreview(m, user) {
+    let body = m.body;
+    (m.variables || []).forEach((v, i) => { body = body.split('{{' + (i + 1) + '}}').join(renderFor(v, user)); });
+    return `<div class="bz-device bz-device--phone">
+      <div class="bz-device__screen bz-device__screen--wa">
+        <div class="bz-wa__hdr">Aurelia Hotels <span>business account</span></div>
+        <div class="bz-wa__bubble">
+          ${m.header ? `<div class="bz-wa__title">${U.esc(renderFor(m.header, user))}</div>` : ''}
+          <div class="bz-wa__body">${U.esc(body).replace(/\n/g, '<br>')}</div>
+          ${m.footer ? `<div class="bz-wa__footer">${U.esc(m.footer)}</div>` : ''}
+          ${(m.buttons || []).map((b) => `<div class="bz-wa__btn">${U.esc(b.text)}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="bz-callout bz-mt8">
+      <div class="bz-callout__t">Template-based channel</div>
+      <p>Outside the 24-hour customer-service window you may only send templates Meta has pre-approved. Copy changes mean re-submission, so WhatsApp is not a channel you iterate on quickly. Variables are positional — <code>{{1}}</code>, <code>{{2}}</code> — and mapped to Liquid below.</p>
+    </div>`;
+  }
+
+  function inappPreview(m, user) {
+    return `<div class="bz-device bz-device--phone">
+      <div class="bz-device__screen bz-device__screen--app">
+        <div class="bz-iam__scrim"></div>
+        <div class="bz-iam">
+          <div class="bz-iam__title">${U.esc(renderFor(m.title, user))}</div>
+          <div class="bz-iam__body">${U.esc(renderFor(m.body, user))}</div>
+          <div class="bz-iam__cta">${U.esc(m.primaryCta)}</div>
+          ${m.secondaryCta ? `<div class="bz-iam__cta2">${U.esc(m.secondaryCta)}</div>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function contentCardPreview(m, user) {
+    return `<div class="bz-device bz-device--phone">
+      <div class="bz-device__screen bz-device__screen--app">
+        <div class="bz-cc__feedhdr">Your feed</div>
+        <div class="bz-cc">
+          <div class="bz-cc__title">${U.esc(renderFor(m.title, user))}</div>
+          <div class="bz-cc__body">${U.esc(renderFor(m.body, user))}</div>
+        </div>
+        <div class="bz-cc bz-cc--ghost"></div>
+      </div>
+    </div>`;
+  }
+
+  function preview(m, user) {
+    switch (m.channel) {
+      case 'push': return pushPreview(m, user);
+      case 'sms': return smsPreview(m, user);
+      case 'whatsapp': return whatsappPreview(m, user);
+      case 'inapp': return inappPreview(m, user);
+      case 'contentcard': return contentCardPreview(m, user);
+      case 'line': return `<div class="bz-device bz-device--phone"><div class="bz-device__screen" style="background:#8CABD8">
+        <div class="bz-wa__hdr" style="background:#06C755">Aurelia Hotels<span>LINE Official Account</span></div>
+        <div class="bz-wa__bubble">${U.esc(renderFor(m.body, user))}</div></div></div>`;
+      case 'banner': return `<div style="border:1px solid var(--bz-line);border-radius:8px;overflow:hidden">
+        <div style="background:var(--bz-bg-3);padding:6px 10px;font-size:11.5px;font-weight:700;color:var(--bz-ink-3)">Placement: ${U.esc(m.placement)}</div>
+        <div>${U.renderLiquid(m.html, user, {}).html}</div></div>`;
+      case 'webhook': return `<pre class="bz-eb__code">${U.esc(m.method + ' ' + m.url + '\n' + m.headers + '\n\n' + renderFor(m.payload, user))}</pre>`;
+      case 'banner': return `
+        ${f('Placement', `<select class="bz-select" data-msg="placement">${['home_top', 'home_feed_inline', 'account_sidebar'].map((t) =>
+          `<option ${t === m.placement ? 'selected' : ''}>${t}</option>`).join('')}</select>`,
+          'Placements are defined under Settings → Banners Placements, then chosen here.')}
+        ${f('Banner HTML', ta('html', m.html, 120))}`;
+
+      case 'line': return `
+        ${f('Message type', `<select class="bz-select" data-msg="messageType">${['Text', 'Sticker', 'Image', 'Rich Menu'].map((t) =>
+          `<option ${t === m.messageType ? 'selected' : ''}>${t}</option>`).join('')}</select>`)}
+        ${f('Message', ta('body', m.body, 100))}`;
+
+      case 'featureflag': return `<div class="bz-callout"><div class="bz-callout__t">${U.esc(m.flagKey)}</div>
+        <p>${m.enabled ? 'Enabled' : 'Disabled'} for ${m.rollout}% of the target audience. No message is delivered.</p></div>`;
+      default: return '';
+    }
+  }
+
+  /* ---------- composer forms --------------------------------------------------------- */
+
+  const f = (label, inner, hint) =>
+    `<div class="bz-field"><label class="bz-label">${U.esc(label)}</label>${inner}${hint ? `<div class="bz-hint">${hint}</div>` : ''}</div>`;
+  const inp = (k, v, ph) => `<input class="bz-input" data-msg="${k}" value="${U.esc(v ?? '')}" placeholder="${U.esc(ph || '')}">`;
+  const ta = (k, v, h) => `<textarea class="bz-textarea" data-msg="${k}" style="min-height:${h || 90}px">${U.esc(v ?? '')}</textarea>`;
+
+  function composerForm(m) {
+    switch (m.channel) {
+      case 'push': return `
+        ${f('Platforms', `<div class="bz-row bz-row--wrap">${['iOS', 'Android', 'Web'].map((p) =>
+          `<label class="bz-checkline"><input type="checkbox" data-msg-plat="${p}" ${m.platforms.includes(p) ? 'checked' : ''}><span>${p}</span></label>`).join('')}</div>`)}
+        ${f('Title', inp('title', m.title))}
+        ${f('Message', ta('alert', m.alert, 80), 'Roughly 40 characters of title and 100 of body survive on a locked screen. Front-load the value.')}
+        ${f('Deep link', inp('deepLink', m.deepLink, 'aurelia://…'), 'Send them to the exact screen. Dropping someone on the home screen wastes the tap.')}
+        ${f('Button label', inp('_btn0', (m.buttons[0] || {}).text))}`;
+
+      case 'sms': return `
+        ${f('Message type', `<select class="bz-select" data-msg="smsType">${['SMS', 'MMS', 'RCS'].map((t) =>
+          `<option ${t === m.smsType ? 'selected' : ''}>${t}</option>`).join('')}</select>`,
+          'One channel family in Braze — you pick the flavour here rather than on the campaign type tile.')}
+        ${f('Subscription group', `<select class="bz-select" data-msg="subscriptionGroup">${window.BZ.subscriptionGroups.filter((g) => g.channel === 'SMS').map((g) =>
+          `<option value="${g.id}" ${g.id === m.subscriptionGroup ? 'selected' : ''}>${U.esc(g.name)}</option>`).join('')}</select>`,
+          'SMS requires an explicit subscription group in Braze — it is not optional the way it is for email.')}
+        ${f('Sender ID', inp('senderId', m.senderId))}
+        ${f('Message', ta('body', m.body, 120), 'Count characters: 160 for GSM-7, 70 once any Unicode character appears — including a curly apostrophe.')}`;
+
+      case 'whatsapp': return `
+        ${f('Approved template', inp('templateName', m.templateName), 'Must already be approved by Meta. New copy means re-submission and a wait.')}
+        ${f('Header', inp('header', m.header))}
+        ${f('Body', ta('body', m.body, 100), 'Positional variables: <code>{{1}}</code>, <code>{{2}}</code>, <code>{{3}}</code>.')}
+        ${f('Variable mapping', ta('_vars', (m.variables || []).join('\n'), 80), 'One Liquid expression per line, in order.')}
+        ${f('Footer', inp('footer', m.footer))}`;
+
+      case 'inapp': return `
+        ${f('Message type', `<select class="bz-select" data-msg="messageType">${['Modal', 'Slideup', 'Full Screen', 'HTML Upload'].map((t) =>
+          `<option ${t === m.messageType ? 'selected' : ''}>${t}</option>`).join('')}</select>`)}
+        ${f('Title', inp('title', m.title))}
+        ${f('Body', ta('body', m.body, 80))}
+        ${f('Primary button', inp('primaryCta', m.primaryCta))}
+        ${f('Primary link', inp('primaryLink', m.primaryLink))}
+        ${f('Secondary button', inp('secondaryCta', m.secondaryCta))}`;
+
+      case 'contentcard': return `
+        ${f('Card type', `<select class="bz-select" data-msg="cardType">${['Classic', 'Captioned Image', 'Image Only'].map((t) =>
+          `<option ${t === m.cardType ? 'selected' : ''}>${t}</option>`).join('')}</select>`)}
+        ${f('Title', inp('title', m.title))}
+        ${f('Body', ta('body', m.body, 80))}
+        ${f('Link', inp('link', m.link))}`;
+
+      case 'webhook': return `
+        ${f('Method', `<select class="bz-select" data-msg="method">${['POST', 'PUT', 'GET', 'DELETE'].map((t) =>
+          `<option ${t === m.method ? 'selected' : ''}>${t}</option>`).join('')}</select>`)}
+        ${f('URL', inp('url', m.url))}
+        ${f('Headers', ta('headers', m.headers, 60))}
+        ${f('Request body', ta('payload', m.payload, 110), 'Liquid is rendered before the request is sent.')}`;
+
+      case 'banner': return `
+        ${f('Placement', `<select class="bz-select" data-msg="placement">${['home_top', 'home_feed_inline', 'account_sidebar'].map((t) =>
+          `<option ${t === m.placement ? 'selected' : ''}>${t}</option>`).join('')}</select>`,
+          'Placements are defined under Settings → Banners Placements, then chosen here.')}
+        ${f('Banner HTML', ta('html', m.html, 120))}`;
+
+      case 'line': return `
+        ${f('Message type', `<select class="bz-select" data-msg="messageType">${['Text', 'Sticker', 'Image', 'Rich Menu'].map((t) =>
+          `<option ${t === m.messageType ? 'selected' : ''}>${t}</option>`).join('')}</select>`)}
+        ${f('Message', ta('body', m.body, 100))}`;
+
+      case 'featureflag': return `
+        ${f('Flag key', inp('flagKey', m.flagKey))}
+        ${f('Rollout (%)', `<input class="bz-input" type="number" data-msg="rollout" value="${m.rollout}" min="0" max="100">`)}
+        ${f('State', `<label class="bz-checkline"><input type="checkbox" data-msg-bool="enabled" ${m.enabled ? 'checked' : ''}><span>Enabled</span></label>`)}`;
+
+      default: return '';
+    }
+  }
+
+  /* Apply a form edit to the message object. */
+  function applyEdit(m, el) {
+    const k = el.dataset.msg;
+    if (k) {
+      let v = el.type === 'number' ? Number(el.value) : el.value;
+      if (k === '_btn0') { m.buttons = m.buttons || [{}]; m.buttons[0].text = v; return; }
+      if (k === '_vars') { m.variables = String(v).split('\n').map((s) => s.trim()).filter(Boolean); return; }
+      m[k] = v;
+      return;
+    }
+    if (el.dataset.msgPlat) {
+      const p = el.dataset.msgPlat;
+      m.platforms = el.checked ? Array.from(new Set(m.platforms.concat([p]))) : m.platforms.filter((x) => x !== p);
+      return;
+    }
+    if (el.dataset.msgBool) m[el.dataset.msgBool] = el.checked;
+  }
+
+  return { CHANNELS, EMAIL_MODES, HTML_SOURCES, channel, newMessage, pickerHtml, emailModeHtml, htmlSourceHtml, preview, composerForm, applyEdit };
+})();
+
+window.BZCompose = BZCompose;
+
+
 /* ===== js/operator.js ===== */
 /* ==========================================================================
    BrazeAI Operator — the in-product assistant
@@ -4223,13 +5597,20 @@ const BZOperator = (function () {
       <p>Using an Action Path where an Audience Path belongs inserts an invisible multi-day delay and nobody can work out why the next message is late.</p>
       <p><strong>Rule:</strong> never put a long Action Path window <em>before</em> your primary message. Branch after the value is delivered.</p>` },
 
-    { keys: ['and', 'or', 'filter', 'anded', 'combine', 'both'], t: 'Why filters are ANDed', a: `
-      <p>The segment builder joins every filter with <strong>AND</strong>. There is no OR between rows — this surprises everyone coming from SQL.</p>
-      <p>You get OR three ways:</p>
-      <ol><li><strong>"is any of"</strong> on a single filter — an OR across values. <code>tier is any of [Gold, Platinum]</code> is <em>one</em> row.</li>
-      <li><strong>Audience Paths</strong> in a Canvas — each path its own filter set, first match wins.</li>
-      <li><strong>Separate segments</strong> and separate campaigns.</li></ol>
-      <p class="bz-small">Two rows saying <code>tier = Gold</code> and <code>tier = Platinum</code> gives you <strong>zero</strong> — nobody is both. Read your filters aloud with "and" between each line.</p>` },
+    { keys: ['and', 'or', 'filter', 'anded', 'combine', 'both', 'filter group', 'boolean'], t: 'AND / OR and filter groups', a: `
+      <p>Braze's <strong>Segment Builder 2.0</strong> supports nested boolean logic:</p>
+      <ul><li><strong>Within a filter group</strong>, filters join with <strong>AND</strong> or <strong>OR</strong>.</li>
+      <li><strong>Between filter groups</strong>, groups join with <strong>AND</strong> or <strong>OR</strong>.</li></ul>
+      <p>So "Gold or Platinum members <em>who also</em> have a stay in the next 7 days" is two groups:</p>
+      <pre><code>( tier = Gold  OR  tier = Platinum )
+        AND
+( next_stay_date in next 7 days )</code></pre>
+      <div class="bz-op__did" style="border-left-color:#B26A00;background:#FDF1DD;color:#7A4A00">
+        <b>Outdated advice you will still hear</b>
+        Plenty of blog posts and older training say "Braze segments are AND-only, use Audience Paths for OR". That described the legacy builder. It is no longer true — but a colleague repeating it is not being careless, it was correct for years.
+      </div>
+      <p><strong>Still worth knowing:</strong> a multi-value operator like <code>is any of</code> is usually cleaner than an OR group. <code>tier is any of [Gold, Platinum]</code> is one row and reads better than two rows joined by OR.</p>
+      <p class="bz-small">On any segment screen, click a join badge to flip it between AND and OR and watch the count move.</p>` },
 
     { keys: ['conversion', 'window', 'attribution', 'how long'], t: 'Conversion events and windows', a: `
       <p>A conversion event is your success metric: did the recipient do the thing within N of <em>receiving</em> the message. Up to four; the first is primary.</p>
@@ -4514,9 +5895,10 @@ Promotions &amp; Offers is subscribed</code></pre>
   /* Leave-one-out: which single filter is costing the most audience? This is
      the answer to "my segment went to zero and I do not know why", which is
      otherwise a genuinely tedious thing to debug by hand.                    */
-  function constraintReport(filters) {
+  function constraintReport(spec) {
+    const filters = S.flat(spec);
     if (filters.length < 2) return '';
-    const full = S.count(filters);
+    const full = S.count(spec);
     const drops = filters.map((f, i) => ({
       f, n: S.count(filters.filter((_, j) => j !== i)),
     })).sort((a, b) => b.n - a.n);
@@ -4580,15 +5962,15 @@ Promotions &amp; Offers is subscribed</code></pre>
         id: U.uid('seg'), _userCreated: true, createdBy: 'BrazeAI Operator', tags: ['operator'],
         name: raw.replace(/^(build|create|make|set up|give me)\s+(me\s+)?(a\s+)?(segment|audience)\s*(of|for|with)?\s*/i, '').trim().slice(0, 60) || 'Operator segment',
         description: 'Built by the Operator from: "' + raw.trim() + '"',
-        filters,
+        groups: [{ join: 'AND', filters }], groupJoin: 'AND',
       };
       window.BZ.segments.push(seg); U.Store.save();
-      const r = S.reach(filters), rr = S.reachability(filters);
+      const r = S.reach(seg), rr = S.reachability(seg);
       location.hash = '#/segments/' + seg.id;
       return say(`<p>Built it — <strong>${U.num(r.count)} users</strong> match${r.count ? `, ${U.num(rr.email)} email-reachable` : ''}.</p>
         ${r.count === 0 ? '<p>That is an empty audience, which is worth understanding rather than just loosening at random.</p>' : ''}
         <p><strong>Why these filters:</strong></p><ul>${why.map((w) => `<li>${w}</li>`).join('')}</ul>
-        ${r.count < 15 ? constraintReport(filters) : ''}
+        ${r.count < 15 ? constraintReport(seg) : ''}
         <p class="bz-small">Every row is ANDed. Adjust or delete rows on the screen and the count updates live.</p>`,
         `Created segment <strong>${U.esc(seg.name)}</strong> with ${filters.length} filter${filters.length > 1 ? 's' : ''} and opened it.`);
     }
@@ -4600,7 +5982,7 @@ Promotions &amp; Offers is subscribed</code></pre>
       if (!filters.length) return say(`<p>I could not tell what to filter on. Try <em>"add a filter for app users"</em> or <em>"add a filter for points over 5000"</em>.</p>`);
       c.segment.filters.push.apply(c.segment.filters, filters);
       c.segment._edited = true; U.Store.save(); window.BZApp.render();
-      const r = S.reach(c.segment.filters);
+      const r = S.reach(c.segment);
       return say(`<p>Added. The segment is now <strong>${U.num(r.count)} users</strong>.</p><ul>${why.map((w) => `<li>${w}</li>`).join('')}</ul>`,
         `Added ${filters.length} filter${filters.length > 1 ? 's' : ''} to <strong>${U.esc(c.segment.name)}</strong>.`);
     }
@@ -4627,8 +6009,8 @@ Promotions &amp; Offers is subscribed</code></pre>
     if (/(why|which).{0,30}(empty|zero|no users|nobody|too small|so small|dropped|shrunk|killing|constraint)/.test(q) ||
         /which filter/.test(q)) {
       if (!c.segment) return say('<p>Open the segment and ask again — I diagnose whatever is on screen. <a href="#/segments">Segments →</a></p>');
-      const r = S.reach(c.segment.filters);
-      const rep = constraintReport(c.segment.filters);
+      const r = S.reach(c.segment);
+      const rep = constraintReport(c.segment);
       return say(`<p><strong>${U.esc(c.segment.name)}</strong> currently matches <strong>${U.num(r.count)}</strong> of ${U.num(r.total)} profiles.</p>
         ${rep || '<p>No single filter is the culprit — the rows are each doing modest work and the combination is simply narrow.</p>'}
         <p class="bz-small">In production the other two causes are worth checking before you touch the filters: a campaign moved people out legitimately (they booked, so their <code>last_stay_date</code> is recent now), or an attribute stopped arriving — nulls fail date comparisons silently, so profiles drop out without any error.</p>`);
@@ -4639,7 +6021,7 @@ Promotions &amp; Offers is subscribed</code></pre>
       const cp = c.campaign;
       const seg = window.BZ.segments.find((s) => s.id === cp.segmentId);
       const tpl = window.BZ.templates.find((t) => t.id === cp.templateId);
-      const rr = seg ? S.reachability(seg.filters) : { total: 0, email: 0, push: 0, sms: 0 };
+      const rr = seg ? S.reachability(seg) : { total: 0, email: 0, push: 0, sms: 0 };
       const lint = tpl ? window.BZLiquid.lint(tpl.body + '\n' + tpl.subject) : [];
       const rows = [
         [!!cp.conversionEvents.length, 'Conversion event set'],
@@ -4971,52 +6353,107 @@ window.BZOperator = BZOperator;
   const S = window.BZSeg;
 
   U.Store.load();
+  /* Segments restored from a previous session may predate the filter-group
+     model, so migrate again after loading. */
+  window.BZ.segments.forEach(S.upgrade);
 
   /* ---------- navigation ---------------------------------------------------- */
 
+  /* Mirrors the live rail: Quick links, then the eight top-level items.
+     Sub-items expand in place, which is how Braze's stacked nav behaves.     */
+  const QUICK = [
+    { route: 'canvases',  icon: '🗺', label: 'Canvas' },
+    { route: 'campaigns', icon: '📣', label: 'Campaigns' },
+    { route: 'segments',  icon: '🎯', label: 'Segments' },
+  ];
+
   const NAV = [
-    { group: null, items: [{ route: 'home', icon: '🏠', label: 'Home' }] },
-    { group: 'Messaging', items: [
-      { route: 'campaigns', icon: '📣', label: 'Campaigns' },
-      { route: 'canvases',  icon: '🗺️', label: 'Canvases' },
-      { route: 'templates', icon: '✉️', label: 'Email Templates' },
-      { route: 'blocks',    icon: '🧩', label: 'Content Blocks' },
+    { route: 'home', icon: '🏠', label: 'Home' },
+    { route: 'ai-decisioning', icon: '✨', label: 'AI Decisioning' },
+    { route: 'agent-console', icon: '🤖', label: 'Agent Console' },
+    { id: 'messaging', icon: '📣', label: 'Messaging', children: [
+      { route: 'campaigns', label: 'Campaigns' },
+      { route: 'canvases', label: 'Canvases' },
+      { route: 'feature-flags', label: 'Feature Flags' },
     ]},
-    { group: 'Audience', items: [
-      { route: 'segments',      icon: '🎯', label: 'Segments' },
-      { route: 'users',         icon: '👤', label: 'Search Users' },
-      { route: 'catalogs',      icon: '📚', label: 'Catalogs' },
-      { route: 'subscriptions', icon: '📬', label: 'Subscription Groups' },
+    { id: 'audience', icon: '👥', label: 'Audience', children: [
+      { route: 'segments', label: 'Segments' },
+      { route: 'users', label: 'Search Users' },
+      { route: 'subscriptions', label: 'Subscription Group Management' },
+      { route: 'suppression', label: 'Suppression Lists' },
     ]},
-    { group: 'Analytics', items: [
-      { route: 'analytics', icon: '📊', label: 'Overview' },
+    { id: 'content', icon: '🎨', label: 'Content', children: [
+      { route: 'templates', label: 'Templates' },
+      { route: 'blocks', label: 'Content Blocks' },
+      { route: 'media', label: 'Media Library' },
+      { route: 'catalogs', label: 'Catalogs' },
+      { route: 'promos', label: 'Promotion Codes' },
     ]},
-    { group: 'Data Settings', items: [
-      { route: 'data', icon: '🗄️', label: 'Custom Data' },
+    { id: 'analytics', icon: '📊', label: 'Analytics', children: [
+      { route: 'analytics', label: 'Dashboards' },
+      { route: 'report-builder', label: 'Report Builder' },
     ]},
-    { group: 'Learning', items: [
-      { route: 'learn', icon: '🎓', label: 'Case Studies' },
+    { id: 'partners', icon: '🔌', label: 'Partner Integrations', children: [
+      { route: 'currents', label: 'Currents' },
+      { route: 'data-export', label: 'Data Export' },
     ]},
   ];
 
+  /* Data Settings and Settings are not top-level rail items in the live
+     product; they hang off the workspace/settings affordance.               */
+  const SETTINGS_NAV = [
+    { id: 'datasettings', icon: '🗄', label: 'Data Settings', children: [
+      { route: 'data', label: 'Custom Attributes & Events' },
+      { route: 'products', label: 'Products' },
+    ]},
+    { id: 'learn', icon: '🎓', label: 'Learning', children: [
+      { route: 'learn', label: 'Case Studies' },
+    ]},
+  ];
+
+  const ROUTE_PARENT = {};
+  NAV.concat(SETTINGS_NAV).forEach((g) => (g.children || []).forEach((c) => { ROUTE_PARENT[c.route] = g.id; }));
+
+  let navOpen = {};
+
   function navHtml(active) {
+    const parent = ROUTE_PARENT[active];
+    const group = (g) => {
+      if (!g.children) {
+        return `<a class="bz-nav__item ${g.route === active ? 'is-active' : ''}" href="#/${g.route}" style="text-decoration:none">
+          <span class="bz-nav__icon">${g.icon}</span>${U.esc(g.label)}</a>`;
+      }
+      const open = navOpen[g.id] !== undefined ? navOpen[g.id] : parent === g.id;
+      return `<button class="bz-nav__item ${parent === g.id ? 'is-parent' : ''}" data-navgroup="${g.id}">
+          <span class="bz-nav__icon">${g.icon}</span>${U.esc(g.label)}
+          <span class="bz-spacer"></span><span class="bz-nav__caret">${open ? '▾' : '▸'}</span>
+        </button>
+        ${open ? `<div class="bz-nav__sub">${g.children.map((c) =>
+          `<a class="bz-nav__subitem ${c.route === active ? 'is-active' : ''}" href="#/${c.route}" style="text-decoration:none">${U.esc(c.label)}</a>`
+        ).join('')}</div>` : ''}`;
+    };
+
     return `
-      <div class="bz-nav__brand">
-        <div class="bz-nav__logo">b</div>
-        <div class="bz-nav__brandname">braze</div>
-      </div>
+      <div class="bz-nav__collapse"><button class="bz-nav__collapsebtn" title="Collapse panel">⇤</button></div>
       <div class="bz-workspace">
-        <div class="bz-workspace__label">Workspace</div>
-        <div class="bz-workspace__name">${U.esc(window.BZ.workspace.name)} <span class="bz-muted">▾</span></div>
+        <div class="bz-workspace__ring"></div>
+        <div style="min-width:0">
+          <div class="bz-workspace__name">${U.esc(window.BZ.workspace.company)}</div>
+        </div>
+        <span class="bz-muted">▾</span>
       </div>
-      ${NAV.map((g) => `
-        <div class="bz-nav__group">
-          ${g.group ? `<div class="bz-nav__grouptitle">${U.esc(g.group)}</div>` : ''}
-          ${g.items.map((i) => `<a class="bz-nav__item ${i.route === active ? 'is-active' : ''}" href="#/${i.route}" style="text-decoration:none">
-            <span class="bz-nav__icon">${i.icon}</span>${U.esc(i.label)}</a>`).join('')}
-        </div>`).join('')}
-      <div class="bz-nav__foot">
-        <button class="bz-btn bz-btn--sm bz-btn--ghost" data-act="reset-store" style="width:100%">↺ Reset sandbox data</button>
+      <div class="bz-nav__group">
+        <div class="bz-nav__grouptitle">Quick links</div>
+        ${QUICK.map((q) => `<a class="bz-nav__item" href="#/${q.route}" style="text-decoration:none">
+          <span class="bz-nav__icon">${q.icon}</span>${U.esc(q.label)}</a>`).join('')}
+      </div>
+      <div class="bz-nav__divider"></div>
+      <div class="bz-nav__group">${NAV.map(group).join('')}</div>
+      <div class="bz-nav__divider"></div>
+      <div class="bz-nav__group">${SETTINGS_NAV.map(group).join('')}</div>
+      <div class="bz-nav__brandpanel">
+        <span class="bz-nav__wordmark">braze</span>
+        <button class="bz-btn bz-btn--sm bz-btn--ghost" data-act="reset-store" style="color:#fff;opacity:.75">↺ Reset sandbox data</button>
       </div>`;
   }
 
@@ -5090,28 +6527,101 @@ window.BZOperator = BZOperator;
   /* CAMPAIGNS                                                                */
   /* ======================================================================== */
 
+  /* Campaign list filters — mirrors the Status / Tag / Filters / Columns row
+     on the real Campaigns screen.                                            */
+  let cmpFilter = { status: 'Active', tag: '', q: '', bannerDismissed: false };
+
+  const CAMPAIGN_STATUSES = ['Active', 'Idle', 'Draft', 'Stopped', 'Archived'];
+
+  function allCampaignTags() {
+    const set = new Set();
+    window.BZ.campaigns.forEach((c) => (c.tags || []).forEach((t) => set.add(t)));
+    return Array.from(set).sort();
+  }
+
   function viewCampaigns() {
-    const rows = window.BZ.campaigns.map((c) => {
-      const seg = window.BZ.segments.find((s) => s.id === c.segmentId);
+    const all = window.BZ.campaigns;
+    const list = all.filter((c) => {
+      if (cmpFilter.status && c.status !== cmpFilter.status.toLowerCase()) return false;
+      if (cmpFilter.tag && !(c.tags || []).includes(cmpFilter.tag)) return false;
+      if (cmpFilter.q && !c.name.toLowerCase().includes(cmpFilter.q.toLowerCase())) return false;
+      return true;
+    });
+
+    const idleCount = all.filter((c) => c.status === 'idle').length;
+
+    const rows = list.map((c) => {
+      const tags = c.tags || [];
+      const shown = tags.slice(0, 5);
       return `<tr class="is-clickable" data-go="#/campaigns/${c.id}">
-        <td><div class="bz-table__name">${U.esc(c.name)}</div>
-            <div class="bz-table__meta">${c.tags.map((t) => `<span class="bz-tag">${U.esc(t)}</span>`).join('')}</div></td>
+        <td>
+          <a class="bz-table__name" href="#/campaigns/${c.id}" style="text-decoration:underline">${U.esc(c.name)}</a>
+          <div class="bz-tagrow">
+            ${shown.map((t) => `<span class="bz-tag">${U.esc(t)}</span>`).join('')}
+            ${tags.length > shown.length ? '<span class="bz-tag">…</span>' : ''}
+          </div>
+        </td>
         <td>${U.statusChip(c.status)}</td>
-        <td>${U.esc(c.channels.join(', '))}</td>
-        <td class="bz-small">${U.esc(c.deliveryType.replace('_', '-'))}</td>
-        <td class="bz-small">${U.esc(seg ? seg.name : '—')}</td>
+        <td class="bz-small bz-nowrap">${c.stopDate ? U.esc(new Date(c.stopDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })) : ''}</td>
+        <td><span class="bz-typepill">${campaignTypeIcon(c.campaignType)} ${U.esc(c.campaignType || 'Email')}</span></td>
+        <td class="bz-small bz-nowrap">${U.esc(c.entrySchedule || '—')}</td>
         <td class="bz-nowrap">${U.num(c.stats.sent)}</td>
-        <td class="bz-nowrap">${c.stats.sent ? U.pct(c.stats.opens, c.stats.sent) : '—'}</td>
-        <td class="bz-nowrap">${c.stats.sent ? U.pct(c.stats.conversions, c.stats.sent) : '—'}</td>
-        <td class="bz-small bz-muted bz-nowrap">${U.relTime(c.updated)}</td>
       </tr>`;
     }).join('');
 
-    return page('Campaigns', 'A campaign is one message. If it has a wait in it, build a Canvas instead.',
-      '<button class="bz-btn bz-btn--primary bz-btn--sm" data-act="new-campaign">+ Create Campaign</button>', `
+    return page('Campaigns', '', '<button class="bz-btn bz-btn--primary bz-btn--sm" data-act="new-campaign">+ Create Campaign</button>', `
+      ${idleCount && !cmpFilter.bannerDismissed ? `<div class="bz-banner">
+        <span class="bz-banner__ico">!</span>
+        <span>You have ${idleCount} active campaign${idleCount > 1 ? 's' : ''} that haven't sent messages in some time.
+          <a href="#/campaigns" data-act="show-idle">Show idle campaigns</a></span>
+        <button data-act="dismiss-banner" aria-label="Dismiss">✕</button>
+      </div>` : ''}
+
+      <h1 style="font-size:26px;margin:0 0 18px;letter-spacing:-.4px">Campaigns
+        <span class="bz-viewonly">👁 View Only</span></h1>
+
+      <div class="bz-listbar">
+        <div class="bz-listbar__f">
+          <label class="bz-label">Status</label>
+          <select class="bz-select" data-cf="status">
+            <option value="">All</option>
+            ${CAMPAIGN_STATUSES.map((s) => `<option ${s === cmpFilter.status ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="bz-listbar__f">
+          <label class="bz-label">Tag</label>
+          <select class="bz-select" data-cf="tag">
+            <option value="">Select…</option>
+            ${allCampaignTags().map((t) => `<option ${t === cmpFilter.tag ? 'selected' : ''}>${U.esc(t)}</option>`).join('')}
+          </select>
+        </div>
+        <button class="bz-btn" data-act="cmp-filters">⚙ Filters</button>
+        <button class="bz-btn" data-act="cmp-columns">▥ Columns</button>
+        <div class="bz-listbar__search">
+          <input class="bz-input" data-cf="q" value="${U.esc(cmpFilter.q)}" placeholder="Search">
+          <button class="bz-btn">🔍</button>
+        </div>
+      </div>
+
+      <div class="bz-appliedchips">
+        ${cmpFilter.status ? `<span class="bz-appliedchip">Status: ${U.esc(cmpFilter.status)}<button data-act="clear-status">✕</button></span>` : ''}
+        ${cmpFilter.tag ? `<span class="bz-appliedchip">Tag: ${U.esc(cmpFilter.tag)}<button data-act="clear-tag">✕</button></span>` : ''}
+      </div>
+
+      <div class="bz-results">${U.num(list.length)} Result${list.length === 1 ? '' : 's'}</div>
+
       <div class="bz-card"><div class="bz-tablewrap"><table class="bz-table">
-        <thead><tr><th>Name</th><th>Status</th><th>Channels</th><th>Delivery</th><th>Audience</th><th>Sent</th><th>Open</th><th>Conv</th><th>Updated</th></tr></thead>
-        <tbody>${rows}</tbody></table></div></div>`);
+        <thead><tr>
+          <th>Name</th><th>Status</th><th>Stop date ⓘ ⇅</th>
+          <th>Campaign type</th><th>Entry schedule</th><th>Sent ⇅</th>
+        </tr></thead>
+        <tbody>${rows || '<tr><td colspan="6" class="bz-muted">No campaigns match these filters.</td></tr>'}</tbody>
+      </table></div></div>`);
+  }
+
+  function campaignTypeIcon(t) {
+    return ({ Email: '✉', Multichannel: '◫', 'Content Card': '▤', 'Push Notification': '🔔',
+      'SMS/MMS': '💬', WhatsApp: '🟢', 'In-App Message': '▣', Webhook: '🔗' })[t] || '✉';
   }
 
   function viewCampaign(id, tab) {
@@ -5125,7 +6635,7 @@ window.BZOperator = BZOperator;
 
     let body;
     if (tab === 'setup') {
-      const reach = seg ? S.reachability(seg.filters) : null;
+      const reach = seg ? S.reachability(seg) : null;
       body = `
         <div class="bz-grid bz-grid--2">
           <div class="bz-card">
@@ -5246,130 +6756,250 @@ window.BZOperator = BZOperator;
 
   let wizard = null;
 
-  function openWizard() {
-    wizard = { step: 1, name: '', channel: 'Email', templateId: window.BZ.templates[0].id,
-      segmentId: 'seg-all', deliveryType: 'scheduled', trigger: 'booking_started', delay: '4 hours',
+  function blankWizard() {
+    return {
+      step: 0,                 // 0 = choose message type, 1..5 = the wizard
+      channelId: null,         // email | push | sms | whatsapp | inapp | ...
+      message: null,           // per-channel message object from BZCompose
+      design: null,            // drag & drop design when mode === 'dragdrop'
+      name: '',
+      tags: [],
+      segmentId: 'seg-all',
+      deliveryType: 'scheduled', trigger: 'booking_started', delay: '4 hours',
       exception: 'booking_completed', schedule: 'One-time · tomorrow 09:00 local',
-      conv: 'booking_completed', convWindow: '72 hours' };
+      conv: 'booking_completed', convWindow: '72 hours',
+    };
+  }
+
+  function openWizard() {
+    wizard = blankWizard();
+    window.BZEmailBuilder.reset();
     location.hash = '#/campaigns/new';
   }
 
-  function viewWizard() {
-    const w = wizard || (wizard = { step: 1, name: '', channel: 'Email', templateId: window.BZ.templates[0].id, segmentId: 'seg-all', deliveryType: 'scheduled', trigger: 'booking_started', delay: '4 hours', exception: 'booking_completed', schedule: 'One-time · tomorrow 09:00 local', conv: 'booking_completed', convWindow: '72 hours' });
-    const steps = ['Compose', 'Target Audience', 'Delivery', 'Conversion Events', 'Review & Deploy'];
-    const seg = window.BZ.segments.find((s) => s.id === w.segmentId);
-    const reach = seg ? S.reachability(seg.filters) : null;
+  /* Turn the current wizard message into renderable HTML/text for preview. */
+  function wizardBodyHtml(w) {
+    if (w.channelId !== 'email') return '';
+    if (w.message.mode === 'dragdrop' && w.design) return window.BZEmailBuilder.compile(w.design);
+    return w.message.body || '';
+  }
 
-    const stepsBar = `<div class="bz-steps">${steps.map((s, i) => `
+  const WIZ_STEPS = ['Compose', 'Target Audience', 'Delivery', 'Conversion Events', 'Review & Deploy'];
+
+  function viewWizard() {
+    const w = wizard || (wizard = blankWizard());
+
+    /* ---- Step 0: choose the message type ------------------------------- */
+    if (w.step === 0 || !w.channelId) {
+      return page('Create Campaign', 'Choose a message type. This decides the composer and cannot be changed later.',
+        '<a class="bz-btn bz-btn--sm" href="#/campaigns">Cancel</a>', `
+        <div style="max-width:1000px">
+          <div class="bz-field" style="max-width:460px">
+            <label class="bz-label">Campaign name</label>
+            <input class="bz-input" data-w="name" value="${U.esc(w.name)}" placeholder="e.g. August Eilat fill — families">
+            <div class="bz-hint">Teams name campaigns so they sort usefully in a list of 800. A convention like
+              <code>Market_Audience_Offer_YYYYMM</code> beats a description every time.</div>
+          </div>
+          ${window.BZCompose.pickerHtml(w.channelId)}
+        </div>`);
+    }
+
+    const ch = window.BZCompose.channel(w.channelId);
+    const seg = window.BZ.segments.find((s) => s.id === w.segmentId);
+    const reach = seg ? S.reachability(seg) : null;
+    const user = window.BZ.userById('AUR-100000');
+
+    const stepsBar = `<div class="bz-steps">${WIZ_STEPS.map((s, i) => `
       ${i ? '<div class="bz-step__sep"></div>' : ''}
       <div class="bz-step ${w.step === i + 1 ? 'is-active' : ''} ${w.step > i + 1 ? 'is-done' : ''}" data-wstep="${i + 1}">
         <div class="bz-step__num">${w.step > i + 1 ? '✓' : i + 1}</div>
         <div class="bz-step__label">${s}</div>
       </div>`).join('')}</div>`;
 
-    let body = '';
+    const navRow = `<div class="bz-row bz-mt24">
+        <button class="bz-btn" data-w-nav="-1">← Back</button>
+        <div class="bz-spacer"></div>
+        <a class="bz-btn" href="#/campaigns">Cancel</a>
+        ${w.step < 5 ? '<button class="bz-btn bz-btn--primary" data-w-nav="1">Next →</button>'
+                     : '<button class="bz-btn bz-btn--primary" data-w-nav="save">Launch campaign</button>'}
+      </div>`;
+
+    const topbar = `<div class="bz-topbar">
+        <a href="#/campaigns" class="bz-btn bz-btn--ghost bz-btn--sm">←</a>
+        <div><div class="bz-topbar__title">${U.esc(w.name || 'Untitled campaign')}</div>
+          <div class="bz-topbar__sub">${ch.icon} ${U.esc(ch.label)}</div></div>
+        <div class="bz-topbar__spacer"></div>
+        <button class="bz-btn bz-btn--sm" data-w-nav="0">Change message type</button>
+      </div>`;
+
+    /* ---- Step 1: Compose ------------------------------------------------ */
     if (w.step === 1) {
-      body = `<div class="bz-card"><div class="bz-card__body" style="max-width:640px">
-        <div class="bz-field"><label class="bz-label">Campaign name</label>
-          <input class="bz-input" data-w="name" value="${U.esc(w.name)}" placeholder="e.g. August Eilat fill — families"></div>
-        <div class="bz-field"><label class="bz-label">Channel</label>
-          <div class="bz-radiocards">${['Email', 'Push', 'SMS', 'In-App Message'].map((c) => `
-            <label class="bz-radiocard ${w.channel === c ? 'is-selected' : ''}">
-              <input type="radio" name="ch" data-w="channel" value="${c}" ${w.channel === c ? 'checked' : ''}>
-              <div><div class="bz-radiocard__title">${c}</div>
-              <div class="bz-radiocard__desc">${{
-                Email: 'Highest reach, richest creative, easiest to measure.',
-                Push: 'Immediate but app-only, and easy to over-use.',
-                SMS: 'Very high open rate, high cost, strictest consent rules.',
-                'In-App Message': 'Only reaches users who open the app. Cannot be pushed.',
-              }[c]}</div></div>
-            </label>`).join('')}</div></div>
-        <div class="bz-field"><label class="bz-label">Template</label>
-          <select class="bz-select" data-w="templateId">
-            ${window.BZ.templates.map((t) => `<option value="${t.id}" ${t.id === w.templateId ? 'selected' : ''}>${U.esc(t.name)}</option>`).join('')}
-          </select></div>
-      </div></div>`;
-    } else if (w.step === 2) {
-      body = `<div class="bz-card"><div class="bz-card__body" style="max-width:760px">
-        <div class="bz-field"><label class="bz-label">Target segment</label>
-          <select class="bz-select" data-w="segmentId">
-            ${window.BZ.segments.map((s) => `<option value="${s.id}" ${s.id === w.segmentId ? 'selected' : ''}>${U.esc(s.name)}</option>`).join('')}
-          </select></div>
-        ${reach ? `<div class="bz-audiencebar bz-mb16">
-          <div class="bz-audiencebar__num">${U.num(reach.total)}</div>
-          <div><div style="font-weight:700">users match</div><div class="bz-small bz-muted">${U.esc(seg.description)}</div></div>
+      /* Email: pick a build mode first, exactly as Braze does. */
+      if (w.channelId === 'email' && !w.message.mode) {
+        return `${topbar}<div class="bz-content">${stepsBar}
+          <div style="max-width:760px">
+            <h2 style="font-size:18px;margin:0 0 6px">How would you like to build your email?</h2>
+            <p class="bz-muted bz-small bz-mb16">You can move from Drag &amp; Drop to HTML later, but not back.</p>
+            ${window.BZCompose.emailModeHtml()}
+          </div>
+          ${navRow}</div>`;
+      }
+
+      /* Email · Drag & Drop — full-bleed builder */
+      if (w.channelId === 'email' && w.message.mode === 'dragdrop') {
+        if (!w.design) w.design = window.BZEmailBuilder.starterDesign('starter');
+        return `${topbar}
+          <div style="padding:14px 26px 0">${stepsBar}${emailHeaderFields(w)}</div>
+          <div style="flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid var(--bz-line)">
+            ${window.BZEmailBuilder.view(w.design)}
+          </div>
+          <div class="bz-wizfoot">
+            <div class="bz-row">
+              <button class="bz-btn bz-btn--sm" data-act="eb-preview">👁 Preview &amp; Test</button>
+              <button class="bz-btn bz-btn--sm" data-act="eb-tohtml">Convert to HTML editor</button>
+              <div class="bz-spacer"></div>
+              <button class="bz-btn" data-w-nav="-1">← Back</button>
+              <button class="bz-btn bz-btn--primary" data-w-nav="1">Next →</button>
+            </div>
+          </div>`;
+      }
+
+      /* Email · HTML or Template */
+      if (w.channelId === 'email') {
+        const r = U.renderLiquid(w.message.body, user, {});
+        return `${topbar}<div class="bz-content">${stepsBar}
+          ${emailHeaderFields(w)}
+          ${w.message.mode === 'template' ? `<div class="bz-field" style="max-width:460px">
+            <label class="bz-label">Start from template</label>
+            <select class="bz-select" data-w-tpl="1">
+              <option value="">— choose —</option>
+              ${window.BZ.templates.map((t) => `<option value="${t.id}" ${t.id === w.message.templateId ? 'selected' : ''}>${U.esc(t.name)}</option>`).join('')}
+            </select>
+            <div class="bz-hint">Editing here does not change the saved template. To push changes back you have to update the template itself.</div>
+          </div>` : ''}
+          <div class="bz-grid bz-grid--2" style="align-items:start">
+            <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">Body HTML</div></div>
+              <div class="bz-card__body"><textarea class="bz-textarea" data-msg="body" style="min-height:420px">${U.esc(w.message.body)}</textarea></div></div>
+            <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">Preview — ${U.esc(user.first_name + ' ' + user.last_name)}</div></div>
+              <div class="bz-card__body">
+                ${r.errors.length ? `<div class="bz-liqerr">${U.esc(r.errors.join('\n'))}</div>` : ''}
+                ${r.warnings.length ? `<div class="bz-liqerr" style="background:var(--bz-amber-soft);border-color:#EBD9B4;color:#7A4A00">Resolved to nothing: ${U.esc(r.warnings.join(', '))}</div>` : ''}
+                <div style="border:1px solid var(--bz-line);border-radius:6px;overflow:auto;max-height:460px">${r.html}</div>
+              </div></div>
+          </div>
+          ${navRow}</div>`;
+      }
+
+      /* Every other channel: form on the left, device preview on the right */
+      return `${topbar}<div class="bz-content">${stepsBar}
+        <div class="bz-grid bz-grid--2" style="align-items:start">
+          <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">${U.esc(ch.label)}</div></div>
+            <div class="bz-card__body">${window.BZCompose.composerForm(w.message)}</div></div>
+          <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">Preview</div>
+            <div class="bz-spacer"></div><span class="bz-small bz-muted">${U.esc(user.first_name)} ${U.esc(user.last_name)}</span></div>
+            <div class="bz-card__body">${window.BZCompose.preview(w.message, user)}</div></div>
         </div>
-        <div class="bz-grid bz-grid--3">
-          ${U.stat('Email reachable', U.num(reach.email))}
-          ${U.stat('Push reachable', U.num(reach.push))}
-          ${U.stat('SMS reachable', U.num(reach.sms))}
-        </div>
-        <div class="bz-hint">${U.esc(seg.filters.map(S.describe).join('  AND  ')) || 'No filters — this targets everyone.'}</div>
-        ${w.channel === 'Push' && reach.push < reach.total * 0.4 ? `<div class="bz-callout bz-callout--warn bz-mt16">
-          <div class="bz-callout__t">Reachability warning</div>
-          <p>Only ${U.num(reach.push)} of ${U.num(reach.total)} are push-reachable. If you promised the stakeholder the segment size, correct it now.</p></div>` : ''}` : ''}
-      </div></div>`;
-    } else if (w.step === 3) {
-      body = `<div class="bz-card"><div class="bz-card__body" style="max-width:700px">
-        <div class="bz-field"><label class="bz-label">Delivery type</label>
-          <div class="bz-radiocards">
-            ${[['scheduled', 'Scheduled', 'Users enter on a time schedule — one-off or recurring. Newsletters, flash sales, monthly statements.'],
-               ['action_based', 'Action-Based', 'Users enter when they perform an event or change an attribute. Abandonment, welcome, post-stay.'],
-               ['api_triggered', 'API-Triggered', 'Your backend calls /campaigns/trigger/send. Use when your system owns the timing and the payload.']].map(([v, t, d]) => `
-              <label class="bz-radiocard ${w.deliveryType === v ? 'is-selected' : ''}">
-                <input type="radio" name="dt" data-w="deliveryType" value="${v}" ${w.deliveryType === v ? 'checked' : ''}>
-                <div><div class="bz-radiocard__title">${t}</div><div class="bz-radiocard__desc">${d}</div></div>
-              </label>`).join('')}
-          </div></div>
-        ${w.deliveryType === 'action_based' ? `
-          <div class="bz-field"><label class="bz-label">Trigger event</label>
-            <select class="bz-select" data-w="trigger">${window.BZ.customEvents.map((e) => `<option ${e.name === w.trigger ? 'selected' : ''}>${e.name}</option>`).join('')}</select></div>
-          <div class="bz-field"><label class="bz-label">Delay after trigger</label>
-            <input class="bz-input" data-w="delay" value="${U.esc(w.delay)}"></div>
-          <div class="bz-field"><label class="bz-label">Exception event (cancels the send)</label>
-            <select class="bz-select" data-w="exception"><option value="">— none —</option>
-              ${window.BZ.customEvents.map((e) => `<option ${e.name === w.exception ? 'selected' : ''}>${e.name}</option>`).join('')}</select>
-            <div class="bz-hint">This is what makes abandonment correct: a guest who completes the booking inside the delay never receives the reminder.</div></div>`
-        : w.deliveryType === 'scheduled' ? `
-          <div class="bz-field"><label class="bz-label">Schedule</label>
-            <input class="bz-input" data-w="schedule" value="${U.esc(w.schedule)}"></div>
-          <label class="bz-checkline"><input type="checkbox" checked><span>Send in the user's local time zone</span></label>
-          <label class="bz-checkline"><input type="checkbox" checked><span>Respect quiet hours (21:00–08:00)</span></label>`
-        : `<div class="bz-callout"><div class="bz-callout__t">API-triggered</div>
-            <p>Braze gives you a campaign id. Your backend posts to <code>/campaigns/trigger/send</code> with <code>trigger_properties</code>, readable in the template as <code>{{api_trigger_properties.\${…}}}</code>.</p>
-            <p class="bz-mono bz-small">POST ${U.esc(window.BZ.workspace.endpoint)}/campaigns/trigger/send</p></div>`}
-      </div></div>`;
-    } else if (w.step === 4) {
-      body = `<div class="bz-card"><div class="bz-card__body" style="max-width:640px">
-        <div class="bz-field"><label class="bz-label">Primary conversion event</label>
-          <select class="bz-select" data-w="conv">${window.BZ.customEvents.map((e) => `<option ${e.name === w.conv ? 'selected' : ''}>${e.name}</option>`).join('')}</select></div>
-        <div class="bz-field"><label class="bz-label">Attribution window</label>
-          <select class="bz-select" data-w="convWindow">
-            ${['1 hour', '24 hours', '72 hours', '5 days', '7 days', '14 days', '30 days'].map((x) => `<option ${x === w.convWindow ? 'selected' : ''}>${x}</option>`).join('')}
-          </select>
-          <div class="bz-hint">Starting points for hospitality: abandonment 72h, win-back 14d, pre-arrival check-in 7d, review request 5d. Whatever you pick, keep it stable across campaigns you want to compare.</div></div>
-        <div class="bz-callout bz-callout--warn"><div class="bz-callout__t">Do not skip this step</div>
-          <p>A campaign with no conversion event can only ever be judged on opens and clicks — which is to say, it cannot be judged at all.</p></div>
-      </div></div>`;
-    } else {
-      const tpl = window.BZ.templates.find((t) => t.id === w.templateId);
-      const checks = [
-        [!!w.name.trim(), 'Campaign has a name'],
-        [!!reach && reach.total > 0, 'Audience resolves to at least one user'],
-        [!!(w.channel !== 'Push' || (reach && reach.push > 0)), 'Audience is reachable on the chosen channel'],
-        [!!w.conv, 'Conversion event is set'],
-        [w.deliveryType !== 'action_based' || !!w.exception, 'Action-based send has an exception event'],
-        [/unsubscribe|aurelia_footer|set_user_to_unsubscribed_url/.test(tpl ? tpl.body : ''), 'Template contains an unsubscribe link'],
-        [/\|\s*default\s*:/.test(tpl ? tpl.body + tpl.subject : ''), 'Personalization has a fallback'],
-      ];
-      body = `<div class="bz-grid bz-grid--2">
+        ${navRow}</div>`;
+    }
+
+    /* ---- Step 2: Target Audience ---------------------------------------- */
+    if (w.step === 2) {
+      return `${topbar}<div class="bz-content">${stepsBar}
+        <div class="bz-card" style="max-width:820px"><div class="bz-card__body">
+          <div class="bz-field"><label class="bz-label">Target segment</label>
+            <select class="bz-select" data-w="segmentId">
+              ${window.BZ.segments.map((s) => `<option value="${s.id}" ${s.id === w.segmentId ? 'selected' : ''}>${U.esc(s.name)}</option>`).join('')}
+            </select></div>
+          ${reach ? `<div class="bz-audiencebar bz-mb16">
+            <div class="bz-audiencebar__num">${U.num(reach.total)}</div>
+            <div><div style="font-weight:700">users match</div><div class="bz-small bz-muted">${U.esc(seg.description)}</div></div>
+          </div>
+          <div class="bz-grid bz-grid--3">
+            ${U.stat('Email reachable', U.num(reach.email))}
+            ${U.stat('Push reachable', U.num(reach.push))}
+            ${U.stat('SMS reachable', U.num(reach.sms))}
+          </div>
+          <div class="bz-hint">${U.esc(S.describeSpec(seg)) || 'No filters — this targets everyone.'}</div>
+          ${channelReachWarning(w, reach)}` : ''}
+        </div></div>
+        ${navRow}</div>`;
+    }
+
+    /* ---- Step 3: Delivery ------------------------------------------------ */
+    if (w.step === 3) {
+      return `${topbar}<div class="bz-content">${stepsBar}
+        <div class="bz-card" style="max-width:760px"><div class="bz-card__body">
+          <div class="bz-field"><label class="bz-label">Delivery type</label>
+            <div class="bz-radiocards">
+              ${[['scheduled', 'Scheduled', 'Users enter on a time schedule — one-off or recurring. Newsletters, flash sales, monthly statements.'],
+                 ['action_based', 'Action-Based', 'Users enter when they perform an event or change an attribute. Abandonment, welcome, post-stay.'],
+                 ['api_triggered', 'API-Triggered', 'Your backend calls /campaigns/trigger/send. Use when your system owns the timing and the payload.']].map(([v, t, d]) => `
+                <label class="bz-radiocard ${w.deliveryType === v ? 'is-selected' : ''}">
+                  <input type="radio" name="dt" data-w="deliveryType" value="${v}" ${w.deliveryType === v ? 'checked' : ''}>
+                  <div><div class="bz-radiocard__title">${t}</div><div class="bz-radiocard__desc">${d}</div></div>
+                </label>`).join('')}
+            </div></div>
+          ${w.deliveryType === 'action_based' ? `
+            <div class="bz-field"><label class="bz-label">Trigger event</label>
+              <select class="bz-select" data-w="trigger">${window.BZ.customEvents.map((e) => `<option ${e.name === w.trigger ? 'selected' : ''}>${e.name}</option>`).join('')}</select></div>
+            <div class="bz-field"><label class="bz-label">Delay after trigger</label>
+              <input class="bz-input" data-w="delay" value="${U.esc(w.delay)}"></div>
+            <div class="bz-field"><label class="bz-label">Exception event (cancels the send)</label>
+              <select class="bz-select" data-w="exception"><option value="">— none —</option>
+                ${window.BZ.customEvents.map((e) => `<option ${e.name === w.exception ? 'selected' : ''}>${e.name}</option>`).join('')}</select>
+              <div class="bz-hint">This is what makes abandonment correct: a guest who completes the booking inside the delay never receives the reminder.</div></div>`
+          : w.deliveryType === 'scheduled' ? `
+            <div class="bz-field"><label class="bz-label">Schedule</label>
+              <input class="bz-input" data-w="schedule" value="${U.esc(w.schedule)}"></div>
+            <label class="bz-checkline"><input type="checkbox" checked><span>Send in the user's local time zone</span></label>
+            <label class="bz-checkline"><input type="checkbox" checked><span>Respect quiet hours (21:00–08:00)</span></label>`
+          : `<div class="bz-callout"><div class="bz-callout__t">API-triggered</div>
+              <p>Braze gives you a campaign id. Your backend posts to <code>/campaigns/trigger/send</code> with <code>trigger_properties</code>, readable in the message as <code>{{api_trigger_properties.\${…}}}</code>.</p>
+              <p class="bz-mono bz-small">POST ${U.esc(window.BZ.workspace.endpoint)}/campaigns/trigger/send</p></div>`}
+        </div></div>
+        ${navRow}</div>`;
+    }
+
+    /* ---- Step 4: Conversion Events --------------------------------------- */
+    if (w.step === 4) {
+      return `${topbar}<div class="bz-content">${stepsBar}
+        <div class="bz-card" style="max-width:660px"><div class="bz-card__body">
+          <div class="bz-field"><label class="bz-label">Primary conversion event</label>
+            <select class="bz-select" data-w="conv">${window.BZ.customEvents.map((e) => `<option ${e.name === w.conv ? 'selected' : ''}>${e.name}</option>`).join('')}</select></div>
+          <div class="bz-field"><label class="bz-label">Attribution window</label>
+            <select class="bz-select" data-w="convWindow">
+              ${['1 hour', '24 hours', '72 hours', '5 days', '7 days', '14 days', '30 days'].map((x) => `<option ${x === w.convWindow ? 'selected' : ''}>${x}</option>`).join('')}
+            </select>
+            <div class="bz-hint">Starting points for hospitality: abandonment 72h, win-back 14d, pre-arrival check-in 7d, review request 5d. Keep it stable across campaigns you want to compare.</div></div>
+          <div class="bz-callout bz-callout--warn"><div class="bz-callout__t">Do not skip this step</div>
+            <p>A campaign with no conversion event can only ever be judged on opens and clicks — which is to say, it cannot be judged.</p></div>
+        </div></div>
+        ${navRow}</div>`;
+    }
+
+    /* ---- Step 5: Review & Deploy ------------------------------------------ */
+    const bodyForChecks = wizardBodyHtml(w) + ' ' + (w.message.subject || '') + ' ' + (w.message.body || '') + ' ' + (w.message.alert || '');
+    const checks = [
+      [!!w.name.trim(), 'Campaign has a name'],
+      [!!reach && reach.total > 0, 'Audience resolves to at least one user'],
+      [channelReachable(w, reach) > 0, `Audience is reachable on ${ch.label}`],
+      [!!w.conv, 'Conversion event is set'],
+      [w.deliveryType !== 'action_based' || !!w.exception, 'Action-based send has an exception event'],
+      [w.channelId !== 'email' || /unsubscribe|aurelia_footer|set_user_to_unsubscribed_url/i.test(bodyForChecks), 'Email contains an unsubscribe link'],
+      [/\|\s*default\s*:/.test(bodyForChecks) || !/\$\{first_name\}/.test(bodyForChecks), 'Name personalization has a fallback'],
+      [w.channelId !== 'sms' || /stop/i.test(w.message.body || ''), 'SMS carries an opt-out instruction'],
+    ];
+
+    return `${topbar}<div class="bz-content">${stepsBar}
+      <div class="bz-grid bz-grid--2" style="align-items:start">
         <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">Summary</div></div>
           <div class="bz-card__body"><div class="bz-kv">
             <div class="bz-kv__k">Name</div><div class="bz-kv__v">${U.esc(w.name) || '<span class="bz-muted">(unnamed)</span>'}</div>
-            <div class="bz-kv__k">Channel</div><div class="bz-kv__v">${U.esc(w.channel)}</div>
-            <div class="bz-kv__k">Template</div><div class="bz-kv__v">${U.esc(tpl ? tpl.name : '—')}</div>
+            <div class="bz-kv__k">Message type</div><div class="bz-kv__v">${U.esc(ch.label)}</div>
+            ${w.channelId === 'email' ? `<div class="bz-kv__k">Built with</div><div class="bz-kv__v">${U.esc((window.BZCompose.EMAIL_MODES.find((m) => m.id === w.message.mode) || {}).label || '—')}</div>
+            <div class="bz-kv__k">Subject</div><div class="bz-kv__v">${U.esc(w.message.subject)}</div>` : ''}
             <div class="bz-kv__k">Audience</div><div class="bz-kv__v">${U.esc(seg ? seg.name : '—')} · ${reach ? U.num(reach.total) : 0} users</div>
-            <div class="bz-kv__k">Reachable</div><div class="bz-kv__v">${reach ? U.num(w.channel === 'Push' ? reach.push : w.channel === 'SMS' ? reach.sms : reach.email) : 0}</div>
+            <div class="bz-kv__k">Reachable</div><div class="bz-kv__v">${U.num(channelReachable(w, reach))}</div>
             <div class="bz-kv__k">Delivery</div><div class="bz-kv__v">${U.esc(w.deliveryType.replace('_', '-'))}</div>
             <div class="bz-kv__k">Conversion</div><div class="bz-kv__v"><code>${U.esc(w.conv)}</code> within ${U.esc(w.convWindow)}</div>
           </div></div></div>
@@ -5378,21 +7008,48 @@ window.BZOperator = BZOperator;
             ${checks.map(([ok, label]) => `<div class="bz-checkline">
               <span style="color:${ok ? 'var(--bz-green)' : 'var(--bz-red)'};font-weight:800">${ok ? '✓' : '✕'}</span>
               <span>${U.esc(label)}</span></div>`).join('')}
-            <div class="bz-hint">These are the ones a machine can check. The rest of the checklist — links, timing, collisions with other sends — is on you. It is in the QA case study.</div>
+            <div class="bz-hint">These are the ones a machine can check. Links, timing and collisions with other sends are still on you — the full checklist is in the QA case study.</div>
           </div></div>
-      </div>`;
-    }
+      </div>
+      ${w.channelId === 'email' ? `<div class="bz-card bz-mt16">
+        <div class="bz-card__head"><div class="bz-card__title">Rendered preview — ${U.esc(user.first_name)} ${U.esc(user.last_name)}</div></div>
+        <div class="bz-card__body"><div style="max-width:640px;margin:0 auto;border:1px solid var(--bz-line);border-radius:6px;overflow:hidden">
+          ${U.renderLiquid(wizardBodyHtml(w), user, {}).html}
+        </div></div></div>` : `<div class="bz-card bz-mt16">
+        <div class="bz-card__head"><div class="bz-card__title">Rendered preview</div></div>
+        <div class="bz-card__body">${window.BZCompose.preview(w.message, user)}</div></div>`}
+      ${navRow}</div>`;
+  }
 
-    return page('Create Campaign', 'Braze walks you through the same five steps', '', `
-      ${stepsBar}
-      ${body}
-      <div class="bz-row bz-mt24">
-        <button class="bz-btn" data-w-nav="-1" ${w.step === 1 ? 'disabled' : ''}>← Back</button>
-        <div class="bz-spacer"></div>
-        <a class="bz-btn" href="#/campaigns">Cancel</a>
-        ${w.step < 5 ? '<button class="bz-btn bz-btn--primary" data-w-nav="1">Next →</button>'
-                     : '<button class="bz-btn bz-btn--primary" data-w-nav="save">Launch campaign</button>'}
-      </div>`);
+  function emailHeaderFields(w) {
+    return `<div class="bz-grid bz-grid--2 bz-mb16" style="max-width:900px">
+      <div class="bz-field bz-mb0"><label class="bz-label">Subject line</label>
+        <input class="bz-input bz-mono" data-msg="subject" value="${U.esc(w.message.subject)}"></div>
+      <div class="bz-field bz-mb0"><label class="bz-label">Preheader</label>
+        <input class="bz-input bz-mono" data-msg="preheader" value="${U.esc(w.message.preheader)}"></div>
+      <div class="bz-field bz-mb0"><label class="bz-label">From name</label>
+        <input class="bz-input" data-msg="fromName" value="${U.esc(w.message.fromName)}"></div>
+      <div class="bz-field bz-mb0"><label class="bz-label">From address</label>
+        <input class="bz-input" data-msg="fromEmail" value="${U.esc(w.message.fromEmail)}"></div>
+    </div>`;
+  }
+
+  function channelReachable(w, reach) {
+    if (!reach) return 0;
+    if (w.channelId === 'push' || w.channelId === 'inapp' || w.channelId === 'contentcard') return reach.push;
+    if (w.channelId === 'sms' || w.channelId === 'whatsapp') return reach.sms;
+    return reach.email;
+  }
+
+  function channelReachWarning(w, reach) {
+    if (!reach) return '';
+    const n = channelReachable(w, reach);
+    if (n >= reach.total * 0.5) return '';
+    const ch = window.BZCompose.channel(w.channelId);
+    return `<div class="bz-callout bz-callout--warn bz-mt16">
+      <div class="bz-callout__t">Reachability warning</div>
+      <p>Only ${U.num(n)} of ${U.num(reach.total)} are reachable on ${U.esc(ch.label)}.
+      If you already quoted the segment size to a stakeholder, correct it now — reachable is the number that ships.</p></div>`;
   }
 
   /* ======================================================================== */
@@ -5461,10 +7118,10 @@ window.BZOperator = BZOperator;
       <div class="bz-card"><div class="bz-tablewrap"><table class="bz-table">
         <thead><tr><th>Name</th><th>Filters</th><th>Users</th><th>% of base</th><th>Email reachable</th><th>Created by</th></tr></thead>
         <tbody>${window.BZ.segments.map((s) => {
-          const r = S.reach(s.filters), rr = S.reachability(s.filters);
+          const r = S.reach(s), rr = S.reachability(s);
           return `<tr class="is-clickable" data-go="#/segments/${s.id}">
             <td><div class="bz-table__name">${U.esc(s.name)}</div><div class="bz-table__meta">${U.esc(s.description)}</div></td>
-            <td class="bz-small bz-muted">${s.filters.length || '—'}</td>
+            <td class="bz-small bz-muted">${S.flat(s).length || '—'}</td>
             <td class="bz-nowrap"><strong>${U.num(r.count)}</strong></td>
             <td class="bz-nowrap">${r.pct.toFixed(1)}%</td>
             <td class="bz-nowrap">${U.num(rr.email)}</td>
@@ -5475,40 +7132,60 @@ window.BZOperator = BZOperator;
 
   function viewSegment(id) {
     const isNew = id === 'new';
-    let seg = isNew ? { id: U.uid('seg'), name: 'Untitled segment', description: '', filters: [], createdBy: 'You', tags: [], _userCreated: true }
+    let seg = isNew ? { id: U.uid('seg'), name: 'Untitled segment', description: '',
+                        groups: [{ join: 'AND', filters: [] }], groupJoin: 'AND',
+                        createdBy: 'You', tags: [], _userCreated: true }
                     : window.BZ.segments.find((s) => s.id === id);
     if (!seg) return page('Not found', '', '', 'That segment does not exist.');
     if (isNew && !window.BZ.segments.some((s) => s.id === seg.id)) window.BZ.segments.push(seg);
 
-    const r = S.reach(seg.filters);
-    const rr = S.reachability(seg.filters);
-    const sample = S.evaluate(seg.filters).slice(0, 12);
+    const r = S.reach(seg);
+    const rr = S.reachability(seg);
+    const sample = S.evaluate(seg).slice(0, 12);
 
-    const filterRows = seg.filters.map((f, i) => {
-      const meta = S.fieldMeta(f.field);
-      const ops = S.OPS[meta.type] || S.OPS.string;
-      const needsValue = !['exists', 'not_exists', 'is_true', 'is_false', 'performed_ever', 'never_performed'].includes(f.op);
-      return `<div class="bz-filterrow">
-        <span class="bz-filterrow__and">${i === 0 ? 'IF' : 'AND'}</span>
-        <select class="bz-select bz-select--sm" data-f="${i}" data-fk="field">
-          ${S.FIELDS.map((g) => `<optgroup label="${U.esc(g.group)}">${g.items.map((it) =>
-            `<option value="${it.field}" ${it.field === f.field ? 'selected' : ''}>${U.esc(it.label)}</option>`).join('')}</optgroup>`).join('')}
-        </select>
-        <select class="bz-select bz-select--sm" data-f="${i}" data-fk="op">
-          ${ops.map((o) => `<option value="${o[0]}" ${o[0] === f.op ? 'selected' : ''}>${U.esc(o[1])}</option>`).join('')}
-        </select>
-        ${needsValue ? (meta.options
-          ? `<select class="bz-select bz-select--sm" data-f="${i}" data-fk="value" ${['is_one_of', 'is_none_of'].includes(f.op) ? 'multiple size="4"' : ''}>
-              ${meta.options.map((o) => `<option value="${U.esc(o)}" ${(Array.isArray(f.value) ? f.value : [f.value]).map(String).includes(String(o)) ? 'selected' : ''}>${U.esc(o)}</option>`).join('')}
-            </select>`
-          : `<input class="bz-input bz-input--sm" data-f="${i}" data-fk="value" value="${U.esc(Array.isArray(f.value) ? f.value.join(',') : (f.value ?? ''))}" style="width:130px">`) : ''}
-        ${f.op === 'between' ? `<input class="bz-input bz-input--sm" data-f="${i}" data-fk="value2" value="${U.esc(f.value2 ?? '')}" style="width:90px" placeholder="and">` : ''}
-        <button class="bz-btn bz-btn--sm bz-btn--ghost bz-filterrow__x" data-del-filter="${i}">✕</button>
-      </div>`;
+    const filterGroups = seg.groups.map((grp, gi) => {
+      const rows = grp.filters.map((f, i) => {
+        const meta = S.fieldMeta(f.field);
+        const ops = S.OPS[meta.type] || S.OPS.string;
+        const needsValue = !['exists', 'not_exists', 'is_true', 'is_false', 'performed_ever', 'never_performed'].includes(f.op);
+        return `<div class="bz-filterrow">
+          ${i === 0
+            ? '<span class="bz-filterrow__and">IF</span>'
+            : `<button class="bz-joinbtn" data-join-filters="${gi}" title="Switch this group between AND and OR">${grp.join}</button>`}
+          <select class="bz-select bz-select--sm" data-f="${gi}:${i}" data-fk="field">
+            ${S.FIELDS.map((g) => `<optgroup label="${U.esc(g.group)}">${g.items.map((it) =>
+              `<option value="${it.field}" ${it.field === f.field ? 'selected' : ''}>${U.esc(it.label)}</option>`).join('')}</optgroup>`).join('')}
+          </select>
+          <select class="bz-select bz-select--sm" data-f="${gi}:${i}" data-fk="op">
+            ${ops.map((o) => `<option value="${o[0]}" ${o[0] === f.op ? 'selected' : ''}>${U.esc(o[1])}</option>`).join('')}
+          </select>
+          ${needsValue ? (meta.options
+            ? `<select class="bz-select bz-select--sm" data-f="${gi}:${i}" data-fk="value" ${['is_one_of', 'is_none_of'].includes(f.op) ? 'multiple size="4"' : ''}>
+                ${meta.options.map((o) => `<option value="${U.esc(o)}" ${(Array.isArray(f.value) ? f.value : [f.value]).map(String).includes(String(o)) ? 'selected' : ''}>${U.esc(o)}</option>`).join('')}
+              </select>`
+            : `<input class="bz-input bz-input--sm" data-f="${gi}:${i}" data-fk="value" value="${U.esc(Array.isArray(f.value) ? f.value.join(',') : (f.value ?? ''))}" style="width:130px">`) : ''}
+          ${f.op === 'between' ? `<input class="bz-input bz-input--sm" data-f="${gi}:${i}" data-fk="value2" value="${U.esc(f.value2 ?? '')}" style="width:90px" placeholder="and">` : ''}
+          <button class="bz-btn bz-btn--sm bz-btn--ghost bz-filterrow__x" data-del-filter="${gi}:${i}">✕</button>
+        </div>`;
+      }).join('');
+
+      return `${gi > 0 ? `<div class="bz-groupjoin">
+          <button class="bz-joinbtn bz-joinbtn--lg" data-join-groups="1" title="Switch how the groups combine">${seg.groupJoin}</button>
+        </div>` : ''}
+        <div class="bz-fgroup">
+          <div class="bz-fgroup__head">
+            <span class="bz-fgroup__label">Filter group ${gi + 1}</span>
+            <span class="bz-small bz-muted">${U.num(S.count({ groups: [grp], groupJoin: 'AND' }))} users match this group alone</span>
+            <div class="bz-spacer"></div>
+            ${seg.groups.length > 1 ? `<button class="bz-btn bz-btn--sm bz-btn--ghost" data-del-group="${gi}">Remove group</button>` : ''}
+          </div>
+          ${rows || '<div class="bz-muted bz-small bz-mb8">Empty group — matches everyone.</div>'}
+          <button class="bz-btn bz-btn--sm" data-add-filter="${gi}">+ Add filter</button>
+        </div>`;
     }).join('');
 
-    const tierBreak = S.breakdown(seg.filters, 'custom.loyalty_tier');
-    const countryBreak = S.breakdown(seg.filters, 'country', 6);
+    const tierBreak = S.breakdown(seg, 'custom.loyalty_tier');
+    const countryBreak = S.breakdown(seg, 'country', 6);
 
     return `
       <div class="bz-topbar">
@@ -5531,11 +7208,13 @@ window.BZOperator = BZOperator;
         <div class="bz-card bz-mb16">
           <div class="bz-card__head"><div class="bz-card__title">Filters</div>
             <div class="bz-spacer"></div>
-            <span class="bz-small bz-muted">All filters are ANDed — there is no OR between rows</span></div>
+            <span class="bz-small bz-muted">Click a join badge to switch between AND and OR</span></div>
           <div class="bz-card__body">
-            ${filterRows || '<div class="bz-muted bz-small bz-mb16">No filters — this segment targets everyone.</div>'}
-            <button class="bz-btn bz-btn--sm" data-act="add-filter">+ Add filter</button>
-            ${seg.filters.length ? `<div class="bz-hint bz-mt16">Read aloud: <strong>${U.esc(seg.filters.map(S.describe).join('  AND  '))}</strong></div>` : ''}
+            ${filterGroups || '<div class="bz-muted bz-small bz-mb16">No filters — this segment targets everyone.</div>'}
+            <button class="bz-btn bz-btn--sm bz-mt16" data-act="add-group">+ Add filter group</button>
+            ${S.flat(seg).length ? `<div class="bz-hint bz-mt16">Read aloud: <strong>${U.esc(S.describeSpec(seg))}</strong></div>` : ''}
+            <div class="bz-hint">Filters inside a group join with that group's operator; groups join with the operator between them.
+              Nested AND/OR is what Segment Builder 2.0 added — the legacy builder could only AND.</div>
           </div>
         </div>
 
@@ -5913,6 +7592,15 @@ window.BZOperator = BZOperator;
       </div>`;
   }
 
+  function viewStub(title, sub, note) {
+    return page(title, sub, '', `
+      <div class="bz-card" style="max-width:720px"><div class="bz-card__body">
+        <p class="bz-muted">This screen exists in Braze and is included here so the navigation matches the real product.
+        It is not simulated in depth — the sandbox invests its detail in the screens you will actually build in.</p>
+        ${note ? `<div class="bz-callout bz-mt16"><div class="bz-callout__t">Worth knowing</div><p>${note}</p></div>` : ''}
+      </div></div>`);
+  }
+
   /* ======================================================================== */
   /* ROUTER                                                                   */
   /* ======================================================================== */
@@ -5936,7 +7624,15 @@ window.BZOperator = BZOperator;
     switch (route) {
       case 'home':      main = viewHome(); break;
       case 'campaigns':
-        if (parts[1] === 'new') main = viewWizard();
+        if (parts[1] === 'new') {
+          main = viewWizard();
+          const w = wizard;
+          if (w && w.step === 1 && w.channelId === 'email' && w.message.mode === 'dragdrop' && w.design) {
+            bindFn = (root) => window.BZEmailBuilder.bind(root, w.design, (canvasAlreadyPainted) => {
+              if (!canvasAlreadyPainted) render();
+            });
+          }
+        }
         else if (parts[1])      main = viewCampaign(parts[1], parts[2]);
         else                    main = viewCampaigns();
         break;
@@ -5960,6 +7656,35 @@ window.BZOperator = BZOperator;
       case 'data':          main = viewData(); break;
       case 'analytics':     main = viewAnalytics(); break;
       case 'learn':         main = parts[1] ? viewCourse(parts[1]) : viewLearn(); break;
+      case 'ai-decisioning': main = viewStub('AI Decisioning',
+        'BrazeAI Decisioning Studio — 1:1 selection of offer, channel and timing against a business metric.',
+        'Not modelled here. Worth knowing it exists and what it claims to do: instead of you picking the variant, Braze picks per user against the metric you nominate.'); break;
+      case 'agent-console': main = viewStub('Agent Console',
+        'Build and manage AI agents, which are then added as steps inside a Canvas.',
+        'The Canvas builder in this sandbox includes an Agent step so you can see where it sits in a journey.'); break;
+      case 'feature-flags': main = viewStub('Feature Flags',
+        'Turn functionality on or off for a segment without a release.',
+        'Note the path: Feature Flags are created from Messaging, not from the Create Campaign channel picker. That distinction comes up in interviews.'); break;
+      case 'suppression':   main = viewStub('Suppression Lists',
+        'Addresses excluded from every send regardless of segment.',
+        'Hard bounces and complaints land here automatically. Build one shared suppression segment and reference it everywhere rather than copying filters.'); break;
+      case 'media':         main = viewStub('Media Library',
+        'Uploaded images and files available to any message.',
+        'Part of Creative Studio, alongside Templates, Content Blocks and Catalogs.'); break;
+      case 'promos':        main = viewStub('Promotion Codes',
+        'Uploaded pools of unique codes, drawn per recipient at send time.',
+        'The right answer when finance wants single-use codes — never hard-code a shared code into the template.'); break;
+      case 'report-builder': main = viewStub('Report Builder',
+        'Custom cross-campaign reports with your own metric set.',
+        'Where your weekly reporting should live once you have more than a handful of campaigns.'); break;
+      case 'currents':      main = viewStub('Currents',
+        'Raw engagement event stream out to S3, Snowflake or BigQuery.',
+        'When someone asks a question the Braze UI cannot answer, Currents is the answer.'); break;
+      case 'data-export':   main = viewStub('Data Export',
+        'Scheduled and on-demand exports of users and engagement data.', ''); break;
+      case 'products':      main = viewStub('Products',
+        'Product identifiers seen in purchase events.',
+        'Lives under Data Settings alongside Custom Attributes and Custom Events.'); break;
       default:              main = viewHome();
     }
 
@@ -5995,7 +7720,46 @@ window.BZOperator = BZOperator;
 
     if (delF) {
       const seg = currentSegment();
-      if (seg) { seg.filters.splice(+delF.dataset.delFilter, 1); seg._edited = true; U.Store.save(); render(); }
+      if (seg) {
+        const [gi, i] = delF.dataset.delFilter.split(':').map(Number);
+        seg.groups[gi].filters.splice(i, 1);
+        seg._edited = true; U.Store.save(); render();
+      }
+      return;
+    }
+
+    /* add a filter to a specific group */
+    const addF = e.target.closest('[data-add-filter]');
+    if (addF) {
+      const seg = currentSegment();
+      if (seg) {
+        seg.groups[+addF.dataset.addFilter].filters.push({ field: 'custom.loyalty_tier', op: 'is_one_of', value: ['Gold'] });
+        seg._edited = true; U.Store.save(); render();
+      }
+      return;
+    }
+
+    /* toggle AND/OR within a group, or between groups */
+    const joinF = e.target.closest('[data-join-filters]');
+    if (joinF) {
+      const seg = currentSegment();
+      if (seg) {
+        const g = seg.groups[+joinF.dataset.joinFilters];
+        g.join = g.join === 'AND' ? 'OR' : 'AND';
+        seg._edited = true; U.Store.save(); render();
+      }
+      return;
+    }
+    const joinG = e.target.closest('[data-join-groups]');
+    if (joinG) {
+      const seg = currentSegment();
+      if (seg) { seg.groupJoin = seg.groupJoin === 'AND' ? 'OR' : 'AND'; seg._edited = true; U.Store.save(); render(); }
+      return;
+    }
+    const delG = e.target.closest('[data-del-group]');
+    if (delG) {
+      const seg = currentSegment();
+      if (seg) { seg.groups.splice(+delG.dataset.delGroup, 1); seg._edited = true; U.Store.save(); render(); }
       return;
     }
 
@@ -6003,13 +7767,102 @@ window.BZOperator = BZOperator;
 
     if (wnav) {
       if (!wizard) return;
-      if (wnav.dataset.wNav === 'save') { saveWizard(); return; }
-      wizard.step = Math.max(1, Math.min(5, wizard.step + Number(wnav.dataset.wNav)));
+      const v = wnav.dataset.wNav;
+      if (v === 'save') { saveWizard(); return; }
+      if (v === '0') { wizard.step = 0; render(); return; }
+      const next = wizard.step + Number(v);
+      /* Step 1 with no channel chosen means we are on the message-type picker. */
+      wizard.step = Math.max(0, Math.min(5, next));
+      render(); return;
+    }
+
+    /* -- message type chosen -------------------------------------------- */
+    const chanTile = e.target.closest('[data-chan]');
+    if (chanTile && wizard) {
+      wizard.channelId = chanTile.dataset.chan;
+      wizard.message = window.BZCompose.newMessage(wizard.channelId);
+      wizard.design = null;
+      window.BZEmailBuilder.reset();
+      wizard.step = 1;
+      render(); return;
+    }
+
+    /* -- email build mode chosen ----------------------------------------- */
+    const modeTile = e.target.closest('[data-emode]');
+    if (modeTile && wizard && wizard.message) {
+      const mode = modeTile.dataset.emode;
+      wizard.message.mode = mode;
+      if (mode === 'dragdrop') {
+        wizard.design = window.BZEmailBuilder.starterDesign('starter');
+      } else if (mode === 'html') {
+        wizard.message.body = "{{content_blocks.${aurelia_header}}}\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  <tr><td style=\"padding:34px 28px;font:400 15px/1.6 Helvetica,Arial,sans-serif;color:#43434E\">\n    <h1 style=\"margin:0 0 12px;font:700 25px/1.3 Helvetica,Arial,sans-serif;color:#0F1B2D\">\n      Hello {{${first_name} | default: 'there'}}\n    </h1>\n    <p>Write your email here. Liquid works exactly as it does in production.</p>\n  </td></tr>\n</table>\n{{content_blocks.${aurelia_footer}}}";
+      }
+      render(); return;
+    }
+
+    const navG = e.target.closest('[data-navgroup]');
+    if (navG) {
+      const id = navG.dataset.navgroup;
+      const parts0 = parseHash();
+      const cur = navOpen[id] !== undefined ? navOpen[id] : (ROUTE_PARENT[parts0[0]] === id);
+      navOpen[id] = !cur;
       render(); return;
     }
 
     if (act) {
       switch (act.dataset.act) {
+        case 'dismiss-banner': cmpFilter.bannerDismissed = true; render(); return;
+        case 'show-idle':      cmpFilter.status = 'Idle'; render(); return;
+        case 'clear-status':   cmpFilter.status = ''; render(); return;
+        case 'clear-tag':      cmpFilter.tag = ''; render(); return;
+        case 'cmp-filters':
+          U.modal('Filters', `<p class="bz-muted bz-small">Braze lets you stack additional filters here — channel, created by, team, last-edited date, conversion event.</p>
+            <p class="bz-muted bz-small">This sandbox implements Status, Tag and name search, which is what you use day to day.</p>`,
+            '<button class="bz-btn" data-modal-close>Close</button>');
+          return;
+        case 'cmp-columns':
+          U.modal('Columns', `<p class="bz-muted bz-small">Choose which columns appear in the list.</p>
+            ${['Name', 'Status', 'Stop date', 'Campaign type', 'Entry schedule', 'Sent', 'Opens', 'Clicks', 'Conversions', 'Revenue', 'Last edited']
+              .map((c, i) => `<label class="bz-checkline"><input type="checkbox" ${i < 6 ? 'checked' : ''}><span>${c}</span></label>`).join('')}`,
+            '<button class="bz-btn" data-modal-close>Close</button>');
+          return;
+        case 'eb-preview': {
+          const w = wizard;
+          const user = window.BZ.userById('AUR-100000');
+          const html = window.BZEmailBuilder.compile(w.design);
+          const r = U.renderLiquid(html, user, {});
+          U.modal('Preview & Test', `
+            <div class="bz-row bz-mb16">
+              <span class="bz-small bz-muted">Previewing as</span>
+              <select class="bz-select bz-select--sm" id="bz-eb-prevuser" style="width:auto">
+                ${window.BZ.users.slice(0, 30).map((u) => `<option value="${u.external_id}" ${u.external_id === 'AUR-100000' ? 'selected' : ''}>
+                  ${U.esc(u.first_name + ' ' + u.last_name)} · ${U.esc(u.custom.loyalty_tier)}</option>`).join('')}
+              </select>
+            </div>
+            ${r.warnings.length ? `<div class="bz-liqerr" style="background:var(--bz-amber-soft);border-color:#EBD9B4;color:#7A4A00">Resolved to nothing: ${U.esc(r.warnings.join(', '))}</div>` : ''}
+            <div id="bz-eb-prevbox" style="border:1px solid var(--bz-line);border-radius:6px;overflow:auto;max-height:60vh">${r.html}</div>`,
+            '<button class="bz-btn" data-modal-close>Close</button>', true);
+          const sel2 = document.getElementById('bz-eb-prevuser');
+          sel2.addEventListener('change', () => {
+            const u2 = window.BZ.userById(sel2.value);
+            document.getElementById('bz-eb-prevbox').innerHTML = U.renderLiquid(html, u2, {}).html;
+          });
+          return;
+        }
+        case 'eb-tohtml': {
+          const w = wizard;
+          U.modal('Convert to HTML editor',
+            `<p>This flattens your blocks into raw HTML. You keep everything you have built, but Braze can no longer reconstruct the drag &amp; drop layout — <strong>the conversion is one-way.</strong></p>
+             <p class="bz-muted bz-small">Real Braze behaves the same way. Convert when you need markup the visual blocks cannot express, not to make a small tweak.</p>`,
+            '<button class="bz-btn" data-modal-close>Cancel</button><button class="bz-btn bz-btn--primary" id="bz-confirm-tohtml">Convert</button>');
+          document.getElementById('bz-confirm-tohtml').onclick = () => {
+            w.message.body = window.BZEmailBuilder.compile(w.design);
+            w.message.mode = 'html';
+            w.design = null;
+            U.closeModal(); U.toast('Converted to the HTML editor'); render();
+          };
+          return;
+        }
         case 'reset-store':
           U.modal('Reset sandbox data', '<p>This clears everything you have created or edited and restores the seeded workspace. Case-study progress is not affected.</p>',
             '<button class="bz-btn" data-modal-close>Cancel</button><button class="bz-btn bz-btn--danger" id="bz-confirm-reset">Reset</button>');
@@ -6017,9 +7870,12 @@ window.BZOperator = BZOperator;
           break;
         case 'new-campaign': openWizard(); break;
         case 'new-segment':  location.hash = '#/segments/new'; break;
-        case 'add-filter': {
+        case 'add-group': {
           const seg = currentSegment();
-          if (seg) { seg.filters.push({ field: 'custom.loyalty_tier', op: 'is_one_of', value: ['Gold'] }); seg._edited = true; U.Store.save(); render(); }
+          if (seg) {
+            seg.groups.push({ join: 'AND', filters: [{ field: 'custom.loyalty_tier', op: 'is_one_of', value: ['Gold'] }] });
+            seg._edited = true; U.Store.save(); render();
+          }
           break;
         }
         case 'save-segment': {
@@ -6089,9 +7945,26 @@ window.BZOperator = BZOperator;
     const wf = e.target.closest('[data-w]');
     if (wf && wizard) {
       wizard[wf.dataset.w] = wf.value;
-      if (['channel', 'deliveryType', 'segmentId'].includes(wf.dataset.w)) render();
+      if (['deliveryType', 'segmentId'].includes(wf.dataset.w)) render();
       return;
     }
+
+    /* message field edits (all channels) */
+    const mf = e.target.closest('[data-msg], [data-msg-plat], [data-msg-bool]');
+    if (mf && wizard && wizard.message) {
+      window.BZCompose.applyEdit(wizard.message, mf);
+      /* repaint only the device preview so the field keeps focus */
+      const box = document.querySelector('.bz-card__body .bz-device');
+      if (box && wizard.channelId !== 'email') {
+        const host = box.closest('.bz-card__body');
+        host.innerHTML = window.BZCompose.preview(wizard.message, window.BZ.userById('AUR-100000'));
+      }
+      return;
+    }
+
+    /* campaign list filters */
+    const cf = e.target.closest('[data-cf]');
+    if (cf) { cmpFilter[cf.dataset.cf] = cf.value; render(); return; }
     const blk = e.target.closest('[data-block]');
     if (blk) {
       const b = window.BZ.contentBlocks.find((x) => x.id === blk.dataset.block);
@@ -6106,22 +7979,30 @@ window.BZOperator = BZOperator;
     const f = e.target.closest('[data-f]');
     if (f) {
       const seg = currentSegment(); if (!seg) return;
-      const i = +f.dataset.f, key = f.dataset.fk;
+      const [gi, i] = String(f.dataset.f).split(':').map(Number);
+      const list = seg.groups[gi].filters;
+      const key = f.dataset.fk;
       if (key === 'field') {
         const meta = S.fieldMeta(f.value);
-        seg.filters[i] = { field: f.value, op: (S.OPS[meta.type] || S.OPS.string)[0][0], value: meta.options ? [meta.options[0]] : '' };
+        list[i] = { field: f.value, op: (S.OPS[meta.type] || S.OPS.string)[0][0], value: meta.options ? [meta.options[0]] : '' };
       } else if (key === 'value' && f.multiple) {
-        seg.filters[i].value = Array.from(f.selectedOptions).map((o) => o.value);
-      } else if (key === 'value' && String(seg.filters[i].op).startsWith('is_one_of')) {
-        seg.filters[i].value = f.value.split(',').map((s) => s.trim());
+        list[i].value = Array.from(f.selectedOptions).map((o) => o.value);
+      } else if (key === 'value' && String(list[i].op).startsWith('is_one_of')) {
+        list[i].value = f.value.split(',').map((s) => s.trim());
       } else {
-        seg.filters[i][key] = f.value;
+        list[i][key] = f.value;
       }
       seg._edited = true; U.Store.save(); render();
       return;
     }
     const wf = e.target.closest('[data-w]');
-    if (wf && wizard) { wizard[wf.dataset.w] = wf.value; render(); }
+    if (wf && wizard) {
+      wizard[wf.dataset.w] = wf.value;
+      /* Only re-render for fields that change what is on screen. Repainting on
+         every blur replaces the DOM mid-interaction and swallows the click the
+         user is in the middle of making. */
+      if (['deliveryType', 'segmentId'].includes(wf.dataset.w)) render();
+    }
   });
 
   function currentSegment() {

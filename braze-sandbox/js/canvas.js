@@ -15,14 +15,17 @@ const BZCanvas = (function () {
     { kind: 'delay',            label: 'Delay',               icon: '⏱',  desc: 'Wait a duration, or until a date.' },
     { kind: 'action_paths',     label: 'Action Paths',        icon: '⚡', desc: 'Branch on what the user does, within a window.' },
     { kind: 'audience_paths',   label: 'Audience Paths',      icon: '👥', desc: 'Branch on who the user is. No waiting.' },
-    { kind: 'experiment_paths', label: 'Experiment Paths',    icon: '🧪', desc: 'Random split with an optional control.' },
+    { kind: 'experiment_paths', label: 'Experiment Paths',    icon: '🧪', desc: 'Random split with an optional control group.' },
+    { kind: 'decision_split',   label: 'Decision Split',      icon: '⑂',  desc: 'Yes/no branch on a single polar question.' },
+    { kind: 'agent',            label: 'Agent',               icon: '🤖', desc: 'Run an AI agent from the Agent Console; route on its output variable.' },
+    { kind: 'feature_flag',     label: 'Feature Flag',        icon: '⚑',  desc: 'Turn a flag on or off for users reaching this step.' },
     { kind: 'webhook',          label: 'Webhook',             icon: '🔗', desc: 'POST to an external endpoint.' },
     { kind: 'update_user',      label: 'Update User Profile', icon: '📝', desc: 'Write a custom attribute mid-journey.' },
     { kind: 'exit',             label: 'Exit',                icon: '🚪', desc: 'End of the journey.' },
   ];
   const typeOf = (kind) => STEP_TYPES.find((t) => t.kind === kind) || { label: kind, icon: '●' };
 
-  const BRANCH_KINDS = ['action_paths', 'audience_paths', 'experiment_paths'];
+  const BRANCH_KINDS = ['action_paths', 'audience_paths', 'experiment_paths', 'decision_split'];
 
   /* ---------- step tree helpers ------------------------------------------- */
 
@@ -60,6 +63,12 @@ const BZCanvas = (function () {
       s.config = { evaluate: 'On entry to step' };
       s.paths = [{ label: 'Gold / Platinum', steps: [] }, { label: 'Everybody else', steps: [] }];
     }
+    if (kind === 'decision_split') {
+      s.config = { question: 'Is in segment: Aurelia Club — Gold & Platinum' };
+      s.paths = [{ label: 'Yes', steps: [] }, { label: 'No', steps: [] }];
+    }
+    if (kind === 'agent') s.config = { agent: 'Content Optimizer', outputVar: 'agent_choice' };
+    if (kind === 'feature_flag') s.config = { flagKey: 'new_checkout_flow', enabled: 'true' };
     if (kind === 'experiment_paths') {
       s.config = { control: 10 };
       s.paths = [{ label: 'Path 1 (45%)', steps: [] }, { label: 'Path 2 (45%)', steps: [] }, { label: 'Control — holdout (10%)', steps: [] }];
@@ -74,6 +83,9 @@ const BZCanvas = (function () {
     const cls = s.kind === 'action_paths' ? 'action'
       : s.kind === 'audience_paths' ? 'audience'
       : s.kind === 'experiment_paths' ? 'experiment'
+      : s.kind === 'decision_split' ? 'action'
+      : s.kind === 'agent' ? 'experiment'
+      : s.kind === 'feature_flag' ? 'update'
       : s.kind === 'update_user' ? 'update' : s.kind;
 
     let meta = '';
@@ -86,6 +98,9 @@ const BZCanvas = (function () {
     else if (s.kind === 'experiment_paths') meta = (s.paths || []).length + ' paths';
     else if (s.kind === 'webhook')       meta = U.esc(s.config.method + ' ' + s.config.url);
     else if (s.kind === 'update_user')   meta = U.esc(s.config.attribute + ' = ' + s.config.value);
+    else if (s.kind === 'decision_split') meta = U.esc(s.config.question);
+    else if (s.kind === 'agent')          meta = U.esc(s.config.agent + ' → ' + s.config.outputVar);
+    else if (s.kind === 'feature_flag')   meta = U.esc(s.config.flagKey + ' = ' + s.config.enabled);
 
     const st = s.stats;
     const statsHtml = st && st.sent ? `<div class="bz-cvstep__stats">
@@ -164,10 +179,13 @@ const BZCanvas = (function () {
           ${reach ? `<div class="bz-hint">${U.num(reach.count)} users match this segment right now (${reach.pct.toFixed(1)}% of the base). The trigger <em>and</em> this filter must both pass.</div>` : ''}
         </div>
         <div class="bz-field">
-          <label class="bz-label">Re-eligibility</label>
+          <label class="bz-label">Entry Controls</label>
           <label class="bz-checkline"><input type="checkbox" data-entry="reelig" ${e.reeligibility.allow ? 'checked' : ''}>
-            <span>Allow users to re-enter this Canvas${e.reeligibility.cooldown ? ' — cooldown ' + U.esc(e.reeligibility.cooldown) : ''}</span></label>
-          <div class="bz-hint">Off for onboarding. On, with a short cooldown, for anything tied to a booking. On with a long cooldown for win-back.</div>
+            <span><strong>Allow users to re-enter Canvas</strong>${e.reeligibility.cooldown ? ' — cooldown ' + U.esc(e.reeligibility.cooldown) : ''}</span></label>
+          <div class="bz-hint"><strong>Re-eligibility</strong> is whether a user may enter again <em>after exiting</em>, governed by that time window.
+            It is a different setting from <strong>re-entry</strong>, which is whether a user already inside the Canvas may start a concurrent path.
+            Conflating the two is a classic interview trip-up.</div>
+          <div class="bz-hint">Off for onboarding. On with a short cooldown for anything tied to a booking. On with a long cooldown for win-back.</div>
         </div>
         <div class="bz-field">
           <label class="bz-label">Conversion events</label>
@@ -176,7 +194,8 @@ const BZCanvas = (function () {
             <code class="bz-mono bz-small">${U.esc(c.event)}</code>
             <span class="bz-muted bz-small">within ${U.esc(c.window)}</span>
           </div>`).join('')}
-          <div class="bz-hint">The window must cover your real lag to conversion. Too short under-credits; too long claims bookings you did not cause.</div>
+          <div class="bz-hint">Up to <strong>four</strong> conversion events per Canvas; the first is primary.
+            The window must cover your real lag to conversion — too short under-credits, too long claims bookings you did not cause.</div>
         </div>
         <div class="bz-field">
           <label class="bz-label">Delivery settings</label>
@@ -234,6 +253,26 @@ const BZCanvas = (function () {
           <input class="bz-input" type="number" data-cfg="config.control" value="${U.esc(step.config.control)}">
           <div class="bz-hint">The holdout receives nothing. It is what turns "converted at 3%" into "caused 1.2pp more than doing nothing".</div>
         </div>` + pathsEditor(step);
+    } else if (step.kind === 'decision_split') {
+      body = `<div class="bz-field"><label class="bz-label">Question</label>
+          <input class="bz-input" data-cfg="config.question" value="${U.esc(step.config.question)}">
+          <div class="bz-hint">A Decision Split answers one yes/no question — segment membership, an attribute test, message engagement.
+          For more than two outcomes use Audience Paths instead.</div>
+        </div>` + pathsEditor(step);
+    } else if (step.kind === 'agent') {
+      body = `<div class="bz-field"><label class="bz-label">Agent</label>
+          <select class="bz-select" data-cfg="config.agent">${['Content Optimizer', 'Send-Time Optimizer', 'Subject Line Writer'].map((a) =>
+            `<option ${a === step.config.agent ? 'selected' : ''}>${a}</option>`).join('')}</select>
+          <div class="bz-hint">Agents are built in the Agent Console and dropped into a Canvas here.</div></div>
+        <div class="bz-field"><label class="bz-label">Output variable</label>
+          <input class="bz-input" data-cfg="config.outputVar" value="${U.esc(step.config.outputVar)}">
+          <div class="bz-hint">The agent writes its result here; a later Audience Paths step can route on it.</div></div>`;
+    } else if (step.kind === 'feature_flag') {
+      body = `<div class="bz-field"><label class="bz-label">Flag key</label>
+          <input class="bz-input" data-cfg="config.flagKey" value="${U.esc(step.config.flagKey)}"></div>
+        <div class="bz-field"><label class="bz-label">Set to</label>
+          <select class="bz-select" data-cfg="config.enabled">${['true', 'false'].map((v) =>
+            `<option ${v === step.config.enabled ? 'selected' : ''}>${v}</option>`).join('')}</select></div>`;
     } else if (step.kind === 'webhook') {
       body = `<div class="bz-field"><label class="bz-label">Method</label>
           <select class="bz-select" data-cfg="config.method">${['POST', 'PUT', 'GET'].map((m) => `<option ${m === step.config.method ? 'selected' : ''}>${m}</option>`).join('')}</select></div>

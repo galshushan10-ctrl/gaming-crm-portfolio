@@ -81,21 +81,38 @@ const BZCourses = [
   id: 'c-segmentation',
   icon: '🎯',
   title: 'Segmentation — building audiences that hold up',
-  blurb: 'Filter logic, the AND-only trap, nested segments, reachability, and how to keep a segment from silently becoming zero.',
+  blurb: 'AND/OR filter groups, nested boolean logic, reachability, and how to keep a segment from silently becoming zero.',
   minutes: 30,
   body: `
-<h2>Filters are ANDed. All of them.</h2>
-<p>The Braze segment builder joins every filter with <strong>AND</strong>. There is no OR between rows. This is the single most surprising thing about it for anyone coming from SQL or from Salesforce Marketing Cloud.</p>
-<p>You get OR in exactly three ways:</p>
-<ol>
-  <li><strong>Multi-value operators</strong> — "is any of" on one filter is an OR across those values. <code>loyalty_tier is any of [Gold, Platinum]</code> is one row.</li>
-  <li><strong>Audience Paths in a Canvas</strong> — each path is its own filter set, evaluated top-down, first match wins. This is the usual production answer.</li>
-  <li><strong>Separate segments</strong>, targeted by separate campaigns.</li>
-</ol>
+<h2>AND, OR, and filter groups</h2>
+<p>Braze's <strong>Segment Builder 2.0</strong> supports nested boolean logic, and this is the single most common thing people get wrong — usually because they learned the old rules.</p>
+<ul>
+  <li><strong>Within a filter group</strong>, filters join with <strong>AND</strong> or <strong>OR</strong>.</li>
+  <li><strong>Between filter groups</strong>, groups join with <strong>AND</strong> or <strong>OR</strong>.</li>
+</ul>
+<p>That gives you real nesting. "Gold or Platinum members who also have a stay in the next 7 days" is two groups:</p>
+<pre><code>( loyalty_tier = Gold   OR   loyalty_tier = Platinum )
+                    AND
+( next_stay_date is in the next 7 days )</code></pre>
 
 <div class="bz-callout bz-callout--warn">
-  <div class="bz-callout__t">Real incident</div>
-  <p>A marketer wanted "Gold members OR guests with a stay in the next 7 days". They built both filters in one segment, saw the count drop to 34, assumed the data was broken, and escalated to the data team. Nothing was broken: the segment was Gold members <em>who also</em> have a stay in 7 days. Always read your filter list out loud with "and" between each line.</p>
+  <div class="bz-callout__t">Advice you will still be given that is now wrong</div>
+  <p>A great deal of Braze training, agency blog content and internal documentation says <em>"Braze segments are AND-only — there is no OR between filters, so use Audience Paths in a Canvas instead."</em> That was accurate for years, and it is why the workaround is so widely taught. It no longer describes the product.</p>
+  <p>Do not correct a colleague aggressively on this one. They learned it when it was true. But do not build a three-Canvas workaround for something one OR now solves.</p>
+</div>
+
+<h3>When to use OR, and when not to</h3>
+<p>Having OR does not mean reaching for it. A multi-value operator is usually cleaner:</p>
+<table>
+  <tr><th>Instead of</th><th>Write</th><th>Why</th></tr>
+  <tr><td>Three rows joined by OR on <code>loyalty_tier</code></td><td><code>tier is any of [Gold, Platinum]</code></td><td>One row, reads as a sentence, and impossible to mis-join later</td></tr>
+  <tr><td>OR across unrelated conditions in one group</td><td>Two filter groups joined by OR</td><td>Groups make the intent legible to whoever inherits it</td></tr>
+</table>
+<p>The old failure mode has not disappeared, it has just moved: two rows saying <code>tier = Gold</code> and <code>tier = Platinum</code> joined by <strong>AND</strong> still gives you <strong>zero</strong>, because nobody is both. Read every group aloud with its join word between the lines.</p>
+
+<div class="bz-callout bz-callout--tip">
+  <div class="bz-callout__t">Do this in the sandbox</div>
+  <p>Open any segment and click a purple join badge to flip it between AND and OR. Watch the count move. Then add a second filter group and flip the badge between the groups — that is the nesting the old builder could not do.</p>
 </div>
 
 <h2>Segment vs filter-at-send-time</h2>
@@ -132,7 +149,7 @@ Promotions &amp; Offers is subscribed</code></pre>
 loyalty_tier               is any of     Gold, Platinum
 next_stay_date             is in the next X days   21
 has_app                    is true</code></pre>
-<p>Note row 2: one filter with "is any of", <em>not</em> two rows — two rows would demand the user be Gold AND Platinum simultaneously, giving you zero.</p>
+<p>Note row 2: one filter with "is any of". You <em>could</em> write two rows joined by OR now that Segment Builder 2.0 allows it, but "is any of" is one row and reads better. What you must not do is leave two tier rows joined by AND — that demands the user be Gold and Platinum simultaneously, which gives you zero.</p>
 <p>The live count appears in the purple bar as you build. Then check the reachability strip underneath: push-reachable will be lower than the total, because <code>has_app is true</code> does not imply <code>push_subscribe is opted_in</code>. That distinction is the whole point of this exercise.</p>`,
     },
     {

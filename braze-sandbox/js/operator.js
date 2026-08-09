@@ -86,13 +86,20 @@ const BZOperator = (function () {
       <p>Using an Action Path where an Audience Path belongs inserts an invisible multi-day delay and nobody can work out why the next message is late.</p>
       <p><strong>Rule:</strong> never put a long Action Path window <em>before</em> your primary message. Branch after the value is delivered.</p>` },
 
-    { keys: ['and', 'or', 'filter', 'anded', 'combine', 'both'], t: 'Why filters are ANDed', a: `
-      <p>The segment builder joins every filter with <strong>AND</strong>. There is no OR between rows — this surprises everyone coming from SQL.</p>
-      <p>You get OR three ways:</p>
-      <ol><li><strong>"is any of"</strong> on a single filter — an OR across values. <code>tier is any of [Gold, Platinum]</code> is <em>one</em> row.</li>
-      <li><strong>Audience Paths</strong> in a Canvas — each path its own filter set, first match wins.</li>
-      <li><strong>Separate segments</strong> and separate campaigns.</li></ol>
-      <p class="bz-small">Two rows saying <code>tier = Gold</code> and <code>tier = Platinum</code> gives you <strong>zero</strong> — nobody is both. Read your filters aloud with "and" between each line.</p>` },
+    { keys: ['and', 'or', 'filter', 'anded', 'combine', 'both', 'filter group', 'boolean'], t: 'AND / OR and filter groups', a: `
+      <p>Braze's <strong>Segment Builder 2.0</strong> supports nested boolean logic:</p>
+      <ul><li><strong>Within a filter group</strong>, filters join with <strong>AND</strong> or <strong>OR</strong>.</li>
+      <li><strong>Between filter groups</strong>, groups join with <strong>AND</strong> or <strong>OR</strong>.</li></ul>
+      <p>So "Gold or Platinum members <em>who also</em> have a stay in the next 7 days" is two groups:</p>
+      <pre><code>( tier = Gold  OR  tier = Platinum )
+        AND
+( next_stay_date in next 7 days )</code></pre>
+      <div class="bz-op__did" style="border-left-color:#B26A00;background:#FDF1DD;color:#7A4A00">
+        <b>Outdated advice you will still hear</b>
+        Plenty of blog posts and older training say "Braze segments are AND-only, use Audience Paths for OR". That described the legacy builder. It is no longer true — but a colleague repeating it is not being careless, it was correct for years.
+      </div>
+      <p><strong>Still worth knowing:</strong> a multi-value operator like <code>is any of</code> is usually cleaner than an OR group. <code>tier is any of [Gold, Platinum]</code> is one row and reads better than two rows joined by OR.</p>
+      <p class="bz-small">On any segment screen, click a join badge to flip it between AND and OR and watch the count move.</p>` },
 
     { keys: ['conversion', 'window', 'attribution', 'how long'], t: 'Conversion events and windows', a: `
       <p>A conversion event is your success metric: did the recipient do the thing within N of <em>receiving</em> the message. Up to four; the first is primary.</p>
@@ -377,9 +384,10 @@ Promotions &amp; Offers is subscribed</code></pre>
   /* Leave-one-out: which single filter is costing the most audience? This is
      the answer to "my segment went to zero and I do not know why", which is
      otherwise a genuinely tedious thing to debug by hand.                    */
-  function constraintReport(filters) {
+  function constraintReport(spec) {
+    const filters = S.flat(spec);
     if (filters.length < 2) return '';
-    const full = S.count(filters);
+    const full = S.count(spec);
     const drops = filters.map((f, i) => ({
       f, n: S.count(filters.filter((_, j) => j !== i)),
     })).sort((a, b) => b.n - a.n);
@@ -443,15 +451,15 @@ Promotions &amp; Offers is subscribed</code></pre>
         id: U.uid('seg'), _userCreated: true, createdBy: 'BrazeAI Operator', tags: ['operator'],
         name: raw.replace(/^(build|create|make|set up|give me)\s+(me\s+)?(a\s+)?(segment|audience)\s*(of|for|with)?\s*/i, '').trim().slice(0, 60) || 'Operator segment',
         description: 'Built by the Operator from: "' + raw.trim() + '"',
-        filters,
+        groups: [{ join: 'AND', filters }], groupJoin: 'AND',
       };
       window.BZ.segments.push(seg); U.Store.save();
-      const r = S.reach(filters), rr = S.reachability(filters);
+      const r = S.reach(seg), rr = S.reachability(seg);
       location.hash = '#/segments/' + seg.id;
       return say(`<p>Built it — <strong>${U.num(r.count)} users</strong> match${r.count ? `, ${U.num(rr.email)} email-reachable` : ''}.</p>
         ${r.count === 0 ? '<p>That is an empty audience, which is worth understanding rather than just loosening at random.</p>' : ''}
         <p><strong>Why these filters:</strong></p><ul>${why.map((w) => `<li>${w}</li>`).join('')}</ul>
-        ${r.count < 15 ? constraintReport(filters) : ''}
+        ${r.count < 15 ? constraintReport(seg) : ''}
         <p class="bz-small">Every row is ANDed. Adjust or delete rows on the screen and the count updates live.</p>`,
         `Created segment <strong>${U.esc(seg.name)}</strong> with ${filters.length} filter${filters.length > 1 ? 's' : ''} and opened it.`);
     }
@@ -463,7 +471,7 @@ Promotions &amp; Offers is subscribed</code></pre>
       if (!filters.length) return say(`<p>I could not tell what to filter on. Try <em>"add a filter for app users"</em> or <em>"add a filter for points over 5000"</em>.</p>`);
       c.segment.filters.push.apply(c.segment.filters, filters);
       c.segment._edited = true; U.Store.save(); window.BZApp.render();
-      const r = S.reach(c.segment.filters);
+      const r = S.reach(c.segment);
       return say(`<p>Added. The segment is now <strong>${U.num(r.count)} users</strong>.</p><ul>${why.map((w) => `<li>${w}</li>`).join('')}</ul>`,
         `Added ${filters.length} filter${filters.length > 1 ? 's' : ''} to <strong>${U.esc(c.segment.name)}</strong>.`);
     }
@@ -490,8 +498,8 @@ Promotions &amp; Offers is subscribed</code></pre>
     if (/(why|which).{0,30}(empty|zero|no users|nobody|too small|so small|dropped|shrunk|killing|constraint)/.test(q) ||
         /which filter/.test(q)) {
       if (!c.segment) return say('<p>Open the segment and ask again — I diagnose whatever is on screen. <a href="#/segments">Segments →</a></p>');
-      const r = S.reach(c.segment.filters);
-      const rep = constraintReport(c.segment.filters);
+      const r = S.reach(c.segment);
+      const rep = constraintReport(c.segment);
       return say(`<p><strong>${U.esc(c.segment.name)}</strong> currently matches <strong>${U.num(r.count)}</strong> of ${U.num(r.total)} profiles.</p>
         ${rep || '<p>No single filter is the culprit — the rows are each doing modest work and the combination is simply narrow.</p>'}
         <p class="bz-small">In production the other two causes are worth checking before you touch the filters: a campaign moved people out legitimately (they booked, so their <code>last_stay_date</code> is recent now), or an attribute stopped arriving — nulls fail date comparisons silently, so profiles drop out without any error.</p>`);
@@ -502,7 +510,7 @@ Promotions &amp; Offers is subscribed</code></pre>
       const cp = c.campaign;
       const seg = window.BZ.segments.find((s) => s.id === cp.segmentId);
       const tpl = window.BZ.templates.find((t) => t.id === cp.templateId);
-      const rr = seg ? S.reachability(seg.filters) : { total: 0, email: 0, push: 0, sms: 0 };
+      const rr = seg ? S.reachability(seg) : { total: 0, email: 0, push: 0, sms: 0 };
       const lint = tpl ? window.BZLiquid.lint(tpl.body + '\n' + tpl.subject) : [];
       const rows = [
         [!!cp.conversionEvents.length, 'Conversion event set'],
