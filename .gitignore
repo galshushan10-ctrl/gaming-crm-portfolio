@@ -6,3 +6,7 @@ __pycache__/
 *.pyc
 automation_ready.csv
 gaming_rfm_report.xlsx
+
+# Braze sandbox
+node_modules/
+package-lock.json
