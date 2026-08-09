@@ -765,8 +765,12 @@
           </div>
           <div class="bz-tablewrap"><table class="bz-table">
             <thead><tr>${c.fields.map((f) => `<th>${U.esc(f)}</th>`).join('')}</tr></thead>
-            <tbody>${c.items.map((it) => `<tr>${c.fields.map((f) =>
-              `<td class="bz-small">${typeof it[f] === 'boolean' ? `<code>${it[f]}</code>` : U.esc(it[f] ?? '—')}</td>`).join('')}</tr>`).join('')}</tbody>
+            <tbody>${c.items.map((it) => `<tr>${c.fields.map((f) => {
+              const v = it[f];
+              if (f === 'image_url' && v) return `<td><img src="${U.esc(v)}" alt="" width="72" style="border-radius:4px;display:block"></td>`;
+              if (typeof v === 'boolean') return `<td class="bz-small"><code>${v}</code></td>`;
+              return `<td class="bz-small">${U.esc(v ?? '—')}</td>`;
+            }).join('')}</tr>`).join('')}</tbody>
           </table></div>
         </div>`).join('')}`);
   }

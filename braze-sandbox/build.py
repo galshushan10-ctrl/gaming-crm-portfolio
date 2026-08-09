@@ -69,8 +69,19 @@ def main() -> None:
     DIST.mkdir(exist_ok=True)
     out = DIST / "braze-sandbox.html"
     out.write_text(html, encoding="utf-8")
-    kb = out.stat().st_size / 1024
-    print(f"built {out.relative_to(ROOT)}  ({kb:.0f} KB, {len(JS_ORDER)} scripts + 1 stylesheet inlined)")
+
+    # Artifact publishing wraps the file in its own doctype/head/body, so that
+    # variant carries the page content only.
+    body = html.split("<body>", 1)[1].rsplit("</body>", 1)[0]
+    art = DIST / "artifact.html"
+    art.write_text(
+        "<title>Braze Sandbox — Marketing Automation Practice</title>\n"
+        f"<style>\n{css}\n</style>\n{body}\n",
+        encoding="utf-8",
+    )
+
+    for f in (out, art):
+        print(f"built {f.relative_to(ROOT)}  ({f.stat().st_size / 1024:.0f} KB)")
 
 
 if __name__ == "__main__":

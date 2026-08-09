@@ -47,24 +47,43 @@ BZ.workspace = {
 
 /* ---------- catalogs ----------------------------------------------------- */
 
+/* Property imagery as inline SVG data URIs. A real catalog would hold CDN URLs,
+   but the sandbox has no network, and a hero image that fails to load makes a
+   correctly-rendered template look broken. Deterministic per hotel id.        */
+function hotelImage(name, city, hue) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="hsl(${hue},42%,32%)"/><stop offset="1" stop-color="hsl(${hue + 24},38%,18%)"/>
+</linearGradient></defs>
+<rect width="640" height="360" fill="url(#g)"/>
+<g fill="hsl(${hue},30%,80%)" opacity=".18">
+<rect x="40" y="180" width="90" height="180"/><rect x="150" y="130" width="70" height="230"/>
+<rect x="240" y="200" width="110" height="160"/><rect x="370" y="150" width="80" height="210"/>
+<rect x="470" y="210" width="130" height="150"/></g>
+<text x="40" y="86" font-family="Helvetica,Arial,sans-serif" font-size="34" font-weight="700" fill="#fff">${name}</text>
+<text x="40" y="122" font-family="Helvetica,Arial,sans-serif" font-size="19" fill="#fff" opacity=".72">${city}</text>
+</svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.replace(/\n\s*/g, ''));
+}
+
 BZ.catalogs = {
   hotels: {
     name: 'hotels',
     description: 'Property catalog synced nightly from the PMS.',
     fields: ['id', 'name', 'city', 'country', 'brand', 'rating', 'price_from', 'image_url', 'url', 'has_spa', 'family_friendly'],
     items: [
-      { id: 'tlv-royal',   name: 'Aurelia Royal Tel Aviv',      city: 'Tel Aviv',  country: 'IL', brand: 'Aurelia Royal',      rating: 4.7, price_from: 289, has_spa: true,  family_friendly: false, image_url: 'https://cdn.aureliahotels.com/img/tlv-royal.jpg',   url: 'https://aureliahotels.com/tlv-royal' },
-      { id: 'jer-herod',   name: 'Herodion Jerusalem',          city: 'Jerusalem', country: 'IL', brand: 'Herodion Collection',rating: 4.8, price_from: 340, has_spa: true,  family_friendly: true,  image_url: 'https://cdn.aureliahotels.com/img/jer-herod.jpg',   url: 'https://aureliahotels.com/jer-herod' },
-      { id: 'eil-club',    name: 'Aurelia Club Eilat',          city: 'Eilat',     country: 'IL', brand: 'Aurelia Club',       rating: 4.4, price_from: 210, has_spa: true,  family_friendly: true,  image_url: 'https://cdn.aureliahotels.com/img/eil-club.jpg',    url: 'https://aureliahotels.com/eil-club' },
-      { id: 'ded-spa',     name: 'Aurelia Dead Sea Spa',        city: 'Dead Sea',  country: 'IL', brand: 'Aurelia Royal',      rating: 4.6, price_from: 265, has_spa: true,  family_friendly: true,  image_url: 'https://cdn.aureliahotels.com/img/ded-spa.jpg',     url: 'https://aureliahotels.com/ded-spa' },
-      { id: 'ber-nyx',     name: 'NYX Berlin Mitte',            city: 'Berlin',    country: 'DE', brand: 'NYX Urban',          rating: 4.3, price_from: 145, has_spa: false, family_friendly: false, image_url: 'https://cdn.aureliahotels.com/img/ber-nyx.jpg',     url: 'https://aureliahotels.com/ber-nyx' },
-      { id: 'mun-royal',   name: 'Aurelia Royal Munich',        city: 'Munich',    country: 'DE', brand: 'Aurelia Royal',      rating: 4.5, price_from: 175, has_spa: true,  family_friendly: false, image_url: 'https://cdn.aureliahotels.com/img/mun-royal.jpg',   url: 'https://aureliahotels.com/mun-royal' },
-      { id: 'lon-express', name: 'Aurelia Express London City', city: 'London',    country: 'GB', brand: 'Aurelia Express',    rating: 4.1, price_from: 132, has_spa: false, family_friendly: false, image_url: 'https://cdn.aureliahotels.com/img/lon-express.jpg', url: 'https://aureliahotels.com/lon-express' },
-      { id: 'mad-nyx',     name: 'NYX Madrid Gran Via',         city: 'Madrid',    country: 'ES', brand: 'NYX Urban',          rating: 4.4, price_from: 155, has_spa: false, family_friendly: false, image_url: 'https://cdn.aureliahotels.com/img/mad-nyx.jpg',     url: 'https://aureliahotels.com/mad-nyx' },
-      { id: 'bcn-club',    name: 'Aurelia Club Barcelona',      city: 'Barcelona', country: 'ES', brand: 'Aurelia Club',       rating: 4.5, price_from: 168, has_spa: true,  family_friendly: true,  image_url: 'https://cdn.aureliahotels.com/img/bcn-club.jpg',    url: 'https://aureliahotels.com/bcn-club' },
-      { id: 'rom-herod',   name: 'Herodion Roma',               city: 'Rome',      country: 'IT', brand: 'Herodion Collection',rating: 4.7, price_from: 295, has_spa: true,  family_friendly: false, image_url: 'https://cdn.aureliahotels.com/img/rom-herod.jpg',   url: 'https://aureliahotels.com/rom-herod' },
-      { id: 'ath-express', name: 'Aurelia Express Athens',      city: 'Athens',    country: 'GR', brand: 'Aurelia Express',    rating: 4.0, price_from: 118, has_spa: false, family_friendly: true,  image_url: 'https://cdn.aureliahotels.com/img/ath-express.jpg', url: 'https://aureliahotels.com/ath-express' },
-      { id: 'vie-royal',   name: 'Aurelia Royal Vienna',        city: 'Vienna',    country: 'AT', brand: 'Aurelia Royal',      rating: 4.6, price_from: 198, has_spa: true,  family_friendly: false, image_url: 'https://cdn.aureliahotels.com/img/vie-royal.jpg',   url: 'https://aureliahotels.com/vie-royal' },
+      { id: 'tlv-royal',   name: 'Aurelia Royal Tel Aviv',      city: 'Tel Aviv',  country: 'IL', brand: 'Aurelia Royal',      rating: 4.7, price_from: 289, has_spa: true,  family_friendly: false, image_url: hotelImage('Aurelia Royal Tel Aviv', 'Tel Aviv', 205),   url: 'https://aureliahotels.com/tlv-royal' },
+      { id: 'jer-herod',   name: 'Herodion Jerusalem',          city: 'Jerusalem', country: 'IL', brand: 'Herodion Collection',rating: 4.8, price_from: 340, has_spa: true,  family_friendly: true,  image_url: hotelImage('Herodion Jerusalem', 'Jerusalem', 38),   url: 'https://aureliahotels.com/jer-herod' },
+      { id: 'eil-club',    name: 'Aurelia Club Eilat',          city: 'Eilat',     country: 'IL', brand: 'Aurelia Club',       rating: 4.4, price_from: 210, has_spa: true,  family_friendly: true,  image_url: hotelImage('Aurelia Club Eilat', 'Eilat', 190),    url: 'https://aureliahotels.com/eil-club' },
+      { id: 'ded-spa',     name: 'Aurelia Dead Sea Spa',        city: 'Dead Sea',  country: 'IL', brand: 'Aurelia Royal',      rating: 4.6, price_from: 265, has_spa: true,  family_friendly: true,  image_url: hotelImage('Aurelia Dead Sea Spa', 'Dead Sea', 172),     url: 'https://aureliahotels.com/ded-spa' },
+      { id: 'ber-nyx',     name: 'NYX Berlin Mitte',            city: 'Berlin',    country: 'DE', brand: 'NYX Urban',          rating: 4.3, price_from: 145, has_spa: false, family_friendly: false, image_url: hotelImage('NYX Berlin Mitte', 'Berlin', 280),     url: 'https://aureliahotels.com/ber-nyx' },
+      { id: 'mun-royal',   name: 'Aurelia Royal Munich',        city: 'Munich',    country: 'DE', brand: 'Aurelia Royal',      rating: 4.5, price_from: 175, has_spa: true,  family_friendly: false, image_url: hotelImage('Aurelia Royal Munich', 'Munich', 215),   url: 'https://aureliahotels.com/mun-royal' },
+      { id: 'lon-express', name: 'Aurelia Express London City', city: 'London',    country: 'GB', brand: 'Aurelia Express',    rating: 4.1, price_from: 132, has_spa: false, family_friendly: false, image_url: hotelImage('Aurelia Express London City', 'London', 228), url: 'https://aureliahotels.com/lon-express' },
+      { id: 'mad-nyx',     name: 'NYX Madrid Gran Via',         city: 'Madrid',    country: 'ES', brand: 'NYX Urban',          rating: 4.4, price_from: 155, has_spa: false, family_friendly: false, image_url: hotelImage('NYX Madrid Gran Via', 'Madrid', 348),     url: 'https://aureliahotels.com/mad-nyx' },
+      { id: 'bcn-club',    name: 'Aurelia Club Barcelona',      city: 'Barcelona', country: 'ES', brand: 'Aurelia Club',       rating: 4.5, price_from: 168, has_spa: true,  family_friendly: true,  image_url: hotelImage('Aurelia Club Barcelona', 'Barcelona', 18),    url: 'https://aureliahotels.com/bcn-club' },
+      { id: 'rom-herod',   name: 'Herodion Roma',               city: 'Rome',      country: 'IT', brand: 'Herodion Collection',rating: 4.7, price_from: 295, has_spa: true,  family_friendly: false, image_url: hotelImage('Herodion Roma', 'Rome', 46),   url: 'https://aureliahotels.com/rom-herod' },
+      { id: 'ath-express', name: 'Aurelia Express Athens',      city: 'Athens',    country: 'GR', brand: 'Aurelia Express',    rating: 4.0, price_from: 118, has_spa: false, family_friendly: true,  image_url: hotelImage('Aurelia Express Athens', 'Athens', 198), url: 'https://aureliahotels.com/ath-express' },
+      { id: 'vie-royal',   name: 'Aurelia Royal Vienna',        city: 'Vienna',    country: 'AT', brand: 'Aurelia Royal',      rating: 4.6, price_from: 198, has_spa: true,  family_friendly: false, image_url: hotelImage('Aurelia Royal Vienna', 'Vienna', 260),   url: 'https://aureliahotels.com/vie-royal' },
     ],
   },
   loyalty_rewards: {
