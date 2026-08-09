@@ -15,7 +15,7 @@ then rebuild the single file:
 
 ```bash
 python3 build.py          # -> dist/braze-sandbox.html
-node smoke-test.js        # 62 assertions across both engines + every route
+node smoke-test.js        # 95 assertions: both engines, every route, operator actions
 ```
 
 The smoke test needs `npm install playwright`; it points at the pre-installed Chromium
@@ -39,6 +39,33 @@ profiles. Every audience count on screen is computed, not hard-coded, so changin
 filter moves the number for a real reason. Includes per-channel reachability, which is
 the number you should actually report to a stakeholder.
 
+## BrazeAI Operator
+
+The assistant panel (bottom-right, **Ask BrazeAI**) is context-aware — it knows which
+screen you are on, so "explain this" and "check this" work without naming the object.
+
+It **acts**, not just answers:
+
+| Say | It does |
+|---|---|
+| "build a segment of lapsed Gold members in Israel with the app" | parses the description into real filters, creates the segment, opens it, and explains each row |
+| "how many users are Gold or Platinum in Germany?" | computes it live against the seeded base, with per-channel reachability |
+| "why is this segment empty?" | leave-one-out analysis showing which single filter is costing the audience |
+| "add an Audience Paths step" | inserts and selects it in the open Canvas, with the relevant caveat |
+| "create an abandonment campaign" | opens the wizard pre-filled, exception event and all |
+| "write Liquid for a tier-based offer" | pastes a working snippet into the open template |
+| "check this template" | renders it against three adversarial profiles and reports what came back empty |
+| "review this Canvas for problems" | walks the flow for missing catch-alls, long waits before the first message, lead-time gaps, re-eligibility mistakes |
+| "run a pre-launch check" | the machine-checkable half of the launch checklist |
+
+It also answers ~35 knowledge topics drawn from the same material as the courses.
+
+**It is not a language model.** A published artifact page has no model access — the only
+runtime capabilities available are `downloads` and `mcp`. So this is intent matching over
+a curated corpus plus a real action layer. It says so when asked, and it says "I don't
+know" rather than inventing an answer. What it *does* — the counts, the filters, the
+lint results — is computed, not scripted.
+
 ## Screens
 
 | Area | What you can do |
@@ -50,7 +77,8 @@ the number you should actually report to a stakeholder.
 | Users | Profile explorer: standard and custom attributes, event timeline, subscription groups, message history |
 | Catalogs, Content Blocks, Subscription Groups, Custom Data | The supporting objects, populated |
 | Analytics | Campaign league table, funnels, channel mix |
-| Case Studies | Eight courses with tasks and solution keys |
+| Case Studies | Nine courses with tasks and solution keys |
+| BrazeAI Operator | Context-aware assistant that answers *and* builds — see above |
 
 Anything you create or edit persists in `localStorage`. **Reset sandbox data** in the
 bottom-left restores the seeds.

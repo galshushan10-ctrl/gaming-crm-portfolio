@@ -535,7 +535,7 @@
           ${ops.map((o) => `<option value="${o[0]}" ${o[0] === f.op ? 'selected' : ''}>${U.esc(o[1])}</option>`).join('')}
         </select>
         ${needsValue ? (meta.options
-          ? `<select class="bz-select bz-select--sm" data-f="${i}" data-fk="value" ${['is_one_of', 'is_none_of'].includes(f.op) ? 'multiple size="3"' : ''}>
+          ? `<select class="bz-select bz-select--sm" data-f="${i}" data-fk="value" ${['is_one_of', 'is_none_of'].includes(f.op) ? 'multiple size="4"' : ''}>
               ${meta.options.map((o) => `<option value="${U.esc(o)}" ${(Array.isArray(f.value) ? f.value : [f.value]).map(String).includes(String(o)) ? 'selected' : ''}>${U.esc(o)}</option>`).join('')}
             </select>`
           : `<input class="bz-input bz-input--sm" data-f="${i}" data-fk="value" value="${U.esc(Array.isArray(f.value) ? f.value.join(',') : (f.value ?? ''))}" style="width:130px">`) : ''}
@@ -1188,6 +1188,21 @@
     location.hash = '#/campaigns/' + c.id;
   }
 
-  window.addEventListener('hashchange', () => { window.scrollTo(0, 0); render(); });
+  /* The operator panel drives the app: it mutates BZ data then asks for a
+     repaint, and needs to know which screen the user is looking at.          */
+  window.BZApp = {
+    render,
+    parseHash,
+    openWizard,
+    get wizard() { return wizard; },
+    set wizard(w) { wizard = w; },
+  };
+
+  window.addEventListener('hashchange', () => {
+    window.scrollTo(0, 0);
+    render();
+    if (window.BZOperator) window.BZOperator.onNavigate();
+  });
   render();
+  if (window.BZOperator) window.BZOperator.mount();
 })();

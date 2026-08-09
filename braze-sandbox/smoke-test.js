@@ -211,6 +211,147 @@ const check = (name, cond, detail) => {
   const hiddenAfter = await page.locator('.bz-solution').first().isHidden();
   check('solutions start hidden and toggle open', hiddenBefore === true && hiddenAfter === false);
 
+  /* ---------- 4b. BrazeAI Operator ---------------------------------------- */
+  console.log('\nBrazeAI Operator');
+
+  await page.evaluate(() => { location.hash = '#/home'; });
+  await page.waitForTimeout(150);
+  await page.locator('.bz-op__fab').click();
+  await page.waitForTimeout(300);
+  check('operator panel opens', await page.locator('.bz-op.is-open').count() === 1);
+  check('operator shows the current screen as context', /Home/.test(await page.locator('#bz-op-ctx').innerText()));
+
+  // ACTION: build a segment from a natural-language description
+  const segsBefore = await page.evaluate(() => BZ.segments.length);
+  await page.fill('#bz-op-in', 'build a segment of lapsed Gold and Platinum members in Israel with the app');
+  await page.press('#bz-op-in', 'Enter');
+  await page.waitForTimeout(400);
+  const segResult = await page.evaluate(() => {
+    const s = BZ.segments[BZ.segments.length - 1];
+    return { n: BZ.segments.length, filters: s.filters.map(f => f.field + ':' + f.op), hash: location.hash, count: BZSeg.count(s.filters) };
+  });
+  check('operator created a new segment', segResult.n === segsBefore + 1);
+  check('operator navigated to the new segment', segResult.hash.startsWith('#/segments/'));
+  check('extracted tier as ONE is_one_of filter (not two rows)',
+    segResult.filters.filter(f => f.startsWith('custom.loyalty_tier')).length === 1 &&
+    segResult.filters.includes('custom.loyalty_tier:is_one_of'), segResult.filters.join(', '));
+  check('extracted country', segResult.filters.includes('country:equals'));
+  check('extracted lapsed as stays>=1 AND last_stay before N days',
+    segResult.filters.includes('custom.total_stays:gte') && segResult.filters.includes('custom.last_stay_date:date_before_days_ago'));
+  check('extracted has_app', segResult.filters.includes('custom.has_app:is_true'));
+  check('segment count is computed, not invented', typeof segResult.count === 'number');
+
+  // ACTION: live count query
+  await page.fill('#bz-op-in', 'how many users are Gold or Platinum in Germany?');
+  await page.press('#bz-op-in', 'Enter');
+  await page.waitForTimeout(250);
+  const countReply = await page.evaluate(() => {
+    const msgs = document.querySelectorAll('.bz-op__msg--op');
+    return msgs[msgs.length - 1].innerText;
+  });
+  const expected = await page.evaluate(() => BZSeg.count([
+    { field: 'custom.loyalty_tier', op: 'is_one_of', value: ['Gold', 'Platinum'] },
+    { field: 'country', op: 'equals', value: 'DE' }]));
+  check('count answer matches the engine', countReply.includes(String(expected)), `said: ${countReply.slice(0, 80)} | engine: ${expected}`);
+
+  // ACTION: add a Canvas step
+  await page.evaluate(() => { location.hash = '#/canvases/cv-onboard'; });
+  await page.waitForTimeout(250);
+  const cvBefore = await page.evaluate(() => BZ.canvases.find(c => c.id === 'cv-onboard').steps.length);
+  await page.fill('#bz-op-in', 'add an audience paths step');
+  await page.press('#bz-op-in', 'Enter');
+  await page.waitForTimeout(350);
+  const cvAfter = await page.evaluate(() => {
+    const c = BZ.canvases.find(x => x.id === 'cv-onboard');
+    return { n: c.steps.length, kinds: c.steps.map(s => s.kind) };
+  });
+  check('operator added a Canvas step', cvAfter.n === cvBefore + 1);
+  check('added the right step type', cvAfter.kinds.includes('audience_paths'));
+  check('inserted before the Exit step', cvAfter.kinds.indexOf('audience_paths') < cvAfter.kinds.lastIndexOf('exit'));
+
+  // ACTION: write Liquid into the open template
+  await page.evaluate(() => { location.hash = '#/templates/tpl-winback'; });
+  await page.waitForTimeout(300);
+  const bodyBefore = await page.evaluate(() => BZ.templates.find(t => t.id === 'tpl-winback').body.length);
+  await page.fill('#bz-op-in', 'write liquid for a tier based offer');
+  await page.press('#bz-op-in', 'Enter');
+  await page.waitForTimeout(350);
+  const bodyAfter = await page.evaluate(() => BZ.templates.find(t => t.id === 'tpl-winback').body);
+  check('operator appended Liquid to the open template', bodyAfter.length > bodyBefore);
+  check('inserted snippet is valid Liquid (renders without error)', await page.evaluate(() => {
+    const t = BZ.templates.find(x => x.id === 'tpl-winback');
+    return BZUI.renderLiquid(t.body, BZ.userById('AUR-100000'), {}).errors.length === 0;
+  }));
+
+  // ACTION: lint a template against awkward profiles
+  await page.fill('#bz-op-in', 'check this template');
+  await page.press('#bz-op-in', 'Enter');
+  await page.waitForTimeout(300);
+  const lintReply = await page.evaluate(() => {
+    const m = document.querySelectorAll('.bz-op__msg--op');
+    return m[m.length - 1].innerText;
+  });
+  check('template check reports on all three probe profiles',
+    /no first name/i.test(lintReply) && /all-null/i.test(lintReply) && /fully populated/i.test(lintReply), lintReply.slice(0, 120));
+
+  // ANSWER: knowledge retrieval routes to the right topic
+  const kb = [
+    ['what is the difference between action paths and audience paths', 'Action Paths'],
+    ['why are my filters anded', 'ANDed'],
+    ['what conversion window should i use', 'Conversion'],
+    ['explain incrementality', 'Incrementality'],
+    ['is 0 truthy in liquid', 'truthiness'],
+  ];
+  for (const [q, expect] of kb) {
+    await page.fill('#bz-op-in', q);
+    await page.press('#bz-op-in', 'Enter');
+    await page.waitForTimeout(160);
+    const reply = await page.evaluate(() => {
+      const m = document.querySelectorAll('.bz-op__msg--op');
+      return m[m.length - 1].innerText;
+    });
+    check(`answers "${q.slice(0, 42)}…"`, reply.toLowerCase().includes(expect.toLowerCase()), reply.slice(0, 90));
+  }
+
+  // HONESTY: unknown question admits it rather than inventing
+  await page.fill('#bz-op-in', 'what is the airspeed velocity of an unladen swallow');
+  await page.press('#bz-op-in', 'Enter');
+  await page.waitForTimeout(200);
+  const idk = await page.evaluate(() => {
+    const m = document.querySelectorAll('.bz-op__msg--op');
+    return m[m.length - 1].innerText;
+  });
+  check('admits when it does not know', /do not have a confident answer/i.test(idk), idk.slice(0, 90));
+
+  // ACTION: diagnose an over-constrained segment
+  await page.evaluate(() => { location.hash = '#/segments'; });
+  await page.waitForTimeout(200);
+  await page.fill('#bz-op-in', 'build a segment of lapsed Platinum members in Greece with the app');
+  await page.press('#bz-op-in', 'Enter');
+  await page.waitForTimeout(500);
+  const diag = await page.evaluate(() => {
+    const m = document.querySelectorAll('.bz-op__msg--op');
+    return m[m.length - 1].innerText;
+  });
+  check('empty segment triggers a leave-one-out constraint report',
+    /which filter is the constraint/i.test(diag), diag.slice(0, 120));
+
+  await page.fill('#bz-op-in', 'why is this segment empty?');
+  await page.press('#bz-op-in', 'Enter');
+  await page.waitForTimeout(300);
+  const diag2 = await page.evaluate(() => {
+    const m = document.querySelectorAll('.bz-op__msg--op');
+    return m[m.length - 1].innerText;
+  });
+  check('standalone "why is it empty" diagnoses the open segment',
+    /constraint|no single filter/i.test(diag2), diag2.slice(0, 120));
+
+  // Context awareness survives navigation
+  await page.evaluate(() => { location.hash = '#/analytics'; });
+  await page.waitForTimeout(250);
+  check('context label follows navigation', /Analytics/.test(await page.locator('#bz-op-ctx').innerText()));
+  check('panel stays open across navigation', await page.locator('.bz-op.is-open').count() === 1);
+
   /* ---------- 5. No runtime errors --------------------------------------- */
   console.log('\nRuntime');
   check('no uncaught page errors', errors.length === 0, errors.slice(0, 5).join('\n      '));

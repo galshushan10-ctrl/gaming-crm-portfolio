@@ -23,6 +23,7 @@ JS_ORDER = [
     "js/ui.js",
     "js/canvas.js",
     "js/editor.js",
+    "js/operator.js",
     "js/app.js",
 ]
 CSS = "css/braze.css"
