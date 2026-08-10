@@ -157,6 +157,8 @@ const check = (name, cond, detail) => {
   await page.waitForTimeout(120);
   const pickerOpen = await page.locator('.bz-steppicker__item').count();
   check('step picker opens with all step types', pickerOpen === 11, 'got ' + pickerOpen);
+  check('step picker groups the step types',
+    (await page.locator('.bz-steppicker__g').count()) >= 5);
   await page.locator('.bz-steppicker__item[data-kind="audience_paths"]').click();
   await page.waitForTimeout(180);
   const stepsAfter = await page.locator('.bz-cvstep').count();
@@ -739,6 +741,115 @@ const check = (name, cond, detail) => {
     ddState.rows === 1 && ddState.blocks === 0, JSON.stringify(ddState));
   check('empty canvas still offers a drop target',
     (await page.locator('.bz-eb__dropzone').count()) >= 1);
+
+  /* ---------- 3d. Canvas Flow: creation, wizard, validation --------------- */
+  console.log('\nCanvas Flow');
+
+  /* the explicit ask: a new Canvas must be EMPTY */
+  await page.evaluate(() => { location.hash = '#/canvases'; });
+  await page.waitForTimeout(200);
+  const cvCountBefore = await page.evaluate(() => BZ.canvases.length);
+  await page.locator('[data-act="new-canvas"]').first().click();
+  await page.waitForTimeout(400);
+  const fresh = await page.evaluate(() => {
+    const c = BZ.canvases[BZ.canvases.length - 1];
+    return { steps: c.steps.length, trigger: c.entry.trigger, conv: c.entry.conversionEvents.length,
+             desc: c.description, status: c.status, id: c.id };
+  });
+  check('Create Canvas made a new Canvas', (await page.evaluate(() => BZ.canvases.length)) === cvCountBefore + 1);
+  check('a new Canvas starts with NO steps', fresh.steps === 0, 'steps: ' + fresh.steps);
+  check('a new Canvas has no pre-filled trigger', fresh.trigger === '', 'trigger: ' + JSON.stringify(fresh.trigger));
+  check('a new Canvas has no pre-filled conversion event', fresh.conv === 0);
+  check('a new Canvas has no invented description', !fresh.desc);
+  check('a new Canvas is a draft', fresh.status === 'draft');
+
+  /* it opens on Canvas Details, because nothing has been decided yet */
+  check('a new Canvas opens on Canvas Details',
+    (await page.locator('[data-detail="name"]').count()) === 1);
+  check('the wizard shows all four Canvas steps',
+    (await page.locator('[data-cvwiz]').count()) === 4);
+
+  /* naming it, then moving through the wizard */
+  await page.fill('[data-detail="name"]', 'Second stay journey');
+  await page.waitForTimeout(150);
+  check('the Canvas name writes through',
+    (await page.evaluate((id) => BZ.canvases.find((c) => c.id === id).name, fresh.id)) === 'Second stay journey');
+
+  await page.locator('[data-cvwiz="schedule"]').click();
+  await page.waitForTimeout(250);
+  check('Entry Schedule offers the three entry types',
+    (await page.locator('[data-entry="type"]').count()) === 3);
+  check('Entry Controls separates re-eligibility from re-entry',
+    (await page.locator('[data-entry="reelig"]').count()) === 1 &&
+    (await page.locator('[data-entry="reentry"]').count()) === 1);
+  check('exit criteria can be configured', (await page.locator('[data-add-exit]').count()) === 1);
+
+  await page.locator('[data-cvwiz="flow"]').click();
+  await page.waitForTimeout(250);
+  check('an empty Canvas says so rather than showing a fake journey',
+    (await page.locator('.bz-cvblank').count()) === 1);
+  check('an empty Canvas still offers one inserter',
+    (await page.locator('.bz-cvaddbtn').count()) === 1);
+  check('the board has zoom controls', (await page.locator('[data-zoom]').count()) === 3);
+
+  /* launch must be blocked while the flow is unbuildable */
+  const v0 = await page.evaluate((id) =>
+    BZCanvas.validate(BZ.canvases.find((c) => c.id === id)), fresh.id);
+  check('an empty, untriggered Canvas fails validation', v0.ok === false && v0.errors.length >= 2,
+    JSON.stringify(v0.errors));
+  await page.locator('[data-act="canvas-launch"]').click();
+  await page.waitForTimeout(300);
+  check('launching an invalid Canvas opens the problem list, not a launch',
+    (await page.locator('.bz-cvproblems').count()) >= 1 &&
+    (await page.evaluate((id) => BZ.canvases.find((c) => c.id === id).status, fresh.id)) === 'draft');
+  await page.locator('[data-modal-close]').first().click();
+  await page.waitForTimeout(200);
+
+  /* build it up and watch validation clear */
+  await page.evaluate((id) => {
+    const c = BZ.canvases.find((x) => x.id === id);
+    c.entry.trigger = 'Performs checked_out';
+    c.entry.conversionEvents.push({ event: 'booking_completed', window: '14 days', primary: true });
+    const m = BZCanvas.newStep('message');
+    m.templateId = BZ.templates[0].id;
+    c.steps.push(m, BZCanvas.newStep('delay'));
+  }, fresh.id);
+  const v1 = await page.evaluate((id) =>
+    BZCanvas.validate(BZ.canvases.find((c) => c.id === id)), fresh.id);
+  check('a completed Canvas passes validation', v1.ok === true, JSON.stringify(v1.errors));
+  check('validation still warns about missing exit criteria',
+    v1.warnings.some((w) => /exit criteria/i.test(w)), JSON.stringify(v1.warnings));
+
+  /* a message step with no template is a blocking error, not a silent gap */
+  const v2 = await page.evaluate((id) => {
+    const c = BZ.canvases.find((x) => x.id === id);
+    c.steps.push(BZCanvas.newStep('message'));
+    const r = BZCanvas.validate(c);
+    c.steps.pop();
+    return r;
+  }, fresh.id);
+  check('a message step with no template blocks launch',
+    v2.ok === false && v2.errors.some((x) => /template/i.test(x)), JSON.stringify(v2.errors));
+
+  /* the drawer opens on a step and closes again */
+  await page.evaluate(() => { location.hash = '#/canvases/cv-onboard'; });
+  await page.waitForTimeout(300);
+  await page.locator('.bz-cvstep[data-step="s1"]').click();
+  await page.waitForTimeout(250);
+  check('selecting a step opens the configuration drawer',
+    (await page.locator('.bz-cvdrawer').count()) === 1);
+  check('the drawer lets you rename the step inline',
+    (await page.locator('.bz-cvdrawer__name').count()) === 1);
+  await page.locator('[data-cv-close]').click();
+  await page.waitForTimeout(250);
+  check('the drawer closes', (await page.locator('.bz-cvdrawer').count()) === 0);
+
+  /* opening a different Canvas must not inherit the previous wizard step */
+  await page.evaluate(() => { location.hash = '#/canvases/cv-prearrival'; });
+  await page.waitForTimeout(300);
+  check('a seeded Canvas opens on its flow, not on Canvas Details',
+    (await page.locator('.bz-canvasflow').count()) === 1 &&
+    (await page.locator('[data-detail="name"]').count()) === 0);
 
   /* ---------- 4a. Workspace delivery controls ---------------------------- */
   console.log('\nDelivery settings');

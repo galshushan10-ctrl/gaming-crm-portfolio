@@ -1218,6 +1218,134 @@ body.bz-op-open .bz-wizbar { padding-right: 16px; }
 .bz-scorecard__grade--paused  { background: #e2a03f; }
 .bz-scorecard__grade--stopped { background: #d64545; }
 
+/* ==========================================================================
+   Canvas Flow — rebuilt board, wizard panes, drawer
+   ========================================================================== */
+
+/* the wizard panes and the flow board share the space under the topbar */
+.bz-cvwrap { flex: 1; min-height: 0; overflow: auto; }
+.bz-cvwrap.is-flow { overflow: hidden; display: flex; }
+.bz-cvwrap.is-flow .bz-canvasflow { flex: 1; min-width: 0; }
+
+.bz-cvpane { max-width: 720px; padding: 30px 34px 40px; }
+.bz-cvpane__h { font-size: 21px; font-weight: 800; letter-spacing: -.3px; margin: 0 0 6px; }
+.bz-cvpane__sub { color: var(--bz-ink-3); font-size: 13.5px; line-height: 1.65; margin: 0 0 24px; }
+
+.bz-req {
+  font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+  color: var(--bz-red); margin-left: 6px;
+}
+
+/* board */
+.bz-cvboardinner { display: flex; flex-direction: column; align-items: flex-start; }
+
+.bz-cvzoom {
+  position: sticky; top: 0; float: right; z-index: 4;
+  display: flex; align-items: center; gap: 2px;
+  background: #fff; border: 1px solid var(--bz-line); border-radius: 8px;
+  padding: 3px; box-shadow: var(--bz-shadow);
+}
+.bz-cvzoom__b {
+  width: 26px; height: 26px; border: 0; background: transparent; cursor: pointer;
+  border-radius: 5px; color: var(--bz-ink-2); font-size: 14px; line-height: 1;
+}
+.bz-cvzoom__b:hover { background: var(--bz-bg-2); color: var(--bz-purple); }
+.bz-cvzoom__v {
+  font-size: 11px; font-variant-numeric: tabular-nums; color: var(--bz-ink-3);
+  min-width: 38px; text-align: center;
+}
+
+.bz-cvstep.is-incomplete { border-color: #E9C46A; }
+.bz-cvstep__warn {
+  margin-left: auto; width: 15px; height: 15px; border-radius: 50%;
+  background: var(--bz-amber); color: #fff; font-size: 10px; font-weight: 800;
+  display: grid; place-items: center;
+}
+.bz-cvempty {
+  width: 268px; font-size: 12px; color: var(--bz-ink-4); font-style: italic;
+  padding: 2px 0 6px;
+}
+.bz-cvblank {
+  width: 420px; background: #fff; border: 1px dashed var(--bz-line-2);
+  border-radius: var(--bz-radius-lg); padding: 22px 24px; text-align: center;
+}
+.bz-cvblank__t { font-weight: 800; font-size: 15px; margin-bottom: 6px; }
+.bz-cvblank p { margin: 0; font-size: 13px; line-height: 1.65; color: var(--bz-ink-3); }
+
+.bz-cvbranch__label.is-catchall { border-style: dashed; color: var(--bz-ink-4); }
+.bz-cvbranch__label.is-control { border-color: #E9C46A; color: var(--bz-amber); background: var(--bz-amber-soft); }
+
+/* configuration drawer */
+.bz-cvdrawer {
+  width: 400px; flex: 0 0 400px; background: #fff;
+  border-left: 1px solid var(--bz-line); overflow-y: auto;
+  display: flex; flex-direction: column;
+  box-shadow: -8px 0 24px rgba(16, 24, 40, .06);
+}
+.bz-cvdrawer__head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-bottom: 1px solid var(--bz-line);
+  position: sticky; top: 0; background: #fff; z-index: 2;
+}
+.bz-cvdrawer__ico { font-size: 20px; }
+.bz-cvdrawer__kind {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase;
+  color: var(--bz-ink-4);
+}
+.bz-cvdrawer__name {
+  border: 1px solid transparent; background: transparent; padding: 2px 6px; margin-left: -6px;
+  font-weight: 700; font-size: 15px; font-family: inherit; color: var(--bz-ink);
+  width: 100%; border-radius: 5px;
+}
+.bz-cvdrawer__name:hover { border-color: var(--bz-line); }
+.bz-cvdrawer__name:focus { border-color: var(--bz-purple); outline: none; background: #fff; }
+.bz-cvdrawer__body { padding: 16px; flex: 1; }
+.bz-cvdrawer__sec {
+  padding: 11px 16px; border-top: 1px solid var(--bz-line); background: var(--bz-bg-2);
+  font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase;
+  color: var(--bz-ink-3);
+}
+.bz-cvdrawer__foot {
+  padding: 12px 16px; border-top: 1px solid var(--bz-line);
+  position: sticky; bottom: 0; background: #fff;
+}
+
+/* step picker, grouped */
+.bz-steppicker__g {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase;
+  color: var(--bz-ink-4); margin: 16px 0 8px;
+}
+.bz-steppicker__g:first-child { margin-top: 0; }
+
+/* launch validation */
+.bz-cvbadge {
+  display: inline-grid; place-items: center; min-width: 17px; height: 17px; padding: 0 5px;
+  border-radius: 999px; background: var(--bz-red); color: #fff;
+  font-size: 10.5px; font-weight: 800; margin-right: 5px;
+}
+.bz-cvproblems ul { margin: 8px 0 0; padding-left: 20px; }
+.bz-cvproblems li { margin-bottom: 7px; font-size: 13.5px; line-height: 1.6; }
+.bz-cvproblems__h {
+  font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase;
+}
+.bz-cvproblems__h--err  { color: var(--bz-red); }
+.bz-cvproblems__h--warn { color: var(--bz-amber); }
+
+/* home-page entry point for the graded case studies */
+.bz-herocase {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap; cursor: pointer;
+  border: 1px solid var(--bz-purple-line); border-radius: var(--bz-radius-lg);
+  background: linear-gradient(180deg, var(--bz-purple-soft), #fff 70%);
+  padding: 20px 24px;
+}
+.bz-herocase:hover { box-shadow: var(--bz-shadow-lg); }
+.bz-herocase__ico {
+  width: 46px; height: 46px; flex: 0 0 46px; border-radius: 12px;
+  background: var(--bz-purple); color: #fff; display: grid; place-items: center; font-size: 22px;
+}
+.bz-herocase__t { font-weight: 800; font-size: 16.5px; letter-spacing: -.2px; }
+.bz-herocase__d { margin: 5px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--bz-ink-2); }
+
 </style>
 </head>
 <body>
@@ -4176,8 +4304,17 @@ window.BZUI = BZUI;
 /* ===== js/canvas.js ===== */
 /* ==========================================================================
    Braze Sandbox — Canvas Flow builder
-   Renders a journey as a vertical lane with branching paths, lets you insert
-   / configure / delete steps, and shows per-step stats like the real thing.
+
+   Structure follows the live product: a Canvas is built through a bottom-bar
+   wizard (Canvas Details → Entry Schedule → Target Audience → Canvas Flow),
+   and the flow itself is a node board with an Entry node at the top, "+"
+   inserters on every connector, a right-hand configuration drawer, zoom
+   controls, and a launch that refuses to run while the flow has blocking
+   problems.
+
+   A new Canvas starts EMPTY. Entry node, one "+", nothing else — the same as
+   the real thing. Pre-populating a journey teaches the wrong habit and hides
+   the decisions the builder exists to make you make.
    ========================================================================== */
 
 const BZCanvas = (function () {
@@ -4187,25 +4324,32 @@ const BZCanvas = (function () {
   /* ---------- step catalog ------------------------------------------------ */
 
   const STEP_TYPES = [
-    { kind: 'message',          label: 'Message',             icon: '✉️', desc: 'Send on one or more channels.' },
-    { kind: 'delay',            label: 'Delay',               icon: '⏱',  desc: 'Wait a duration, or until a date.' },
-    { kind: 'action_paths',     label: 'Action Paths',        icon: '⚡', desc: 'Branch on what the user does, within a window.' },
-    { kind: 'audience_paths',   label: 'Audience Paths',      icon: '👥', desc: 'Branch on who the user is. No waiting.' },
-    { kind: 'experiment_paths', label: 'Experiment Paths',    icon: '🧪', desc: 'Random split with an optional control group.' },
-    { kind: 'decision_split',   label: 'Decision Split',      icon: '⑂',  desc: 'Yes/no branch on a single polar question.' },
-    { kind: 'agent',            label: 'Agent',               icon: '🤖', desc: 'Run an AI agent from the Agent Console; route on its output variable.' },
-    { kind: 'feature_flag',     label: 'Feature Flag',        icon: '⚑',  desc: 'Turn a flag on or off for users reaching this step.' },
-    { kind: 'webhook',          label: 'Webhook',             icon: '🔗', desc: 'POST to an external endpoint.' },
-    { kind: 'update_user',      label: 'Update User Profile', icon: '📝', desc: 'Write a custom attribute mid-journey.' },
-    { kind: 'exit',             label: 'Exit',                icon: '🚪', desc: 'End of the journey.' },
+    { kind: 'message',          group: 'Messaging',  label: 'Message',             icon: '✉️', desc: 'Send on one or more channels.' },
+    { kind: 'delay',            group: 'Timing',     label: 'Delay',               icon: '⏱',  desc: 'Wait a duration, until a date, or until a time of day.' },
+    { kind: 'action_paths',     group: 'Paths',      label: 'Action Paths',        icon: '⚡', desc: 'Wait for a behaviour within a window, then branch. This one holds the user.' },
+    { kind: 'audience_paths',   group: 'Paths',      label: 'Audience Paths',      icon: '👥', desc: 'Branch on who the user is, evaluated on arrival. First match wins.' },
+    { kind: 'decision_split',   group: 'Paths',      label: 'Decision Split',      icon: '⑂',  desc: 'One yes/no question, two ways out.' },
+    { kind: 'experiment_paths', group: 'Paths',      label: 'Experiment Paths',    icon: '🧪', desc: 'Random split, with an optional control that receives nothing.' },
+    { kind: 'webhook',          group: 'Actions',    label: 'Webhook',             icon: '🔗', desc: 'Send an HTTP request to an external system.' },
+    { kind: 'update_user',      group: 'Actions',    label: 'Update User Profile', icon: '📝', desc: 'Write a custom attribute mid-journey.' },
+    { kind: 'feature_flag',     group: 'Actions',    label: 'Feature Flag',        icon: '⚑',  desc: 'Turn a flag on or off for users reaching this step.' },
+    { kind: 'agent',            group: 'BrazeAI',    label: 'Agent',               icon: '🤖', desc: 'Run an agent built in the Agent Console; route on its output.' },
+    { kind: 'exit',             group: 'End',        label: 'Exit',                icon: '🚪', desc: 'Ends the journey for anyone who reaches it.' },
   ];
+  const GROUP_ORDER = ['Messaging', 'Timing', 'Paths', 'Actions', 'BrazeAI', 'End'];
   const typeOf = (kind) => STEP_TYPES.find((t) => t.kind === kind) || { label: kind, icon: '●' };
 
   const BRANCH_KINDS = ['action_paths', 'audience_paths', 'experiment_paths', 'decision_split'];
 
+  const WIZ = [
+    { id: 'details',  label: 'Canvas Details' },
+    { id: 'schedule', label: 'Entry Schedule' },
+    { id: 'audience', label: 'Target Audience' },
+    { id: 'flow',     label: 'Canvas Flow' },
+  ];
+
   /* ---------- step tree helpers ------------------------------------------- */
 
-  /* Walk every step in the tree, including inside paths. */
   function walk(steps, fn, parent) {
     steps.forEach((s, i) => {
       fn(s, steps, i, parent);
@@ -4224,35 +4368,93 @@ const BZCanvas = (function () {
     if (f) f.list.splice(f.index, 1);
   }
 
+  function countSteps(canvas) {
+    let n = 0;
+    walk(canvas.steps, () => n++);
+    return n;
+  }
+
   function newStep(kind) {
     const t = typeOf(kind);
     const s = { id: U.uid('st'), kind, name: t.label };
-    if (kind === 'message')     Object.assign(s, { channel: 'Email', templateId: window.BZ.templates[0].id, delay: 'Immediately', stats: { sent: 0, opens: 0, clicks: 0, conv: 0 } });
-    if (kind === 'delay')       s.config = { duration: '1 day' };
-    if (kind === 'webhook')     s.config = { url: 'https://hooks.example.com/braze', method: 'POST' };
-    if (kind === 'update_user') s.config = { attribute: 'journey_stage', value: 'reached' };
+    if (kind === 'message')     Object.assign(s, { channel: 'Email', templateId: '', delay: 'Immediately', stats: { sent: 0, opens: 0, clicks: 0, conv: 0 } });
+    if (kind === 'delay')       s.config = { mode: 'duration', duration: '1 day', untilTime: '10:00', relativeTo: '', relativeOffset: '3 days before' };
+    if (kind === 'webhook')     s.config = { url: '', method: 'POST' };
+    if (kind === 'update_user') s.config = { attribute: '', value: '' };
     if (kind === 'action_paths') {
-      s.config = { window: '1 day' };
-      s.paths = [{ label: 'Performed `booking_completed`', steps: [] }, { label: 'Everybody else', steps: [] }];
+      s.config = { window: '1 day', event: 'booking_completed' };
+      s.paths = [{ label: 'Performed booking_completed', steps: [] }, { label: 'Everybody else', steps: [], catchAll: true }];
     }
     if (kind === 'audience_paths') {
-      s.config = { evaluate: 'On entry to step' };
-      s.paths = [{ label: 'Gold / Platinum', steps: [] }, { label: 'Everybody else', steps: [] }];
+      s.config = { evaluate: 'On arrival at this step' };
+      s.paths = [{ label: 'Path 1', steps: [] }, { label: 'Everybody else', steps: [], catchAll: true }];
     }
     if (kind === 'decision_split') {
-      s.config = { question: 'Is in segment: Aurelia Club — Gold & Platinum' };
-      s.paths = [{ label: 'Yes', steps: [] }, { label: 'No', steps: [] }];
+      s.config = { question: '' };
+      s.paths = [{ label: 'Yes', steps: [] }, { label: 'No', steps: [], catchAll: true }];
     }
     if (kind === 'agent') s.config = { agent: 'Content Optimizer', outputVar: 'agent_choice' };
-    if (kind === 'feature_flag') s.config = { flagKey: 'new_checkout_flow', enabled: 'true' };
+    if (kind === 'feature_flag') s.config = { flagKey: '', enabled: 'true' };
     if (kind === 'experiment_paths') {
       s.config = { control: 10 };
-      s.paths = [{ label: 'Path 1 (45%)', steps: [] }, { label: 'Path 2 (45%)', steps: [] }, { label: 'Control — holdout (10%)', steps: [] }];
+      s.paths = [{ label: 'Variant 1 (45%)', steps: [] }, { label: 'Variant 2 (45%)', steps: [] }, { label: 'Control — holdout (10%)', steps: [], control: true }];
     }
     return s;
   }
 
-  /* ---------- rendering ---------------------------------------------------- */
+  /* An entry object for a brand-new Canvas: nothing decided for you. */
+  function newEntry() {
+    return {
+      type: 'action_based', trigger: '', segmentId: 'seg-all',
+      reeligibility: { allow: false, cooldown: '' },
+      reentry: false,
+      entryWindow: 'Anytime', startDate: '', endDate: '',
+      conversionEvents: [],
+      exitCriteria: [],
+      sendInUserTz: false, quietHours: '', rateLimit: '',
+    };
+  }
+
+  /* ---------- validation ---------------------------------------------------- */
+  /* Braze blocks a launch and tells you why. Reproducing that is worth more
+     than any amount of visual polish, because it is where the builder teaches. */
+
+  function validate(canvas) {
+    const errors = [], warnings = [];
+    const e = canvas.entry;
+
+    if (!canvas.name || /^untitled/i.test(canvas.name)) warnings.push('The Canvas is still called "Untitled Canvas".');
+    if (e.type === 'action_based' && !String(e.trigger).trim()) errors.push('Entry Schedule: an action-based Canvas needs a trigger event.');
+    if (e.type === 'scheduled' && !String(e.startDate).trim()) errors.push('Entry Schedule: a scheduled Canvas needs a start date.');
+    if (!countSteps(canvas)) errors.push('Canvas Flow: the flow is empty — add at least one step.');
+    if (!e.conversionEvents.length) warnings.push('No conversion event is set, so this Canvas will report engagement and no outcome.');
+
+    walk(canvas.steps, (s) => {
+      if (s.kind === 'message' && !s.templateId) errors.push(`"${s.name}": no template selected.`);
+      if (s.kind === 'webhook' && !String(s.config.url).trim()) errors.push(`"${s.name}": no URL.`);
+      if (s.kind === 'update_user' && !String(s.config.attribute).trim()) errors.push(`"${s.name}": no attribute to write.`);
+      if (s.kind === 'decision_split' && !String(s.config.question).trim()) errors.push(`"${s.name}": no question set.`);
+      if (s.kind === 'feature_flag' && !String(s.config.flagKey).trim()) errors.push(`"${s.name}": no flag key.`);
+      if (BRANCH_KINDS.includes(s.kind)) {
+        const empty = (s.paths || []).filter((p) => !p.steps.length && !p.control);
+        if (empty.length) warnings.push(`"${s.name}": ${empty.length} path(s) lead nowhere — users reaching them stop here.`);
+        if (!(s.paths || []).some((p) => p.catchAll)) warnings.push(`"${s.name}": no catch-all path. Anyone matching nothing drops out silently.`);
+      }
+      if (s.kind === 'action_paths' && /^(\d+)\s*(hour|hours)/.test(String(s.config.window)) === false && /day/.test(String(s.config.window)) === false) {
+        /* not a real problem, just unparsed — stay quiet */
+      }
+    });
+
+    if (e.reeligibility.allow && !String(e.reeligibility.cooldown).trim()) {
+      warnings.push('Re-eligibility is on with no cooldown — a user can re-enter the moment they exit.');
+    }
+    if (!e.exitCriteria.length && countSteps(canvas) > 1) {
+      warnings.push('No exit criteria. Anyone who converts mid-journey will keep receiving the rest of it.');
+    }
+    return { errors, warnings, ok: !errors.length };
+  }
+
+  /* ---------- board rendering ---------------------------------------------- */
 
   function stepCard(s, selectedId) {
     const t = typeOf(s.kind);
@@ -4264,19 +4466,23 @@ const BZCanvas = (function () {
       : s.kind === 'feature_flag' ? 'update'
       : s.kind === 'update_user' ? 'update' : s.kind;
 
-    let meta = '';
+    let meta = '', incomplete = false;
     if (s.kind === 'message') {
       const tpl = window.BZ.templates.find((x) => x.id === s.templateId);
-      meta = `${U.esc(s.channel)} · ${U.esc(s.delay || 'Immediately')}${tpl ? '<br>' + U.esc(tpl.name) : ''}`;
-    } else if (s.kind === 'delay')       meta = U.esc(s.config.duration);
-    else if (s.kind === 'action_paths')  meta = 'Evaluation window: ' + U.esc(s.config.window);
-    else if (s.kind === 'audience_paths')meta = U.esc(s.config.evaluate);
-    else if (s.kind === 'experiment_paths') meta = (s.paths || []).length + ' paths';
-    else if (s.kind === 'webhook')       meta = U.esc(s.config.method + ' ' + s.config.url);
-    else if (s.kind === 'update_user')   meta = U.esc(s.config.attribute + ' = ' + s.config.value);
-    else if (s.kind === 'decision_split') meta = U.esc(s.config.question);
+      incomplete = !tpl;
+      meta = `${U.esc(s.channel)} · ${U.esc(s.delay || 'Immediately')}` + (tpl ? '<br>' + U.esc(tpl.name) : '<br><em>No template selected</em>');
+    } else if (s.kind === 'delay') {
+      meta = s.config.mode === 'until_time' ? 'Until ' + U.esc(s.config.untilTime)
+        : s.config.mode === 'relative' ? U.esc((s.config.relativeOffset || '') + ' ' + (s.config.relativeTo || 'an attribute'))
+        : 'Wait ' + U.esc(s.config.duration);
+    } else if (s.kind === 'action_paths')  meta = 'If ' + U.esc(s.config.event || 'an event') + ' within ' + U.esc(s.config.window);
+    else if (s.kind === 'audience_paths')  meta = U.esc(s.config.evaluate) + ' · ' + (s.paths || []).length + ' paths';
+    else if (s.kind === 'experiment_paths') meta = (s.paths || []).length + ' paths · ' + U.esc(String(s.config.control)) + '% control';
+    else if (s.kind === 'webhook')       { incomplete = !s.config.url; meta = U.esc(s.config.method + ' ' + (s.config.url || '— no URL —')); }
+    else if (s.kind === 'update_user')   { incomplete = !s.config.attribute; meta = s.config.attribute ? U.esc(s.config.attribute + ' = ' + s.config.value) : '<em>No attribute set</em>'; }
+    else if (s.kind === 'decision_split') { incomplete = !s.config.question; meta = s.config.question ? U.esc(s.config.question) : '<em>No question set</em>'; }
     else if (s.kind === 'agent')          meta = U.esc(s.config.agent + ' → ' + s.config.outputVar);
-    else if (s.kind === 'feature_flag')   meta = U.esc(s.config.flagKey + ' = ' + s.config.enabled);
+    else if (s.kind === 'feature_flag')   { incomplete = !s.config.flagKey; meta = s.config.flagKey ? U.esc(s.config.flagKey + ' = ' + s.config.enabled) : '<em>No flag key</em>'; }
 
     const st = s.stats;
     const statsHtml = st && st.sent ? `<div class="bz-cvstep__stats">
@@ -4286,10 +4492,10 @@ const BZCanvas = (function () {
       <div>conv<b>${U.pct(st.conv, st.sent)}</b></div>
     </div>` : '';
 
-    return `<div class="bz-cvstep bz-cvstep--${cls} ${s.id === selectedId ? 'is-selected' : ''}" data-step="${s.id}">
+    return `<div class="bz-cvstep bz-cvstep--${cls} ${s.id === selectedId ? 'is-selected' : ''} ${incomplete ? 'is-incomplete' : ''}" data-step="${s.id}">
       <div class="bz-cvstep__bar"></div>
       <div class="bz-cvstep__body">
-        <div class="bz-cvstep__kind">${t.icon} ${U.esc(t.label)}</div>
+        <div class="bz-cvstep__kind">${t.icon} ${U.esc(t.label)}${incomplete ? '<span class="bz-cvstep__warn" title="Not finished">!</span>' : ''}</div>
         <div class="bz-cvstep__name">${U.esc(s.name)}</div>
         ${meta ? `<div class="bz-cvstep__meta">${meta}</div>` : ''}
         ${statsHtml}
@@ -4304,11 +4510,11 @@ const BZCanvas = (function () {
       <div class="bz-cvconn__line"></div>
     </div>`;
 
-  function renderLane(steps, selectedId, pathRef, editable) {
+  function renderLane(steps, selectedId, pathRef) {
     let html = '';
     if (!steps.length) {
-      html += editable ? `<div style="padding:4px 0">${connector('', pathRef)}</div>` : '<div class="bz-muted bz-small" style="padding:8px 0">No steps on this path.</div>';
-      return `<div class="bz-cvlane">${html}</div>`;
+      return `<div class="bz-cvlane">${connector('', pathRef)}
+        <div class="bz-cvempty">Nothing on this path yet</div></div>`;
     }
     steps.forEach((s, i) => {
       html += stepCard(s, selectedId);
@@ -4316,70 +4522,215 @@ const BZCanvas = (function () {
         html += `<div class="bz-cvconn"><div class="bz-cvconn__line"></div></div>`;
         html += `<div class="bz-cvbranches">${s.paths.map((p, pi) => `
           <div class="bz-cvbranch">
-            <div class="bz-cvbranch__label">${U.esc(p.label)}</div>
-            ${renderLane(p.steps, selectedId, s.id + ':' + pi, editable)}
+            <div class="bz-cvbranch__label ${p.catchAll ? 'is-catchall' : ''} ${p.control ? 'is-control' : ''}">${U.esc(p.label)}</div>
+            ${renderLane(p.steps, selectedId, s.id + ':' + pi)}
           </div>`).join('')}</div>`;
+      } else if (s.kind !== 'exit') {
+        html += connector(s.id, pathRef);
       }
-      if (i < steps.length - 1 || editable) html += connector(s.id, pathRef);
     });
     return `<div class="bz-cvlane">${html}</div>`;
   }
 
-  /* ---------- config panel -------------------------------------------------- */
+  /* ---------- wizard panes -------------------------------------------------- */
 
-  function entryPanel(canvas) {
-    const e = canvas.entry;
-    const seg = window.BZ.segments.find((s) => s.id === e.segmentId);
-    const reach = seg ? window.BZSeg.reach(seg.filters) : null;
+  function paneDetails(canvas) {
     return `
-      <div class="bz-card__head"><div class="bz-card__title">Canvas entry</div></div>
-      <div class="bz-card__body">
+      <div class="bz-cvpane">
+        <h2 class="bz-cvpane__h">Canvas Details</h2>
+        <p class="bz-cvpane__sub">Naming is not admin. Six months from now this name is the only thing telling
+        you what the journey was for.</p>
+        <div class="bz-field">
+          <label class="bz-label">Canvas name</label>
+          <input class="bz-input" data-detail="name" value="${U.esc(canvas.name)}" placeholder="e.g. Post-stay → second booking">
+        </div>
+        <div class="bz-field">
+          <label class="bz-label">Description</label>
+          <textarea class="bz-textarea" data-detail="description" style="font-family:var(--bz-font);font-size:13.5px"
+            placeholder="What is this for, and what does success look like?">${U.esc(canvas.description || '')}</textarea>
+        </div>
+        <div class="bz-field">
+          <label class="bz-label">Tags</label>
+          <input class="bz-input" data-detail="tagstr" value="${U.esc((canvas.tags || []).join(', '))}" placeholder="lifecycle, loyalty">
+          <div class="bz-hint">Tags are how cross-Canvas reporting works later, and how frequency capping rules
+            find this journey. Untagged Canvases are invisible to both.</div>
+        </div>
+        <div class="bz-field">
+          <label class="bz-label">Teams</label>
+          <input class="bz-input" data-detail="team" value="${U.esc(canvas.team || '')}" placeholder="CRM">
+        </div>
+      </div>`;
+  }
+
+  function paneSchedule(canvas) {
+    const e = canvas.entry;
+    return `
+      <div class="bz-cvpane">
+        <h2 class="bz-cvpane__h">Entry Schedule</h2>
+        <p class="bz-cvpane__sub">When people enter. Separate from <em>who</em> may enter, which is the next step.</p>
+
         <div class="bz-field">
           <label class="bz-label">Entry type</label>
-          <select class="bz-select" data-entry="type">
-            <option value="action_based" ${e.type === 'action_based' ? 'selected' : ''}>Action-based delivery</option>
-            <option value="scheduled" ${e.type === 'scheduled' ? 'selected' : ''}>Scheduled delivery</option>
-            <option value="api_triggered" ${e.type === 'api_triggered' ? 'selected' : ''}>API-triggered delivery</option>
-          </select>
-          <div class="bz-hint">Action-based: users trickle in as they act. Scheduled: the whole segment enters at once.</div>
+          <div class="bz-radiocards">
+            ${[['action_based', 'Action-Based Delivery', 'Users enter as they perform a trigger event. The moment is the point.'],
+               ['scheduled', 'Scheduled Delivery', 'The whole eligible audience enters at a set time, once or on a recurrence.'],
+               ['api_triggered', 'API-Triggered Delivery', 'Your systems call Braze to put a specific user in.']].map(([v, t, d]) => `
+              <label class="bz-radiocard ${e.type === v ? 'is-selected' : ''}">
+                <input type="radio" name="cventry" value="${v}" data-entry="type" ${e.type === v ? 'checked' : ''}>
+                <div><div class="bz-radiocard__title">${t}</div><div class="bz-radiocard__desc">${d}</div></div>
+              </label>`).join('')}
+          </div>
         </div>
+
+        ${e.type === 'action_based' ? `
+          <div class="bz-field">
+            <label class="bz-label">Trigger event <span class="bz-req">required</span></label>
+            <select class="bz-select" data-entry="trigger">
+              <option value="">Select an event…</option>
+              ${window.BZ.customEvents.map((ev) => `<option value="Performs ${ev.name}" ${e.trigger === 'Performs ' + ev.name ? 'selected' : ''}>Performs ${ev.name}</option>`).join('')}
+            </select>
+          </div>` : ''}
+
+        ${e.type === 'scheduled' ? `
+          <div class="bz-field">
+            <label class="bz-label">Start date <span class="bz-req">required</span></label>
+            <input class="bz-input" type="date" data-entry="startDate" value="${U.esc(e.startDate)}">
+          </div>` : ''}
+
         <div class="bz-field">
-          <label class="bz-label">Trigger</label>
-          <input class="bz-input" data-entry="trigger" value="${U.esc(e.trigger)}">
+          <label class="bz-label">Entry Controls</label>
+          <label class="bz-checkline"><input type="checkbox" data-entry="reelig" ${e.reeligibility.allow ? 'checked' : ''}>
+            <span><strong>Re-eligibility</strong> — may a user enter again <em>after they have exited</em>?</span></label>
+          ${e.reeligibility.allow ? `<input class="bz-input bz-input--sm bz-mt8" data-entry="cooldown"
+            value="${U.esc(e.reeligibility.cooldown)}" placeholder="Cooldown, e.g. 30 days" style="max-width:260px">` : ''}
+          <label class="bz-checkline"><input type="checkbox" data-entry="reentry" ${e.reentry ? 'checked' : ''}>
+            <span><strong>Re-entry</strong> — may a user be inside this Canvas twice at once?</span></label>
+          <div class="bz-hint">These are two different settings and conflating them is the classic Canvas
+            misconfiguration. Re-eligibility with no cooldown on a high-frequency trigger sends the same
+            journey again and again; re-entry lets it run concurrently with itself.</div>
         </div>
+
+        <div class="bz-field">
+          <label class="bz-label">Conversion events <span class="bz-muted bz-small">(up to 4, the first is primary)</span></label>
+          ${e.conversionEvents.length ? e.conversionEvents.map((c, i) => `
+            <div class="bz-filterrow">
+              <span class="bz-chip ${i === 0 ? 'bz-chip--purple' : ''}">${i === 0 ? 'primary' : 'secondary'}</span>
+              <code class="bz-mono bz-small" style="flex:1">${U.esc(c.event)}</code>
+              <input class="bz-input bz-input--sm" style="width:130px" data-conv="${i}" value="${U.esc(c.window)}">
+              <button class="bz-btn bz-btn--sm bz-btn--ghost bz-filterrow__x" data-del-conv="${i}">✕</button>
+            </div>`).join('')
+            : '<div class="bz-muted bz-small bz-mb8">None set. The Canvas will report opens and clicks and no outcome.</div>'}
+          ${e.conversionEvents.length < 4 ? `<div class="bz-row bz-mt8">
+            <select class="bz-select bz-select--sm" id="bz-cv-newconv" style="width:auto">
+              ${window.BZ.customEvents.map((ev) => `<option value="${ev.name}">${ev.name}</option>`).join('')}
+            </select>
+            <button class="bz-btn bz-btn--sm" data-add-conv="1">+ Add conversion event</button>
+          </div>` : ''}
+        </div>
+
+        <div class="bz-field">
+          <label class="bz-label">Exit criteria</label>
+          ${e.exitCriteria.length ? e.exitCriteria.map((x, i) => `<div class="bz-filterrow">
+              <code class="bz-mono bz-small" style="flex:1">Performs ${U.esc(x)}</code>
+              <button class="bz-btn bz-btn--sm bz-btn--ghost bz-filterrow__x" data-del-exit="${i}">✕</button>
+            </div>`).join('')
+            : '<div class="bz-muted bz-small bz-mb8">None. Anyone who converts halfway through keeps receiving the rest.</div>'}
+          <div class="bz-row bz-mt8">
+            <select class="bz-select bz-select--sm" id="bz-cv-newexit" style="width:auto">
+              ${window.BZ.customEvents.map((ev) => `<option value="${ev.name}">${ev.name}</option>`).join('')}
+            </select>
+            <button class="bz-btn bz-btn--sm" data-add-exit="1">+ Add exit criterion</button>
+          </div>
+          <div class="bz-hint">Match these to your entry. Entered on <code>booking_started</code>? Then
+            <code>booking_completed</code> belongs here.</div>
+        </div>
+
+        <div class="bz-field">
+          <label class="bz-label">Send Settings</label>
+          <label class="bz-checkline"><input type="checkbox" data-entry="tz" ${e.sendInUserTz ? 'checked' : ''}>
+            <span>Send in the user's local time zone</span></label>
+          <div class="bz-hint">Right for evergreen journeys. Wrong when the deadline is the same moment for
+            everybody — then an absolute time is fairer.</div>
+        </div>
+      </div>`;
+  }
+
+  function paneAudience(canvas) {
+    const e = canvas.entry;
+    const seg = window.BZ.segments.find((s) => s.id === e.segmentId);
+    const r = seg ? window.BZSeg.reach(seg.groups ? seg : seg.filters) : null;
+    const rr = seg ? window.BZSeg.reachability(seg.groups ? seg : seg.filters) : null;
+    return `
+      <div class="bz-cvpane">
+        <h2 class="bz-cvpane__h">Target Audience</h2>
+        <p class="bz-cvpane__sub">Who is <em>eligible</em> to enter. This is checked at entry only — it does not
+        re-evaluate while someone is in the journey.</p>
         <div class="bz-field">
           <label class="bz-label">Entry audience</label>
           <select class="bz-select" data-entry="segmentId">
             ${window.BZ.segments.map((s) => `<option value="${s.id}" ${s.id === e.segmentId ? 'selected' : ''}>${U.esc(s.name)}</option>`).join('')}
           </select>
-          ${reach ? `<div class="bz-hint">${U.num(reach.count)} users match this segment right now (${reach.pct.toFixed(1)}% of the base). The trigger <em>and</em> this filter must both pass.</div>` : ''}
         </div>
-        <div class="bz-field">
-          <label class="bz-label">Entry Controls</label>
-          <label class="bz-checkline"><input type="checkbox" data-entry="reelig" ${e.reeligibility.allow ? 'checked' : ''}>
-            <span><strong>Allow users to re-enter Canvas</strong>${e.reeligibility.cooldown ? ' — cooldown ' + U.esc(e.reeligibility.cooldown) : ''}</span></label>
-          <div class="bz-hint"><strong>Re-eligibility</strong> is whether a user may enter again <em>after exiting</em>, governed by that time window.
-            It is a different setting from <strong>re-entry</strong>, which is whether a user already inside the Canvas may start a concurrent path.
-            Conflating the two is a classic interview trip-up.</div>
-          <div class="bz-hint">Off for onboarding. On with a short cooldown for anything tied to a booking. On with a long cooldown for win-back.</div>
-        </div>
-        <div class="bz-field">
-          <label class="bz-label">Conversion events</label>
-          ${e.conversionEvents.map((c) => `<div class="bz-filterrow">
-            <span class="bz-chip ${c.primary ? 'bz-chip--purple' : ''}">${c.primary ? 'primary' : 'secondary'}</span>
-            <code class="bz-mono bz-small">${U.esc(c.event)}</code>
-            <span class="bz-muted bz-small">within ${U.esc(c.window)}</span>
-          </div>`).join('')}
-          <div class="bz-hint">Up to <strong>four</strong> conversion events per Canvas; the first is primary.
-            The window must cover your real lag to conversion — too short under-credits, too long claims bookings you did not cause.</div>
-        </div>
-        <div class="bz-field">
-          <label class="bz-label">Delivery settings</label>
-          <label class="bz-checkline"><input type="checkbox" ${e.sendInUserTz ? 'checked' : ''} disabled><span>Send in the user's local time zone</span></label>
-          <label class="bz-checkline"><input type="checkbox" checked disabled><span>Quiet hours ${U.esc(e.quietHours)}</span></label>
+        ${r ? `<div class="bz-statrow bz-mb16">
+          ${U.stat('Match this segment', U.num(r.count), r.pct.toFixed(1) + '% of the base')}
+          ${rr ? U.stat('Reachable by email', U.num(rr.email), 'subscribed and addressable') : ''}
+          ${rr ? U.stat('Reachable by push', U.num(rr.push), 'has a live token') : ''}
+        </div>` : ''}
+        <div class="bz-callout bz-callout--warn">
+          <div class="bz-callout__t">Eligibility is evaluated at entry only</div>
+          <p>If someone stops qualifying on day two — they book, they churn, they unsubscribe — the entry
+          audience will not remove them. That is what <strong>exit criteria</strong> and a mid-journey
+          <strong>Audience Paths</strong> step are for.</p>
         </div>
       </div>`;
   }
+
+  function paneFlow(canvas, selectedId, zoom) {
+    const seg = window.BZ.segments.find((s) => s.id === canvas.entry.segmentId);
+    const empty = !canvas.steps.length;
+    return `
+      <div class="bz-canvasflow">
+        <div class="bz-canvasflow__board" id="bz-board">
+          <div class="bz-cvzoom">
+            <button class="bz-cvzoom__b" data-zoom="out" title="Zoom out">−</button>
+            <span class="bz-cvzoom__v">${Math.round(zoom * 100)}%</span>
+            <button class="bz-cvzoom__b" data-zoom="in" title="Zoom in">+</button>
+            <button class="bz-cvzoom__b" data-zoom="fit" title="Reset zoom">⤢</button>
+          </div>
+          <div class="bz-cvboardinner" style="transform:scale(${zoom});transform-origin:top center">
+            <div class="bz-cvstep bz-cvstep--entry ${selectedId === '__entry' ? 'is-selected' : ''}" data-step="__entry">
+              <div class="bz-cvstep__bar"></div>
+              <div class="bz-cvstep__body">
+                <div class="bz-cvstep__kind">▶ Entry Criteria</div>
+                <div class="bz-cvstep__name">${U.esc(canvas.entry.trigger || 'No trigger set')}</div>
+                <div class="bz-cvstep__meta">${U.esc((seg || {}).name || 'All Users')}</div>
+                ${canvas.stats.entered ? `<div class="bz-cvstep__stats">
+                  <div>entered<b>${U.num(canvas.stats.entered)}</b></div>
+                  <div>converted<b>${U.pct(canvas.stats.converted, canvas.stats.entered)}</b></div>
+                  <div>revenue<b>${U.money(canvas.stats.revenue)}</b></div></div>` : ''}
+              </div>
+            </div>
+            ${empty
+              ? `${connector('__entry', '')}
+                 <div class="bz-cvblank">
+                   <div class="bz-cvblank__t">This Canvas is empty</div>
+                   <p>Click the <strong>+</strong> above to add your first step. Sketch the flow before you
+                   build it — Canvases assembled by clicking tend to grow a shape nobody can explain later.</p>
+                 </div>`
+              : `${connector('__entry', '')}${renderLane(canvas.steps, selectedId, '')}`}
+          </div>
+        </div>
+        ${selectedId && selectedId !== '__entry' ? `<div class="bz-cvdrawer" id="bz-cvpanel">${drawerFor(canvas, selectedId)}</div>` : ''}
+      </div>`;
+  }
+
+  function drawerFor(canvas, selectedId) {
+    const sel = findStep(canvas, selectedId);
+    if (!sel) return '';
+    return stepPanel(canvas, sel.step);
+  }
+
+  /* ---------- step configuration drawer ------------------------------------- */
 
   function stepPanel(canvas, step) {
     const t = typeOf(step.kind);
@@ -4391,49 +4742,78 @@ const BZCanvas = (function () {
         <div class="bz-field">
           <label class="bz-label">Channel</label>
           <select class="bz-select" data-cfg="channel">
-            ${['Email', 'Push', 'SMS', 'In-App Message', 'Webhook'].map((c) => `<option ${c === step.channel ? 'selected' : ''}>${c}</option>`).join('')}
+            ${['Email', 'Push', 'SMS', 'WhatsApp', 'In-App Message', 'Content Card', 'Webhook'].map((c) => `<option ${c === step.channel ? 'selected' : ''}>${c}</option>`).join('')}
           </select>
         </div>
         <div class="bz-field">
-          <label class="bz-label">Template</label>
+          <label class="bz-label">Template <span class="bz-req">required</span></label>
           <select class="bz-select" data-cfg="templateId">
+            <option value="">Select a template…</option>
             ${window.BZ.templates.map((x) => `<option value="${x.id}" ${x.id === step.templateId ? 'selected' : ''}>${U.esc(x.name)}</option>`).join('')}
           </select>
-          ${tpl ? `<div class="bz-hint"><a href="#/templates/${tpl.id}">Open in the email editor →</a></div>` : ''}
+          ${tpl ? `<div class="bz-hint"><a href="#/templates/${tpl.id}">Open in the editor →</a></div>` : ''}
         </div>
         <div class="bz-field">
           <label class="bz-label">Send time</label>
           <input class="bz-input" data-cfg="delay" value="${U.esc(step.delay || '')}" placeholder="Immediately / Send at 10:00 local">
         </div>`;
     } else if (step.kind === 'delay') {
-      body = `<div class="bz-field">
-          <label class="bz-label">Wait</label>
-          <input class="bz-input" data-cfg="config.duration" value="${U.esc(step.config.duration)}">
-          <div class="bz-hint">Absolute ("3 days") or relative to an attribute ("Until 7 days before <code>next_stay_date</code>"). A relative gate that is already in the past drops the user — handle short lead times on their own path.</div>
-        </div>`;
+      body = `
+        <div class="bz-field">
+          <label class="bz-label">Delay type</label>
+          <select class="bz-select" data-cfg="config.mode">
+            <option value="duration" ${step.config.mode === 'duration' ? 'selected' : ''}>Wait a set amount of time</option>
+            <option value="until_time" ${step.config.mode === 'until_time' ? 'selected' : ''}>Wait until a specific time of day</option>
+            <option value="relative" ${step.config.mode === 'relative' ? 'selected' : ''}>Wait relative to a date attribute</option>
+          </select>
+        </div>
+        ${step.config.mode === 'until_time' ? `<div class="bz-field"><label class="bz-label">Until</label>
+            <input class="bz-input" data-cfg="config.untilTime" value="${U.esc(step.config.untilTime)}"></div>`
+        : step.config.mode === 'relative' ? `
+          <div class="bz-field"><label class="bz-label">Offset</label>
+            <input class="bz-input" data-cfg="config.relativeOffset" value="${U.esc(step.config.relativeOffset)}" placeholder="3 days before"></div>
+          <div class="bz-field"><label class="bz-label">Date attribute</label>
+            <select class="bz-select" data-cfg="config.relativeTo">
+              <option value="">Select…</option>
+              ${window.BZ.customAttributes.filter((a) => a.type === 'Date').map((a) => `<option value="${a.name}" ${a.name === step.config.relativeTo ? 'selected' : ''}>${a.name}</option>`).join('')}
+            </select>
+            <div class="bz-hint">A relative gate that is already in the past drops the user. Short lead times
+              need their own path, not a shorter offset.</div></div>`
+        : `<div class="bz-field"><label class="bz-label">Wait</label>
+            <input class="bz-input" data-cfg="config.duration" value="${U.esc(step.config.duration)}"></div>`}`;
     } else if (step.kind === 'action_paths') {
       body = `<div class="bz-field">
+          <label class="bz-label">Wait for event</label>
+          <select class="bz-select" data-cfg="config.event">
+            ${window.BZ.customEvents.map((ev) => `<option ${ev.name === step.config.event ? 'selected' : ''}>${ev.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="bz-field">
           <label class="bz-label">Evaluation window</label>
           <input class="bz-input" data-cfg="config.window" value="${U.esc(step.config.window)}">
-          <div class="bz-hint">Users are held here until they act or the window closes (max 31 days). This is a real wait — never put a long one before your primary message.</div>
+          <div class="bz-hint">Users are <strong>held here</strong> until they act or the window closes
+            (max 31 days). Size it to the behaviour's real latency — a 2-hour window on a 3-day decision
+            routes nearly everyone down "did not".</div>
         </div>` + pathsEditor(step);
     } else if (step.kind === 'audience_paths') {
       body = `<div class="bz-field">
           <label class="bz-label">Evaluation</label>
           <input class="bz-input" data-cfg="config.evaluate" value="${U.esc(step.config.evaluate)}">
-          <div class="bz-hint">Evaluated the moment the user arrives — no waiting. Paths are checked top-down and the first match wins, so order from most specific to least and always keep a catch-all last.</div>
+          <div class="bz-hint">No waiting — evaluated the instant the user arrives. Paths are checked
+            top-down and <strong>first match wins</strong>, so order most specific first and keep a
+            catch-all last.</div>
         </div>` + pathsEditor(step);
     } else if (step.kind === 'experiment_paths') {
       body = `<div class="bz-field">
           <label class="bz-label">Control group (%)</label>
-          <input class="bz-input" type="number" data-cfg="config.control" value="${U.esc(step.config.control)}">
-          <div class="bz-hint">The holdout receives nothing. It is what turns "converted at 3%" into "caused 1.2pp more than doing nothing".</div>
+          <input class="bz-input" type="number" data-cfg="config.control" value="${U.esc(String(step.config.control))}">
+          <div class="bz-hint">The control receives nothing. It is what turns "converted at 3%" into
+            "caused 1.2pp more than doing nothing".</div>
         </div>` + pathsEditor(step);
     } else if (step.kind === 'decision_split') {
-      body = `<div class="bz-field"><label class="bz-label">Question</label>
-          <input class="bz-input" data-cfg="config.question" value="${U.esc(step.config.question)}">
-          <div class="bz-hint">A Decision Split answers one yes/no question — segment membership, an attribute test, message engagement.
-          For more than two outcomes use Audience Paths instead.</div>
+      body = `<div class="bz-field"><label class="bz-label">Question <span class="bz-req">required</span></label>
+          <input class="bz-input" data-cfg="config.question" value="${U.esc(step.config.question)}" placeholder="Is in segment: …">
+          <div class="bz-hint">One yes/no question. For more than two outcomes use Audience Paths.</div>
         </div>` + pathsEditor(step);
     } else if (step.kind === 'agent') {
       body = `<div class="bz-field"><label class="bz-label">Agent</label>
@@ -4444,31 +4824,36 @@ const BZCanvas = (function () {
           <input class="bz-input" data-cfg="config.outputVar" value="${U.esc(step.config.outputVar)}">
           <div class="bz-hint">The agent writes its result here; a later Audience Paths step can route on it.</div></div>`;
     } else if (step.kind === 'feature_flag') {
-      body = `<div class="bz-field"><label class="bz-label">Flag key</label>
-          <input class="bz-input" data-cfg="config.flagKey" value="${U.esc(step.config.flagKey)}"></div>
+      body = `<div class="bz-field"><label class="bz-label">Flag key <span class="bz-req">required</span></label>
+          <input class="bz-input" data-cfg="config.flagKey" value="${U.esc(step.config.flagKey)}" placeholder="new_checkout_flow"></div>
         <div class="bz-field"><label class="bz-label">Set to</label>
           <select class="bz-select" data-cfg="config.enabled">${['true', 'false'].map((v) =>
             `<option ${v === step.config.enabled ? 'selected' : ''}>${v}</option>`).join('')}</select></div>`;
     } else if (step.kind === 'webhook') {
       body = `<div class="bz-field"><label class="bz-label">Method</label>
           <select class="bz-select" data-cfg="config.method">${['POST', 'PUT', 'GET'].map((m) => `<option ${m === step.config.method ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
-        <div class="bz-field"><label class="bz-label">URL</label>
-          <input class="bz-input" data-cfg="config.url" value="${U.esc(step.config.url)}"></div>
-        <div class="bz-hint">Webhook failures are largely silent. Log on the receiving end rather than assuming it fired.</div>`;
+        <div class="bz-field"><label class="bz-label">URL <span class="bz-req">required</span></label>
+          <input class="bz-input" data-cfg="config.url" value="${U.esc(step.config.url)}" placeholder="https://hooks.example.com/braze"></div>
+        <div class="bz-hint">Webhook failures are largely silent. Log on the receiving end rather than
+          assuming it fired.</div>`;
     } else if (step.kind === 'update_user') {
-      body = `<div class="bz-field"><label class="bz-label">Attribute</label>
-          <input class="bz-input" data-cfg="config.attribute" value="${U.esc(step.config.attribute)}"></div>
+      body = `<div class="bz-field"><label class="bz-label">Attribute <span class="bz-req">required</span></label>
+          <select class="bz-select" data-cfg="config.attribute">
+            <option value="">Select…</option>
+            ${window.BZ.customAttributes.map((a) => `<option value="${a.name}" ${a.name === step.config.attribute ? 'selected' : ''}>${a.name}</option>`).join('')}
+          </select></div>
         <div class="bz-field"><label class="bz-label">Value</label>
           <input class="bz-input" data-cfg="config.value" value="${U.esc(step.config.value)}"></div>
-        <div class="bz-hint">Useful for journey state. Careful: if this attribute is also an entry trigger somewhere, you have built a loop.</div>`;
+        <div class="bz-hint">Careful: if this attribute also triggers a Canvas somewhere, you have built a loop.</div>`;
     } else {
-      body = '<div class="bz-muted bz-small">Nothing to configure on this step.</div>';
+      body = `<div class="bz-muted bz-small">An Exit step ends the journey for anyone who reaches it.
+        Nothing to configure.</div>`;
     }
 
     const st = step.stats;
     const statsBlock = st && st.sent ? `
-      <div class="bz-card__head" style="border-top:1px solid var(--bz-line)"><div class="bz-card__title">Step performance</div></div>
-      <div class="bz-card__body">
+      <div class="bz-cvdrawer__sec">Step performance</div>
+      <div class="bz-cvdrawer__body">
         ${U.funnel([
           { label: 'Sent', value: st.sent },
           { label: 'Opened', value: st.opens, pct: U.pct(st.opens, st.sent) },
@@ -4478,27 +4863,29 @@ const BZCanvas = (function () {
       </div>` : '';
 
     return `
-      <div class="bz-card__head">
-        <div class="bz-card__title">${t.icon} ${U.esc(t.label)}</div>
-        <div class="bz-spacer"></div>
-        <button class="bz-btn bz-btn--sm bz-btn--danger" data-del-step="${step.id}">Delete</button>
-      </div>
-      <div class="bz-card__body">
-        <div class="bz-field">
-          <label class="bz-label">Step name</label>
-          <input class="bz-input" data-cfg="name" value="${U.esc(step.name)}">
+      <div class="bz-cvdrawer__head">
+        <span class="bz-cvdrawer__ico">${t.icon}</span>
+        <div style="flex:1;min-width:0">
+          <div class="bz-cvdrawer__kind">${U.esc(t.label)}</div>
+          <input class="bz-cvdrawer__name" data-cfg="name" value="${U.esc(step.name)}">
         </div>
-        ${body}
+        <button class="bz-btn bz-btn--sm bz-btn--ghost" data-cv-close="1" title="Close">✕</button>
       </div>
-      ${statsBlock}`;
+      <div class="bz-cvdrawer__body">${body}</div>
+      ${statsBlock}
+      <div class="bz-cvdrawer__foot">
+        <button class="bz-btn bz-btn--sm bz-btn--danger" data-del-step="${step.id}">Delete step</button>
+      </div>`;
   }
 
   function pathsEditor(step) {
     return `<div class="bz-field">
-      <label class="bz-label">Paths</label>
+      <label class="bz-label">Paths <span class="bz-muted bz-small">(checked top-down, first match wins)</span></label>
       ${(step.paths || []).map((p, i) => `<div class="bz-filterrow">
         <span class="bz-filterrow__and">${i + 1}</span>
         <input class="bz-input bz-input--sm" style="flex:1" data-path="${i}" value="${U.esc(p.label)}">
+        ${p.catchAll ? '<span class="bz-tag">catch-all</span>' : ''}
+        ${p.control ? '<span class="bz-tag">control</span>' : ''}
         <button class="bz-btn bz-btn--sm bz-btn--ghost bz-filterrow__x" data-del-path="${i}">✕</button>
       </div>`).join('')}
       <button class="bz-btn bz-btn--sm" data-add-pathrow="1">+ Add path</button>
@@ -4508,44 +4895,59 @@ const BZCanvas = (function () {
   /* ---------- view ---------------------------------------------------------- */
 
   let selectedId = null;
+  let wizStep = 'flow';
+  let zoom = 1;
+  let lastId = null;
+
+  function reset() { selectedId = null; wizStep = 'flow'; zoom = 1; lastId = null; }
 
   function view(canvasId) {
     const canvas = window.BZ.canvases.find((c) => c.id === canvasId);
     if (!canvas) return '<div class="bz-content">Canvas not found.</div>';
+    if (!canvas.entry.exitCriteria) canvas.entry.exitCriteria = [];   /* seeded canvases predate this */
 
-    const sel = selectedId ? findStep(canvas, selectedId) : null;
-    const panel = sel ? stepPanel(canvas, sel.step) : entryPanel(canvas);
+    /* Opening a different Canvas starts on its flow with nothing selected —
+       otherwise the wizard step from the last one leaks across. A brand-new
+       Canvas is the exception: it opens on Canvas Details, because none of the
+       decisions the flow depends on have been made yet. */
+    if (lastId !== canvasId) {
+      selectedId = null;
+      wizStep = canvas._fresh ? 'details' : 'flow';
+      canvas._fresh = false;
+      lastId = canvasId;
+    }
+
+    const v = validate(canvas);
+    const pane = wizStep === 'details'  ? paneDetails(canvas)
+               : wizStep === 'schedule' ? paneSchedule(canvas)
+               : wizStep === 'audience' ? paneAudience(canvas)
+               : paneFlow(canvas, selectedId, zoom);
+
+    const idx = WIZ.findIndex((w) => w.id === wizStep);
 
     return `
       <div class="bz-topbar">
         <a href="#/canvases" class="bz-btn bz-btn--ghost bz-btn--sm">←</a>
         <div>
           <div class="bz-topbar__title">${U.esc(canvas.name)}</div>
-          <div class="bz-topbar__sub">${U.esc(canvas.description)}</div>
+          <div class="bz-topbar__sub">${U.esc(canvas.description || 'No description')}</div>
         </div>
         <div class="bz-topbar__spacer"></div>
         ${U.statusChip(canvas.status)}
-        <button class="bz-btn bz-btn--sm" data-act="canvas-entry">Entry settings</button>
-        <button class="bz-btn bz-btn--primary bz-btn--sm" data-act="canvas-launch">${canvas.status === 'active' ? 'Stop Canvas' : 'Launch Canvas'}</button>
+        <span class="bz-small bz-muted">${countSteps(canvas)} step${countSteps(canvas) === 1 ? '' : 's'}</span>
       </div>
-      <div class="bz-canvasflow">
-        <div class="bz-canvasflow__board" id="bz-board">
-          <div class="bz-cvstep bz-cvstep--entry" data-step="__entry" style="${selectedId ? '' : 'border-color:var(--bz-purple);box-shadow:0 0 0 3px var(--bz-purple-soft)'}">
-            <div class="bz-cvstep__bar"></div>
-            <div class="bz-cvstep__body">
-              <div class="bz-cvstep__kind">▶ Entry</div>
-              <div class="bz-cvstep__name">${U.esc(canvas.entry.trigger)}</div>
-              <div class="bz-cvstep__meta">${U.esc((window.BZ.segments.find((s) => s.id === canvas.entry.segmentId) || {}).name || '')}</div>
-              ${canvas.stats.entered ? `<div class="bz-cvstep__stats">
-                <div>entered<b>${U.num(canvas.stats.entered)}</b></div>
-                <div>converted<b>${U.pct(canvas.stats.converted, canvas.stats.entered)}</b></div>
-                <div>revenue<b>${U.money(canvas.stats.revenue)}</b></div></div>` : ''}
-            </div>
-          </div>
-          ${connector('__entry', '')}
-          ${renderLane(canvas.steps, selectedId, '', true)}
-        </div>
-        <div class="bz-canvasflow__side" id="bz-cvpanel">${panel}</div>
+
+      <div class="bz-cvwrap ${wizStep === 'flow' ? 'is-flow' : ''}">${pane}</div>
+
+      <div class="bz-wizbar">
+        ${WIZ.map((w, i) => `<button class="bz-wizbar__step ${w.id === wizStep ? 'is-active' : ''} ${i < idx ? 'is-done' : ''}"
+          data-cvwiz="${w.id}"><span class="bz-wizbar__n">${i + 1}</span>${U.esc(w.label)}</button>`).join('')}
+        <div class="bz-spacer"></div>
+        ${v.errors.length ? `<button class="bz-btn bz-btn--sm" data-act="cv-problems">
+          <span class="bz-cvbadge">${v.errors.length}</span> problem${v.errors.length === 1 ? '' : 's'}</button>` : ''}
+        <button class="bz-btn" data-act="cv-draft">Save as Draft</button>
+        <button class="bz-btn bz-btn--primary" data-act="canvas-launch">
+          ${canvas.status === 'active' ? 'Stop Canvas' : 'Launch Canvas'}</button>
       </div>`;
   }
 
@@ -4557,73 +4959,159 @@ const BZCanvas = (function () {
     const touch = () => { canvas._edited = true; U.Store.save(); };
 
     root.addEventListener('click', (e) => {
-      const card = e.target.closest('[data-step]');
-      const addBtn = e.target.closest('[data-add-after]');
-      const delBtn = e.target.closest('[data-del-step]');
-      const delPath = e.target.closest('[data-del-path]');
-      const addPath = e.target.closest('[data-add-pathrow]');
-      const act = e.target.closest('[data-act]');
+      const wiz = e.target.closest('[data-cvwiz]');
+      if (wiz) { wizStep = wiz.dataset.cvwiz; selectedId = null; rerender(); return; }
 
+      const zb = e.target.closest('[data-zoom]');
+      if (zb) {
+        const z = zb.dataset.zoom;
+        zoom = z === 'in' ? Math.min(1.5, zoom + 0.1) : z === 'out' ? Math.max(0.5, zoom - 0.1) : 1;
+        rerender(); return;
+      }
+
+      if (e.target.closest('[data-cv-close]')) { selectedId = null; rerender(); return; }
+
+      const delConv = e.target.closest('[data-del-conv]');
+      if (delConv) { canvas.entry.conversionEvents.splice(+delConv.dataset.delConv, 1); touch(); rerender(); return; }
+      if (e.target.closest('[data-add-conv]')) {
+        const sel = document.getElementById('bz-cv-newconv');
+        canvas.entry.conversionEvents.push({ event: sel.value, window: '72 hours', primary: !canvas.entry.conversionEvents.length });
+        touch(); rerender(); return;
+      }
+      const delExit = e.target.closest('[data-del-exit]');
+      if (delExit) { canvas.entry.exitCriteria.splice(+delExit.dataset.delExit, 1); touch(); rerender(); return; }
+      if (e.target.closest('[data-add-exit]')) {
+        const sel = document.getElementById('bz-cv-newexit');
+        if (!canvas.entry.exitCriteria.includes(sel.value)) canvas.entry.exitCriteria.push(sel.value);
+        touch(); rerender(); return;
+      }
+
+      const act = e.target.closest('[data-act]');
       if (act) {
-        if (act.dataset.act === 'canvas-entry') { selectedId = null; rerender(); }
+        if (act.dataset.act === 'cv-draft') { canvas.status = 'draft'; touch(); U.toast('Saved as draft'); rerender(); }
+        if (act.dataset.act === 'cv-problems') { showProblems(canvas); }
         if (act.dataset.act === 'canvas-launch') {
-          canvas.status = canvas.status === 'active' ? 'stopped' : 'active';
-          touch(); U.toast('Canvas ' + canvas.status); rerender();
+          if (canvas.status === 'active') { canvas.status = 'stopped'; touch(); U.toast('Canvas stopped'); rerender(); return; }
+          const v = validate(canvas);
+          if (!v.ok) { showProblems(canvas); return; }
+          canvas.status = 'active'; touch(); U.toast('Canvas launched'); rerender();
         }
         return;
       }
+
+      const delBtn = e.target.closest('[data-del-step]');
       if (delBtn) { removeStep(canvas, delBtn.dataset.delStep); selectedId = null; touch(); rerender(); return; }
+
+      const delPath = e.target.closest('[data-del-path]');
       if (delPath) {
         const s = findStep(canvas, selectedId); if (!s) return;
         s.step.paths.splice(+delPath.dataset.delPath, 1); touch(); rerender(); return;
       }
+      const addPath = e.target.closest('[data-add-pathrow]');
       if (addPath) {
         const s = findStep(canvas, selectedId); if (!s) return;
         s.step.paths.push({ label: 'New path', steps: [] }); touch(); rerender(); return;
       }
+
+      const addBtn = e.target.closest('[data-add-after]');
       if (addBtn) { openPicker(canvas, addBtn.dataset.addAfter, addBtn.dataset.addPath, touch, rerender); return; }
-      if (card) {
-        selectedId = card.dataset.step === '__entry' ? null : card.dataset.step;
-        rerender(); return;
+
+      const card = e.target.closest('[data-step]');
+      if (card) { selectedId = card.dataset.step; rerender(); return; }
+    });
+
+    /* select and checkbox changes need a re-render; text inputs must not, or
+       the field loses focus on every keystroke */
+    root.addEventListener('change', (e) => {
+      const entry = e.target.closest('[data-entry]');
+      if (entry && (entry.tagName === 'SELECT' || entry.type === 'checkbox' || entry.type === 'radio' || entry.type === 'date')) {
+        applyEntry(canvas, entry); touch(); rerender(); return;
       }
+      const cfg = e.target.closest('[data-cfg]');
+      if (cfg && cfg.tagName === 'SELECT') { applyCfg(canvas, cfg); touch(); rerender(); }
     });
 
     root.addEventListener('input', (e) => {
-      const cfg = e.target.closest('[data-cfg]');
-      const pathIn = e.target.closest('[data-path]');
-      const entry = e.target.closest('[data-entry]');
-      if (cfg) {
-        const s = findStep(canvas, selectedId); if (!s) return;
-        const path = cfg.dataset.cfg.split('.');
-        let obj = s.step;
-        for (let i = 0; i < path.length - 1; i++) obj = obj[path[i]] = obj[path[i]] || {};
-        obj[path[path.length - 1]] = cfg.value;
+      const detail = e.target.closest('[data-detail]');
+      if (detail) {
+        const k = detail.dataset.detail;
+        if (k === 'tagstr') canvas.tags = detail.value.split(',').map((x) => x.trim()).filter(Boolean);
+        else canvas[k] = detail.value;
         touch();
-        /* live-update only the card, so the input keeps focus */
-        const node = root.querySelector(`[data-step="${s.step.id}"]`);
-        if (node) node.outerHTML = stepCard(s.step, selectedId);
+        if (k === 'name') {
+          const t = root.querySelector('.bz-topbar__title'); if (t) t.textContent = detail.value;
+        }
         return;
       }
+      const conv = e.target.closest('[data-conv]');
+      if (conv) { canvas.entry.conversionEvents[+conv.dataset.conv].window = conv.value; touch(); return; }
+
+      const cfg = e.target.closest('[data-cfg]');
+      if (cfg && cfg.tagName !== 'SELECT') {
+        const s = applyCfg(canvas, cfg); if (!s) return;
+        touch();
+        /* repaint just the card so the drawer input keeps focus */
+        const node = root.querySelector(`[data-step="${s.id}"]`);
+        if (node) node.outerHTML = stepCard(s, selectedId);
+        return;
+      }
+      const pathIn = e.target.closest('[data-path]');
       if (pathIn) {
         const s = findStep(canvas, selectedId); if (!s) return;
         s.step.paths[+pathIn.dataset.path].label = pathIn.value; touch(); return;
       }
-      if (entry) {
-        const k = entry.dataset.entry;
-        if (k === 'reelig') canvas.entry.reeligibility.allow = entry.checked;
-        else canvas.entry[k] = entry.value;
-        touch();
-        if (k === 'segmentId' || k === 'trigger') rerender();
+      const entry = e.target.closest('[data-entry]');
+      if (entry && entry.tagName !== 'SELECT' && entry.type !== 'checkbox' && entry.type !== 'radio') {
+        applyEntry(canvas, entry); touch();
       }
     });
   }
 
+  function applyEntry(canvas, el) {
+    const k = el.dataset.entry;
+    if (k === 'reelig')        canvas.entry.reeligibility.allow = el.checked;
+    else if (k === 'cooldown') canvas.entry.reeligibility.cooldown = el.value;
+    else if (k === 'reentry')  canvas.entry.reentry = el.checked;
+    else if (k === 'tz')       canvas.entry.sendInUserTz = el.checked;
+    else                       canvas.entry[k] = el.value;
+  }
+
+  function applyCfg(canvas, el) {
+    const s = findStep(canvas, selectedId); if (!s) return null;
+    const path = el.dataset.cfg.split('.');
+    let obj = s.step;
+    for (let i = 0; i < path.length - 1; i++) obj = obj[path[i]] = obj[path[i]] || {};
+    obj[path[path.length - 1]] = el.value;
+    return s.step;
+  }
+
+  function showProblems(canvas) {
+    const v = validate(canvas);
+    U.modal('Before this Canvas can launch', `
+      ${v.errors.length ? `<div class="bz-cvproblems">
+        <div class="bz-cvproblems__h bz-cvproblems__h--err">Blocking — ${v.errors.length}</div>
+        <ul>${v.errors.map((x) => `<li>${U.esc(x)}</li>`).join('')}</ul>
+      </div>` : '<p class="bz-fb-good"><strong>Nothing blocking.</strong> This Canvas can launch.</p>'}
+      ${v.warnings.length ? `<div class="bz-cvproblems bz-mt16">
+        <div class="bz-cvproblems__h bz-cvproblems__h--warn">Worth fixing — ${v.warnings.length}</div>
+        <ul>${v.warnings.map((x) => `<li>${U.esc(x)}</li>`).join('')}</ul>
+        <p class="bz-small bz-muted">These will not stop a launch. Every one of them is something that
+        silently costs you users or makes the results unreadable.</p>
+      </div>` : ''}`,
+      '<button class="bz-btn" data-modal-close>Close</button>');
+  }
+
   function openPicker(canvas, afterId, pathRef, touch, rerender) {
-    const html = `<div class="bz-steppicker">${STEP_TYPES.map((t) =>
-      `<button class="bz-steppicker__item" data-kind="${t.kind}">
-        <div class="bz-steppicker__t">${t.icon} ${U.esc(t.label)}</div>
-        <div class="bz-steppicker__d">${U.esc(t.desc)}</div>
-      </button>`).join('')}</div>`;
+    const html = GROUP_ORDER.map((g) => {
+      const items = STEP_TYPES.filter((t) => t.group === g);
+      if (!items.length) return '';
+      return `<div class="bz-steppicker__g">${g}</div>
+        <div class="bz-steppicker">${items.map((t) =>
+          `<button class="bz-steppicker__item" data-kind="${t.kind}">
+            <div class="bz-steppicker__t">${t.icon} ${U.esc(t.label)}</div>
+            <div class="bz-steppicker__d">${U.esc(t.desc)}</div>
+          </button>`).join('')}</div>`;
+    }).join('');
     const m = U.modal('Add a step', html, '', false);
     m.addEventListener('click', (e) => {
       const b = e.target.closest('[data-kind]');
@@ -4649,8 +5137,9 @@ const BZCanvas = (function () {
   }
 
   function select(id) { selectedId = id; }
+  function goStep(id) { wizStep = id; }
 
-  return { view, bind, select, STEP_TYPES, newStep, findStep };
+  return { view, bind, select, reset, goStep, STEP_TYPES, newStep, newEntry, findStep, validate, countSteps };
 })();
 
 window.BZCanvas = BZCanvas;
@@ -9685,6 +10174,7 @@ window.BZCaseSim = BZCaseSim;
     { route: 'canvases',  icon: '🗺', label: 'Canvas' },
     { route: 'campaigns', icon: '📣', label: 'Campaigns' },
     { route: 'segments',  icon: '🎯', label: 'Segments' },
+    { route: 'cases',     icon: '📝', label: 'Case Studies' },
   ];
 
   const NAV = [
@@ -9735,8 +10225,8 @@ window.BZCaseSim = BZCaseSim;
       { route: 'settings/email', label: 'Email Settings' },
     ]},
     { id: 'learn', icon: '🎓', label: 'Learning', children: [
+      { route: 'cases', label: 'Case Studies (graded)' },
       { route: 'learn', label: 'Courses' },
-      { route: 'cases', label: 'Graded Simulations' },
     ]},
   ];
 
@@ -9813,7 +10303,21 @@ window.BZCaseSim = BZCaseSim;
       <div class="bz-callout bz-mb24">
         <div class="bz-callout__t">Start here</div>
         <p>This is a practice replica of the Braze dashboard seeded with a hotel group's data — 240 real profiles, live segment counts, working Liquid.
-        Nothing sends anywhere. Work through <a href="#/learn">Case Studies</a> alongside it: each course ends with tasks you complete in these screens.</p>
+        Nothing sends anywhere.</p>
+      </div>
+
+      <div class="bz-herocase bz-mb24" data-go="#/cases">
+        <div class="bz-herocase__ico">📝</div>
+        <div style="flex:1;min-width:0">
+          <div class="bz-herocase__t">Case Studies — graded</div>
+          <p class="bz-herocase__d">Four real briefs, worked end to end, with <strong>${(window.BZCases || []).reduce((n, c) => n + c.steps.length, 0)} scored decisions</strong>.
+          You answer, it marks you, and it tells you what you got wrong and what to do differently next time.
+          Some steps send you into the sandbox and check what you actually built.</p>
+          <div class="bz-mt8">
+            ${(window.BZCases || []).map((c) => `<span class="bz-tag">${c.icon} ${U.esc(c.title)}</span>`).join('')}
+          </div>
+        </div>
+        <a class="bz-btn bz-btn--primary" href="#/cases">Start a case study →</a>
       </div>
 
       <div class="bz-grid bz-grid--2 bz-mb24">
@@ -11845,16 +12349,16 @@ window.BZCaseSim = BZCaseSim;
         }
         case 'new-canvas': {
           const cv = {
-            id: U.uid('cv'), name: 'Untitled Canvas', status: 'draft', _userCreated: true,
-            description: 'Built in the sandbox.',
-            entry: { type: 'action_based', trigger: 'Performs custom event `booking_started`', segmentId: 'seg-all',
-              reeligibility: { allow: false, cooldown: null }, entryWindow: 'Anytime',
-              conversionEvents: [{ event: 'booking_completed', window: '72 hours', primary: true }],
-              sendInUserTz: true, quietHours: '21:00 – 08:00' },
+            id: U.uid('cv'), name: 'Untitled Canvas', status: 'draft', _userCreated: true, _fresh: true,
+            description: '', tags: [], team: '',
+            entry: window.BZCanvas.newEntry(),
             stats: { entered: 0, converted: 0, revenue: 0 },
-            steps: [window.BZCanvas.newStep('message'), window.BZCanvas.newStep('delay'), window.BZCanvas.newStep('exit')],
+            /* Empty. A new Canvas in Braze has an Entry node and nothing else —
+               pre-filling a journey hides every decision the builder exists for. */
+            steps: [],
           };
-          window.BZ.canvases.push(cv); U.Store.save(); location.hash = '#/canvases/' + cv.id;
+          window.BZ.canvases.push(cv); U.Store.save();
+          location.hash = '#/canvases/' + cv.id;
           break;
         }
         case 'new-template': {

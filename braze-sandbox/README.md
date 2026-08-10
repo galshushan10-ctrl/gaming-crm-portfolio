@@ -15,7 +15,7 @@ then rebuild the single file:
 
 ```bash
 python3 build.py          # -> dist/braze-sandbox.html
-node smoke-test.js        # 208 assertions: engines, routes, composers, editors, settings, graded cases
+node smoke-test.js        # 233 assertions: engines, routes, composers, editors, settings, graded cases
 ```
 
 The smoke test needs `npm install playwright`; it points at the pre-installed Chromium
@@ -82,7 +82,7 @@ lint results — is computed, not scripted.
 | Preview & Test | The eye icon in the rail opens Braze's real panel: **Preview as a User** / **Test Send** tabs, a user selector with **Get Random User**, the previewed profile's data shown beside the render, **Desktop / Mobile / Plaintext** switches, and the From / Reply-To / Subject header |
 | Liquid reference | 11 categories, 90+ runnable snippets — every personalization namespace, ~40 filters, all control flow, and the Braze-only tags (`abort_message`, `catalog_items`, `catalog_selection_items`, `connected_content`, `promotion`, `message_extras_capture`). Click to insert at the cursor. Every snippet is asserted to parse |
 | Other channels | Push, SMS (with GSM-7 vs Unicode segment counting), WhatsApp (positional template variables), In-App, Content Card, Banner, LINE, Webhook — each with a device preview |
-| Canvases | Full Canvas Flow builder — add, configure, delete and branch. Message, Delay, Action Paths, Audience Paths, Experiment Paths, Decision Split, Agent, Feature Flag, Webhook, Update User Profile, Exit. Entry settings with re-eligibility and conversion windows |
+| Canvases | Four-step builder — **Canvas Details / Entry Schedule / Target Audience / Canvas Flow** in a bottom bar with Save as Draft and Launch Canvas. **A new Canvas starts empty**: an Entry node and one `+`, nothing else. The flow board has zoom controls, inserters on every connector, branch labels marked *catch-all* and *control*, and a right-hand **configuration drawer** with inline step renaming. Steps that are not finished are flagged on the card, and **Launch is blocked** with a list of what is wrong — separated into blocking errors and things that will silently cost you users |
 | Email Templates | HTML + Liquid editor with live preview against a real profile, personalization palette, snippet library, per-user "Send test", and an **Edge case** button that previews against a null-heavy profile |
 | Segments | Filter-group builder with AND/OR join badges, per-group counts, live totals, breakdowns and a sample of matched users |
 | Users | Profile explorer: standard and custom attributes, event timeline, subscription groups, message history |

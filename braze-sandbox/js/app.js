@@ -20,6 +20,7 @@
     { route: 'canvases',  icon: '🗺', label: 'Canvas' },
     { route: 'campaigns', icon: '📣', label: 'Campaigns' },
     { route: 'segments',  icon: '🎯', label: 'Segments' },
+    { route: 'cases',     icon: '📝', label: 'Case Studies' },
   ];
 
   const NAV = [
@@ -70,8 +71,8 @@
       { route: 'settings/email', label: 'Email Settings' },
     ]},
     { id: 'learn', icon: '🎓', label: 'Learning', children: [
+      { route: 'cases', label: 'Case Studies (graded)' },
       { route: 'learn', label: 'Courses' },
-      { route: 'cases', label: 'Graded Simulations' },
     ]},
   ];
 
@@ -148,7 +149,21 @@
       <div class="bz-callout bz-mb24">
         <div class="bz-callout__t">Start here</div>
         <p>This is a practice replica of the Braze dashboard seeded with a hotel group's data — 240 real profiles, live segment counts, working Liquid.
-        Nothing sends anywhere. Work through <a href="#/learn">Case Studies</a> alongside it: each course ends with tasks you complete in these screens.</p>
+        Nothing sends anywhere.</p>
+      </div>
+
+      <div class="bz-herocase bz-mb24" data-go="#/cases">
+        <div class="bz-herocase__ico">📝</div>
+        <div style="flex:1;min-width:0">
+          <div class="bz-herocase__t">Case Studies — graded</div>
+          <p class="bz-herocase__d">Four real briefs, worked end to end, with <strong>${(window.BZCases || []).reduce((n, c) => n + c.steps.length, 0)} scored decisions</strong>.
+          You answer, it marks you, and it tells you what you got wrong and what to do differently next time.
+          Some steps send you into the sandbox and check what you actually built.</p>
+          <div class="bz-mt8">
+            ${(window.BZCases || []).map((c) => `<span class="bz-tag">${c.icon} ${U.esc(c.title)}</span>`).join('')}
+          </div>
+        </div>
+        <a class="bz-btn bz-btn--primary" href="#/cases">Start a case study →</a>
       </div>
 
       <div class="bz-grid bz-grid--2 bz-mb24">
@@ -2180,16 +2195,16 @@
         }
         case 'new-canvas': {
           const cv = {
-            id: U.uid('cv'), name: 'Untitled Canvas', status: 'draft', _userCreated: true,
-            description: 'Built in the sandbox.',
-            entry: { type: 'action_based', trigger: 'Performs custom event `booking_started`', segmentId: 'seg-all',
-              reeligibility: { allow: false, cooldown: null }, entryWindow: 'Anytime',
-              conversionEvents: [{ event: 'booking_completed', window: '72 hours', primary: true }],
-              sendInUserTz: true, quietHours: '21:00 – 08:00' },
+            id: U.uid('cv'), name: 'Untitled Canvas', status: 'draft', _userCreated: true, _fresh: true,
+            description: '', tags: [], team: '',
+            entry: window.BZCanvas.newEntry(),
             stats: { entered: 0, converted: 0, revenue: 0 },
-            steps: [window.BZCanvas.newStep('message'), window.BZCanvas.newStep('delay'), window.BZCanvas.newStep('exit')],
+            /* Empty. A new Canvas in Braze has an Entry node and nothing else —
+               pre-filling a journey hides every decision the builder exists for. */
+            steps: [],
           };
-          window.BZ.canvases.push(cv); U.Store.save(); location.hash = '#/canvases/' + cv.id;
+          window.BZ.canvases.push(cv); U.Store.save();
+          location.hash = '#/canvases/' + cv.id;
           break;
         }
         case 'new-template': {
