@@ -1117,3 +1117,96 @@ body.bz-op-open .bz-wizbar { padding-right: 16px; }
   padding: 14px; font-family: var(--bz-mono); font-size: 12.5px; line-height: 1.65;
   white-space: pre-wrap; overflow-wrap: anywhere; margin: 0;
 }
+
+/* ==========================================================================
+   Graded case-study simulator
+   ========================================================================== */
+
+.bz-brief {
+  border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg);
+  background: #fff; overflow: hidden; margin-bottom: 26px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, .06);
+}
+.bz-brief__head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 18px; background: var(--bz-bg-2); border-bottom: 1px solid var(--bz-line);
+}
+.bz-brief__body { padding: 20px 22px; font-size: 14.5px; line-height: 1.75; color: var(--bz-ink-2); }
+.bz-brief__body p { margin: 0 0 12px; }
+.bz-brief__body p:last-child { margin-bottom: 0; }
+.bz-brief__body blockquote {
+  margin: 14px 0; padding: 2px 0 2px 14px; border-left: 3px solid var(--bz-line);
+  color: var(--bz-ink-3); font-style: italic;
+}
+
+.bz-csprog { display: flex; align-items: center; gap: 16px; margin-bottom: 6px; }
+.bz-csprog__bar {
+  flex: 1; height: 6px; border-radius: 4px; background: var(--bz-bg-3); overflow: hidden;
+}
+.bz-csprog__fill {
+  height: 100%; border-radius: 4px; background: var(--bz-purple);
+  transition: width .25s ease;
+}
+.bz-nowrap { white-space: nowrap; }
+
+.bz-scene {
+  border-left: 3px solid var(--bz-purple); background: var(--bz-purple-050, #f7f0fe);
+  padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.7;
+  color: var(--bz-ink-2);
+}
+.bz-scene p { margin: 0 0 10px; }
+.bz-scene p:last-child { margin-bottom: 0; }
+.bz-scene table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12.5px; }
+.bz-scene th, .bz-scene td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--bz-line); }
+.bz-scene th { color: var(--bz-ink-3); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+
+.bz-radiocard.is-locked { cursor: default; }
+.bz-radiocard.is-locked:hover { border-color: var(--bz-line); }
+
+.bz-fb {
+  border-radius: var(--bz-radius-lg); padding: 16px 18px; margin-top: 20px;
+  font-size: 13.5px; line-height: 1.7; border: 1px solid;
+}
+.bz-fb ul { margin: 8px 0; padding-left: 20px; }
+.bz-fb li { margin-bottom: 7px; }
+.bz-fb p { margin: 0 0 10px; }
+.bz-fb p:last-child { margin-bottom: 0; }
+.bz-fb--good { background: #edfaf1; border-color: #a9dfbb; }
+.bz-fb--part { background: #fff8e8; border-color: #f0d18a; }
+.bz-fb--bad  { background: #fdf0f0; border-color: #f0b4b4; }
+.bz-fb__head { font-weight: 800; font-size: 13px; letter-spacing: .2px; margin-bottom: 8px; }
+.bz-fb--good .bz-fb__head { color: #1a7f43; }
+.bz-fb--part .bz-fb__head { color: #a06a06; }
+.bz-fb--bad  .bz-fb__head { color: #b42318; }
+.bz-fb__model, .bz-fb__next {
+  margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(16, 24, 40, .18);
+}
+.bz-fb__model strong, .bz-fb__next strong {
+  display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .7px;
+  color: var(--bz-ink-3); margin-bottom: 6px;
+}
+.bz-fb-good { color: #1a7f43; }
+.bz-fb-bad  { color: #b42318; }
+
+.bz-buildbox {
+  border: 1px dashed var(--bz-purple); border-radius: var(--bz-radius-lg);
+  background: var(--bz-purple-050, #f7f0fe); padding: 18px 20px;
+}
+.bz-buildbox__task { font-size: 14px; line-height: 1.75; color: var(--bz-ink-2); }
+.bz-buildbox__task ol, .bz-buildbox__task ul { margin: 10px 0; padding-left: 22px; }
+.bz-buildbox__task li { margin-bottom: 6px; }
+
+.bz-scorecard {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg);
+  background: #fff; padding: 22px 24px; margin-bottom: 28px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, .06);
+}
+.bz-scorecard__grade {
+  width: 76px; height: 76px; flex: 0 0 76px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-weight: 800; color: #fff; letter-spacing: -1px;
+}
+.bz-scorecard__grade--active  { background: #12a150; }
+.bz-scorecard__grade--paused  { background: #e2a03f; }
+.bz-scorecard__grade--stopped { background: #d64545; }

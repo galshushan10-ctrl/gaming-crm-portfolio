@@ -740,6 +740,172 @@ const check = (name, cond, detail) => {
   check('empty canvas still offers a drop target',
     (await page.locator('.bz-eb__dropzone').count()) >= 1);
 
+  /* ---------- 4a. Workspace delivery controls ---------------------------- */
+  console.log('\nDelivery settings');
+
+  await page.evaluate(() => { location.hash = '#/settings/delivery'; });
+  await page.waitForTimeout(300);
+  check('Message Delivery exposes the four workspace controls',
+    (await page.locator('[data-ds-toggle]').count()) === 4);
+  check('global control group has a percentage field',
+    (await page.locator('[data-ds-num="globalControl.pct"]').count()) === 1);
+  check('quiet hours exposes delay-vs-discard',
+    (await page.locator('[data-ds-str="quietHours.behaviour"]').count()) === 1);
+
+  /* the controls must actually write through, not just render */
+  await page.locator('[data-ds-num="globalControl.pct"]').fill('12');
+  await page.locator('[data-ds-num="globalControl.pct"]').dispatchEvent('change');
+  await page.waitForTimeout(200);
+  check('editing a delivery setting writes through to the workspace',
+    (await page.evaluate(() => BZ.deliverySettings.globalControl.pct)) === 12);
+  await page.locator('[data-ds-toggle="rateLimit"]').check();
+  await page.waitForTimeout(200);
+  check('toggling a delivery setting writes through',
+    (await page.evaluate(() => BZ.deliverySettings.rateLimit.enabled)) === true);
+  check('delivery settings are marked for persistence',
+    (await page.evaluate(() => !!BZ.deliverySettings._edited)));
+
+  await page.evaluate(() => { location.hash = '#/settings/groups'; });
+  await page.waitForTimeout(300);
+  const groupsText = await page.locator('#bz-mainpane').innerText();
+  check('Internal Groups distinguishes test groups from seed groups',
+    /Content Test Group/.test(groupsText) && /Seed Group/.test(groupsText));
+
+  /* ---------- 4b. Graded case-study simulator ---------------------------- */
+  console.log('\nCase simulator');
+
+  const caseMeta = await page.evaluate(() => (window.BZCases || []).map((c) => ({
+    id: c.id, steps: c.steps.length,
+    weight: c.steps.reduce((a, s) => a + s.weight, 0),
+    dims: Array.from(new Set(c.steps.map((s) => s.dim))),
+    kinds: Array.from(new Set(c.steps.map((s) => s.type))),
+    hasDebrief: !!c.debrief && !!c.remedial,
+  })));
+  check('four case studies are defined', caseMeta.length === 4, JSON.stringify(caseMeta.map((c) => c.id)));
+  check('every case carries a debrief and remedial notes', caseMeta.every((c) => c.hasDebrief));
+  check('every case has at least 9 graded decisions', caseMeta.every((c) => c.steps >= 9),
+    JSON.stringify(caseMeta.map((c) => c.steps)));
+  check('cases collectively use all four step kinds',
+    ['choice', 'multi', 'text', 'build'].every((k) => caseMeta.some((c) => c.kinds.includes(k))));
+
+  /* every competency dimension must be exercised, or the report renders a
+     breakdown with empty rows */
+  const allDims = await page.evaluate(() => Object.keys(BZCaseSim.DIMS));
+  const usedDims = await page.evaluate(() =>
+    Array.from(new Set([].concat.apply([], (window.BZCases || []).map((c) => c.steps.map((s) => s.dim))))));
+  check('every competency dimension is assessed somewhere',
+    allDims.every((d) => usedDims.includes(d)),
+    'unused: ' + allDims.filter((d) => !usedDims.includes(d)).join(', '));
+  check('no case references an unknown dimension',
+    usedDims.every((d) => allDims.includes(d)), 'unknown: ' + usedDims.filter((d) => !allDims.includes(d)).join(', '));
+
+  /* authoring integrity: a choice step whose best option scores 0 would make a
+     perfect answer impossible, and a multi with no positive option divides by 0 */
+  const authoring = await page.evaluate(() => {
+    const bad = [];
+    (window.BZCases || []).forEach((c) => c.steps.forEach((s) => {
+      if (s.type === 'choice' || s.type === 'multi') {
+        if (!s.options || s.options.length < 2) bad.push(c.id + '/' + s.id + ': too few options');
+        const best = Math.max.apply(null, (s.options || []).map((o) => o.pts));
+        if (!(best > 0)) bad.push(c.id + '/' + s.id + ': no positively-scored option');
+        (s.options || []).forEach((o) => { if (!o.feedback) bad.push(c.id + '/' + s.id + '/' + o.id + ': no feedback'); });
+      }
+      if (s.type === 'text') {
+        if (!s.rubric || !s.rubric.length) bad.push(c.id + '/' + s.id + ': text step with no rubric');
+        if (!s.model) bad.push(c.id + '/' + s.id + ': text step with no model answer');
+      }
+      if (s.type === 'build' && typeof s.check !== 'function') bad.push(c.id + '/' + s.id + ': build step with no check()');
+      if (!s.weight) bad.push(c.id + '/' + s.id + ': no weight');
+    }));
+    return bad;
+  });
+  check('every step is authored completely', authoring.length === 0, authoring.slice(0, 6).join('\n      '));
+
+  /* build-step checks must survive being run against a clean workspace */
+  const checksRun = await page.evaluate(() => {
+    const out = [];
+    (window.BZCases || []).forEach((c) => c.steps.forEach((s) => {
+      if (s.type !== 'build') return;
+      try {
+        const r = s.check();
+        out.push({ id: s.id, ok: typeof r === 'object' && typeof r.detail === 'string' });
+      } catch (e) { out.push({ id: s.id, ok: false, err: e.message }); }
+    }));
+    return out;
+  });
+  check('every build-step check runs without throwing on empty state',
+    checksRun.length > 0 && checksRun.every((r) => r.ok), JSON.stringify(checksRun));
+
+  /* grading must actually discriminate: the best option scores full marks and
+     a zero-point option scores none */
+  const grading = await page.evaluate(() => {
+    const c = window.BZCases[0];
+    const step = c.steps.find((s) => s.type === 'choice');
+    const best = step.options.slice().sort((a, b) => b.pts - a.pts)[0];
+    const worst = step.options.slice().sort((a, b) => a.pts - b.pts)[0];
+    BZCaseSim.reset(c.id);
+    const st = BZCaseSim.state;
+    st.idx = c.steps.indexOf(step);
+    st.answers[step.id] = { value: best.id };
+    return { bestId: best.id, worstId: worst.id, worstPts: worst.pts, weight: step.weight };
+  });
+  check('the best option in a choice step is worth full marks', grading.weight > 0);
+  check('a choice step has a genuinely wrong option', grading.worstPts <= 0);
+
+  /* the simulator renders end to end — clear the state the grading probe left */
+  await page.evaluate(() => { BZCaseSim.state.caseId = null; BZCaseSim.state.idx = -1; });
+  await page.evaluate(() => { location.hash = '#/cases'; });
+  await page.waitForTimeout(300);
+  check('case list renders all four', (await page.locator('[data-case]').count()) === 4);
+
+  await page.locator('[data-case="eilat-november"]').click();
+  await page.waitForTimeout(300);
+  check('the brief screen renders', (await page.locator('.bz-brief').count()) === 1);
+  check('the brief has a start button', (await page.locator('[data-cs="start"]').count()) === 1);
+
+  await page.locator('[data-cs="start"]').click();
+  await page.waitForTimeout(300);
+  check('the first decision renders with a progress bar',
+    (await page.locator('.bz-csprog__fill').count()) === 1);
+
+  /* answering wrongly must produce negative feedback, not silent acceptance */
+  const wrongId = await page.evaluate(() => {
+    const s = window.BZCases[0].steps[0];
+    return s.options.slice().sort((a, b) => a.pts - b.pts)[0].id;
+  });
+  await page.evaluate((id) => {
+    const el = document.querySelector(`input[value="${id}"][data-cs-choice]`);
+    el.checked = true; el.dispatchEvent(new Event('change', { bubbles: true }));
+  }, wrongId);
+  await page.waitForTimeout(150);
+  await page.locator('[data-cs="submit"]').click();
+  await page.waitForTimeout(300);
+  check('a wrong answer is marked wrong', (await page.locator('.bz-fb--bad').count()) === 1);
+  check('wrong answers still explain the model answer',
+    (await page.locator('.bz-fb__model').count()) >= 1);
+  check('feedback tells you what to do next time',
+    (await page.locator('.bz-fb__next').count()) >= 1);
+
+  /* jump to the end and confirm the report renders with a grade */
+  await page.evaluate(() => {
+    const c = window.BZCases[0];
+    BZCaseSim.state.idx = c.steps.length;
+    location.hash = '#/cases/' + c.id;
+  });
+  await page.evaluate(() => window.dispatchEvent(new HashChangeEvent('hashchange')));
+  await page.waitForTimeout(400);
+  check('the report screen renders a grade', (await page.locator('.bz-scorecard__grade').count()) === 1);
+  check('the report breaks the score down by competency',
+    (await page.locator('.bz-scorecard').count()) === 1 &&
+    (await page.locator('.bz-funnel, .bz-bars, .bz-bar').count()) >= 1);
+  const reportText = await page.locator('.bz-lesson').innerText();
+  check('the report says what you got wrong', /What you got wrong/i.test(reportText));
+  check('the report says how to improve next time', /better next time/i.test(reportText));
+
+  /* nav wiring */
+  check('Graded Simulations is reachable from the nav',
+    (await page.locator('a[href="#/cases"]').count()) >= 1);
+
   /* ---------- 5. No runtime errors --------------------------------------- */
   console.log('\nRuntime');
   check('no uncaught page errors', errors.length === 0, errors.slice(0, 5).join('\n      '));

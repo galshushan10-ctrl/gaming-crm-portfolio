@@ -28,6 +28,8 @@ JS_ORDER = [
     "js/emailbuilder.js",
     "js/compose.js",
     "js/operator.js",
+    "js/cases.js",
+    "js/casesim.js",
     "js/app.js",
 ]
 CSS = "css/braze.css"

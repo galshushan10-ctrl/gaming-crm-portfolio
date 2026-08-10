@@ -124,6 +124,8 @@ const BZUI = (function () {
             if (i > -1) window.BZ[k][i] = item; else window.BZ[k].push(item);
           });
         });
+        /* workspace settings are a single object rather than a collection */
+        if (saved.deliverySettings) Object.assign(window.BZ.deliverySettings, saved.deliverySettings);
       } catch (e) { /* corrupt store — ignore and carry on with seeds */ }
     },
     save() {
@@ -132,6 +134,9 @@ const BZUI = (function () {
         ['segments', 'campaigns', 'canvases', 'templates', 'contentBlocks'].forEach((k) => {
           out[k] = window.BZ[k].filter((x) => x._userCreated || x._edited);
         });
+        if (window.BZ.deliverySettings && window.BZ.deliverySettings._edited) {
+          out.deliverySettings = window.BZ.deliverySettings;
+        }
         localStorage.setItem(KEY, JSON.stringify(out));
       } catch (e) { toast('Could not save — browser storage is full or blocked.'); }
     },

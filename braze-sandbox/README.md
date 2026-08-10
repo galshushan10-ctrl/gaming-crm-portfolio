@@ -15,7 +15,7 @@ then rebuild the single file:
 
 ```bash
 python3 build.py          # -> dist/braze-sandbox.html
-node smoke-test.js        # 179 assertions: engines, routes, composers, editors, settings
+node smoke-test.js        # 208 assertions: engines, routes, composers, editors, settings, graded cases
 ```
 
 The smoke test needs `npm install playwright`; it points at the pre-installed Chromium
@@ -91,10 +91,42 @@ lint results — is computed, not scripted.
 | Catalogs, Subscription Groups, Custom Data | The supporting objects, populated |
 | Analytics | Campaign league table, funnels, channel mix |
 | Case Studies | Nine courses with tasks and solution keys |
+| Graded Simulations | Four end-to-end case studies that score you — see below |
 | BrazeAI Operator | Context-aware assistant that answers *and* builds — see above |
 
 Anything you create or edit persists in `localStorage`. **Reset sandbox data** in the
 bottom-left restores the seeds.
+
+## Graded simulations
+
+`#/cases`. A brief arrives the way one really does — short, ambiguous, and from someone who
+does not use Braze. You work it end to end and **every decision is scored**, against six
+competencies: audience and targeting, personalization and QA, timing and delivery,
+measurement and incrementality, commercial judgement, and consent and compliance.
+
+Four cases, 54 graded decisions:
+
+| Case | What it is | What it tests |
+|---|---|---|
+| **November in Eilat** | Revenue wants midweek heads in the all-inclusives without touching the weekend rate | The brief contains a targeting contradiction, a discount-leakage risk and a consent trap, and defines no success metric |
+| **Ten nights and a paid club** | 8,000 members are near the free eleventh night; build a Canvas | Who was going to buy anyway; re-eligibility vs re-entry; Action vs Audience Paths; an arbitrage hidden in the reward mechanics |
+| **72 hours to Passover** | Scarce inventory, a hard deadline, a CMO leaning on you | Four wrong answers that are one click away: the unread shared segment, the transactional reclassification, the cap exemption, and local-time delivery on an absolute deadline |
+| **11:40 on a Thursday** | The send went out twenty minutes ago and something is wrong | Order of operations under pressure — containment, diagnosis, communication, remediation |
+
+Four kinds of step. `choice` and `multi` carry partial and negative credit, so a
+confident-sounding wrong answer costs you. `text` answers are scored against a keyword
+rubric and shown a model answer. **`build` steps send you into the sandbox and are verified
+against what you actually built** — the segment's filters, the campaign's conversion event,
+the Canvas's entry configuration — not against what you say you would build.
+
+You get a letter grade, a per-competency breakdown, an explicit list of what you got wrong
+with what to do differently, and a debrief. The scoring weights blast radius rather than
+difficulty: a wrong subscription group costs more than a wrong send hour.
+
+**The one to notice:** local-time-zone delivery is the correct answer in *November in Eilat*
+and the wrong answer in *72 hours to Passover*. Same setting, opposite answers, because one
+offer runs for ten days and the other has a deadline that is the same moment for everybody.
+Most best practice in this job is like that.
 
 ## The curriculum
 
@@ -110,6 +142,20 @@ you complete in the screens.
 7. **Deliverability & consent** — subscription groups, bounces, frequency capping, sender reputation
 8. **Analytics** — the metric hierarchy, incrementality, reporting upward
 9. **On-the-job scenarios** — vague briefs, broken data, a live incident, the interview question
+
+## The Fattal grounding
+
+The briefs use Fattal's real commercial furniture, researched rather than invented: the
+brands (Herods, Leonardo Plaza, Leonardo Club, Leonardo Privilege, U Hotels, NYX, FATTAL
+COLORS, The Jaffa), the Israeli destinations and their seasonality, the Sunday-to-Thursday
+working week, and the loyalty club as it actually works — **Fattal & Friends**, a *paid*
+club at roughly ₪250 for two years, 10% off, eleventh night free valued at the average of
+the ten accumulated nights after the discount, and **no published tier ladder**. Where the
+research could not confirm something it is left out rather than smoothed over.
+
+The sandbox itself is seeded as the fictional Aurelia Hotels Group, because inventing guest
+records under a real employer's name is a bad habit to start. The attribute names map one
+to one; the cases say so where it matters.
 
 ## Seeded workspace
 
@@ -149,6 +195,22 @@ wrong:
   (Creative Studio); Custom Attributes and Custom Events live under Data Settings.
 - **Campaign statuses** are Active / Idle / Draft / Stopped / Archived. "Scheduled" is not
   a status — scheduling shows in the Entry schedule column.
+
+Corrections from the latest research pass, each of which the earlier version of this
+sandbox had wrong or had guessed:
+
+- **The loyalty club is Fattal & Friends and it is paid** — roughly ₪250 for two years.
+  Not a free frequent-guest scheme, which changes the entire lifecycle: every member has
+  already made a purchase decision, and there is a renewal event every 24 months.
+- **There is no published tier ladder** in either Fattal & Friends or Leonardo
+  AdvantageCLUB. The Gold/Platinum segmentation that feels natural for a hotel group does
+  not exist there, so the *Ten nights* case deliberately refuses to lean on it.
+- **Europe is a separate programme** — Leonardo AdvantageCLUB, free, 1 point per €1.
+  Two clubs, two sites, two consent regimes (Israel's Spam Law Amendment 40 vs GDPR).
+- **Eilat is roughly 90% domestic**, so its demand follows the Israeli school and festival
+  calendar rather than international arrivals. This is the fact the November case turns on.
+- **Jurys Inn no longer exists as a brand** — the 35 UK/Ireland hotels were rebranded to
+  Leonardo, substantially complete in 2023.
 
 Still uncertain, and deliberately not invented: exact ordering and wording of the channel
 tiles, the numeric threshold at which a campaign becomes Idle, and the exact field labels

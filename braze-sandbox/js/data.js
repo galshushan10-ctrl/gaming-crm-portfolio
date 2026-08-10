@@ -871,6 +871,31 @@ BZ.frequencyCaps = [
   { id: 'fc-4', channel: 'WhatsApp', tag: '01_Level_L4', count: 2, per: 'week' },
 ];
 
+/* Workspace-level delivery controls. These live at company/workspace scope in
+   the real product, which is exactly why people set them per-campaign and end
+   up contradicting the global config. */
+BZ.deliverySettings = {
+  globalControl: { enabled: true, pct: 5,
+    note: 'A random slice of the whole base held out of every message, so the programme as a whole has an incrementality baseline. Separate from any per-campaign holdout.' },
+  quietHours: { enabled: true, from: '21:00', to: '08:00', behaviour: 'delay',
+    note: 'Messages that would land inside the window are held until it closes. The alternative, discard, silently drops them — know which one you are running.' },
+  rateLimit: { enabled: false, perMinute: 20000,
+    note: 'Caps sends per minute so you do not generate more demand than the booking engine or the call centre can absorb.' },
+  intelligentTiming: { enabled: false, fallback: '10:00',
+    note: 'Per-user predicted send time inside a window. Wrong for anything with a hard deadline, and it falls back to the default time for users without enough history.' },
+};
+
+/* Internal groups. Content test groups get the test send; seed groups are added
+   to the real send so there is a record of what actually went out. */
+BZ.internalGroups = [
+  { id: 'ig-crm',  name: 'CRM team',        type: 'Content Test Group',
+    members: ['maya@aurelia.example', 'crm-qa@aurelia.example'],
+    note: 'Receives test sends before launch.' },
+  { id: 'ig-seed', name: 'Email seed list', type: 'Seed Group',
+    members: ['seed-gmail@aurelia.example', 'seed-outlook@aurelia.example', 'archive@aurelia.example'],
+    note: 'Added to live sends. Gives you an archived copy of exactly what shipped, and a read on inbox placement.' },
+];
+
 BZ.apiKeys = [
   { id: 'k1', name: 'Website integration', key: 'a1b2c3d4-5e6f-7890-abcd-ef1234567890',
     perms: 'users.track, users.export.ids', created: daysFromNow(-400) },

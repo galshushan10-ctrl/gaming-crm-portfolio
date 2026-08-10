@@ -64,11 +64,14 @@
     { id: 'settings', icon: '⚙', label: 'Settings', children: [
       { route: 'settings/connected', label: 'Connected Content' },
       { route: 'settings/frequency', label: 'Frequency Capping' },
+      { route: 'settings/delivery', label: 'Message Delivery' },
+      { route: 'settings/groups', label: 'Internal Groups' },
       { route: 'settings/keys', label: 'API Keys' },
       { route: 'settings/email', label: 'Email Settings' },
     ]},
     { id: 'learn', icon: '🎓', label: 'Learning', children: [
-      { route: 'learn', label: 'Case Studies' },
+      { route: 'learn', label: 'Courses' },
+      { route: 'cases', label: 'Graded Simulations' },
     ]},
   ];
 
@@ -964,11 +967,93 @@
     const tabsHtml = U.tabs([
       { id: 'connected', label: 'Connected Content' },
       { id: 'frequency', label: 'Frequency Capping' },
+      { id: 'delivery', label: 'Message Delivery' },
+      { id: 'groups', label: 'Internal Groups' },
       { id: 'keys', label: 'API Keys' },
       { id: 'email', label: 'Email Settings' },
     ], tab, (t) => `#/settings/${t}`);
 
     let body = '';
+
+    if (tab === 'delivery') {
+      const d = window.BZ.deliverySettings;
+      const toggle = (key, label, on, detail) => `
+        <div class="bz-fcrule bz-mb12">
+          <label class="bz-row" style="gap:10px;cursor:pointer">
+            <input type="checkbox" data-ds-toggle="${key}" ${on ? 'checked' : ''}>
+            <span style="font-weight:700">${label}</span>
+          </label>
+          <div class="bz-spacer"></div>
+          <div>${detail}</div>
+        </div>`;
+
+      body = `
+        <div class="bz-card" style="max-width:960px">
+          <div class="bz-card__head"><div class="bz-card__title">Workspace delivery controls</div></div>
+          <div class="bz-card__body">
+            <p class="bz-muted bz-small bz-mb16">These sit at workspace scope. Setting the equivalent on an
+              individual campaign and forgetting what is configured here is one of the commonest ways a send
+              behaves in a way nobody can explain.</p>
+
+            ${toggle('globalControl', 'Global control group', d.globalControl.enabled,
+              `<input class="bz-input" style="width:78px" type="number" min="0" max="20" value="${d.globalControl.pct}" data-ds-num="globalControl.pct"> <span class="bz-small bz-muted">% of all users</span>`)}
+            <p class="bz-small bz-muted bz-mb24">${U.esc(d.globalControl.note)}</p>
+
+            ${toggle('quietHours', 'Quiet hours', d.quietHours.enabled,
+              `<input class="bz-input" style="width:88px" value="${U.esc(d.quietHours.from)}" data-ds-str="quietHours.from">
+               <span class="bz-small bz-muted">to</span>
+               <input class="bz-input" style="width:88px" value="${U.esc(d.quietHours.to)}" data-ds-str="quietHours.to">
+               <select class="bz-select" style="width:auto" data-ds-str="quietHours.behaviour">
+                 <option value="delay" ${d.quietHours.behaviour === 'delay' ? 'selected' : ''}>Delay until the window closes</option>
+                 <option value="discard" ${d.quietHours.behaviour === 'discard' ? 'selected' : ''}>Discard the message</option>
+               </select>`)}
+            <p class="bz-small bz-muted bz-mb24">${U.esc(d.quietHours.note)}</p>
+
+            ${toggle('rateLimit', 'Default rate limit', d.rateLimit.enabled,
+              `<input class="bz-input" style="width:110px" type="number" value="${d.rateLimit.perMinute}" data-ds-num="rateLimit.perMinute"> <span class="bz-small bz-muted">messages / minute</span>`)}
+            <p class="bz-small bz-muted bz-mb24">${U.esc(d.rateLimit.note)}</p>
+
+            ${toggle('intelligentTiming', 'Intelligent Timing (BrazeAI)', d.intelligentTiming.enabled,
+              `<span class="bz-small bz-muted">fallback send time</span> <input class="bz-input" style="width:88px" value="${U.esc(d.intelligentTiming.fallback)}" data-ds-str="intelligentTiming.fallback">`)}
+            <p class="bz-small bz-muted">${U.esc(d.intelligentTiming.note)}</p>
+          </div>
+        </div>
+
+        <div class="bz-callout bz-callout--warn bz-mt16" style="max-width:960px">
+          <div class="bz-callout__t">The three settings that interact</div>
+          <p>Quiet hours, frequency capping and Intelligent Timing all decide independently whether a given
+          user gets a given message. A send whose delivered count is well below the segment count is almost
+          always one of these three, not a bug — check here before you raise a ticket.</p>
+        </div>`;
+    }
+
+    if (tab === 'groups') {
+      body = `
+        <div class="bz-card" style="max-width:960px">
+          <div class="bz-card__head"><div class="bz-card__title">Internal groups</div></div>
+          <div class="bz-card__body">
+            <p class="bz-muted bz-small bz-mb16">Two different things with confusingly similar names.
+              A <strong>content test group</strong> receives your test sends before launch. A
+              <strong>seed group</strong> is added to the <em>real</em> send, so you keep an archived copy of
+              exactly what went out and a read on where it landed.</p>
+            ${window.BZ.internalGroups.map((g) => `
+              <div class="bz-cred">
+                <div class="bz-cred__main">
+                  <div class="bz-row"><strong>${U.esc(g.name)}</strong><span class="bz-tag">${U.esc(g.type)}</span></div>
+                  <div class="bz-small bz-muted bz-mt8">${U.esc(g.note)}</div>
+                  <div class="bz-mt8">${g.members.map((m) => `<code class="bz-mono bz-small">${U.esc(m)}</code>`).join(' · ')}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="bz-callout bz-callout--tip bz-mt16" style="max-width:960px">
+          <div class="bz-callout__t">Why a seed group is not a substitute for previewing</div>
+          <p>Seed addresses are usually complete, well-formed profiles. They will happily render a template
+          that breaks for every user with a missing attribute. Seed for the archive and for deliverability;
+          preview against a null-heavy profile for correctness.</p>
+        </div>`;
+    }
 
     if (tab === 'connected') {
       body = `
@@ -1637,6 +1722,10 @@
       case 'data':          main = viewData(); break;
       case 'analytics':     main = viewAnalytics(); break;
       case 'learn':         main = parts[1] ? viewCourse(parts[1]) : viewLearn(); break;
+      case 'cases':
+        main = window.BZCaseSim.view(parts[1]);
+        bindFn = (root) => window.BZCaseSim.bind(root, parts[1], render);
+        break;
       case 'ai-decisioning': main = viewStub('AI Decisioning',
         'BrazeAI Decisioning Studio — 1:1 selection of offer, channel and timing against a business metric.',
         'Not modelled here. Worth knowing it exists and what it claims to do: instead of you picking the variant, Braze picks per user against the metric you nominate.'); break;
@@ -2201,6 +2290,27 @@
   });
 
   document.addEventListener('change', (e) => {
+    /* workspace delivery controls — write through a dotted path so the toggle,
+       the number and the string inputs all share one handler */
+    const dsT = e.target.closest('[data-ds-toggle]');
+    const dsN = e.target.closest('[data-ds-num]');
+    const dsS = e.target.closest('[data-ds-str]');
+    if (dsT || dsN || dsS) {
+      const setPath = (path, val) => {
+        const parts = path.split('.');
+        let o = window.BZ.deliverySettings;
+        while (parts.length > 1) o = o[parts.shift()];
+        o[parts[0]] = val;
+      };
+      if (dsT) setPath(dsT.dataset.dsToggle + '.enabled', dsT.checked);
+      if (dsN) setPath(dsN.dataset.dsNum, Number(dsN.value));
+      if (dsS) setPath(dsS.dataset.dsStr, dsS.value);
+      window.BZ.deliverySettings._edited = true;
+      U.Store.save();
+      U.toast('Delivery settings saved');
+      return;
+    }
+
     const f = e.target.closest('[data-f]');
     if (f) {
       const seg = currentSegment(); if (!seg) return;
