@@ -925,6 +925,162 @@ body.bz-op-open .bz-op__fab { display: none; }
 }
 body.bz-op-open .bz-wizfoot { padding-right: 26px; }
 
+/* ---------- HTML code editor (Braze layout) ------------------------------ */
+
+.bz-he { display: flex; height: 100%; min-height: 0; background: #fff; }
+
+.bz-he__rail { display: flex; flex: 0 0 246px; width: 246px; border-right: 1px solid var(--bz-line); }
+.bz-he__railicons {
+  flex: 0 0 44px; border-right: 1px solid var(--bz-line); background: var(--bz-bg-2);
+  display: flex; flex-direction: column; align-items: center; padding-top: 10px; gap: 4px;
+}
+.bz-he__ricon {
+  width: 32px; height: 32px; border-radius: 6px; border: none; background: none;
+  cursor: pointer; font-size: 15px; color: var(--bz-ink-3);
+}
+.bz-he__ricon:hover { background: var(--bz-bg-3); }
+.bz-he__ricon.is-active { background: var(--bz-purple-soft); color: var(--bz-purple-dark); }
+.bz-he__railbody { flex: 1; overflow-y: auto; padding: 12px 0; min-width: 0; }
+.bz-he__railtitle {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
+  color: var(--bz-ink-4); padding: 10px 16px 6px;
+}
+.bz-he__railitem {
+  display: block; width: calc(100% - 16px); margin: 1px 8px; padding: 8px 12px;
+  border: none; background: none; border-radius: var(--bz-radius);
+  text-align: left; font-size: 13px; color: var(--bz-ink-2); cursor: pointer;
+}
+.bz-he__railitem:hover { background: var(--bz-bg-2); }
+.bz-he__railitem.is-active { background: var(--bz-bg-3); font-weight: 700; color: var(--bz-ink); }
+.bz-he__railgroup { border-top: 1px solid var(--bz-line); margin: 10px 0; padding-top: 8px; }
+.bz-he__railaction {
+  display: block; width: calc(100% - 16px); margin: 1px 8px; padding: 7px 12px;
+  border: none; background: none; border-radius: var(--bz-radius);
+  text-align: left; font-size: 13px; color: var(--bz-purple); cursor: pointer; font-weight: 600;
+}
+.bz-he__railaction:hover { background: var(--bz-purple-soft); }
+.bz-he__railaction--ai { color: #B26A00; }
+.bz-he__railaction--ai:hover { background: var(--bz-amber-soft); }
+
+.bz-he__main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.bz-he__tabs {
+  display: flex; align-items: center; gap: 4px; padding: 6px 12px;
+  border-bottom: 1px solid var(--bz-line); background: #fff; flex: 0 0 auto;
+}
+.bz-he__tab {
+  padding: 7px 13px; border: none; background: none; cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--bz-ink-3); border-radius: var(--bz-radius);
+}
+.bz-he__tab:hover { background: var(--bz-bg-2); }
+.bz-he__tab.is-active { background: var(--bz-purple-soft); color: var(--bz-purple-dark); }
+.bz-he__icon {
+  width: 30px; height: 30px; border: none; background: none; cursor: pointer;
+  border-radius: 6px; color: var(--bz-ink-3); font-size: 14px;
+}
+.bz-he__icon:hover { background: var(--bz-bg-2); }
+
+.bz-he__split { flex: 1; display: flex; min-height: 0; }
+.bz-he__left { flex: 1; min-width: 0; border-right: 1px solid var(--bz-line); display: flex; flex-direction: column; }
+.bz-he__right { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bz-bg-2); }
+.bz-he__pad { padding: 16px; overflow-y: auto; flex: 1; }
+
+.bz-he__prevbar {
+  display: flex; align-items: center; gap: 10px; padding: 7px 12px;
+  border-bottom: 1px solid var(--bz-line); background: #fff; flex: 0 0 auto;
+  font-size: 12px; font-weight: 700; color: var(--bz-ink-3);
+}
+.bz-he__toggle { display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 12px; cursor: pointer; }
+.bz-he__toggle input { accent-color: var(--bz-purple); }
+.bz-he__prevbody { flex: 1; overflow: auto; padding: 16px; }
+.bz-he__paper { background: #fff; border: 1px solid var(--bz-line); border-radius: 4px; overflow: hidden; }
+.bz-he__paper img { max-width: 100%; }
+.bz-he__noprev { display: grid; place-items: center; height: 100%; color: var(--bz-ink-4); font-size: 13px; font-style: italic; }
+.bz-he__prevnote { padding: 7px 12px; border-top: 1px solid var(--bz-line); font-size: 10.5px; color: var(--bz-ink-4); background: #fff; flex: 0 0 auto; }
+
+.bz-he__foot {
+  display: flex; align-items: center; gap: 8px; padding: 9px 14px;
+  border-top: 1px solid var(--bz-line); background: var(--bz-bg-2); flex: 0 0 auto;
+}
+
+/* line-numbered code pane */
+.bz-code { flex: 1; display: flex; min-height: 0; background: #fff; }
+.bz-code__gutter {
+  flex: 0 0 46px; padding: 12px 8px 12px 0; text-align: right;
+  font-family: var(--bz-mono); font-size: 12.5px; line-height: 1.6;
+  color: var(--bz-ink-4); background: var(--bz-bg-2); border-right: 1px solid var(--bz-line);
+  overflow: hidden; white-space: pre; user-select: none;
+}
+.bz-code__area {
+  flex: 1; border: none; outline: none; resize: none; padding: 12px 14px;
+  font-family: var(--bz-mono); font-size: 12.5px; line-height: 1.6; tab-size: 2; min-width: 0;
+}
+
+/* Liquid reference panel */
+.bz-lq { border-top: 1px solid var(--bz-line); background: #fff; max-height: 46%; display: flex; flex-direction: column; flex: 0 0 auto; }
+.bz-lq__bar { display: flex; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--bz-line); background: var(--bz-bg-2); }
+.bz-lq__groups { display: flex; gap: 4px; padding: 8px 12px 0; overflow-x: auto; border-bottom: 1px solid var(--bz-line); }
+.bz-lq__tab {
+  padding: 6px 11px; border: none; background: none; cursor: pointer; white-space: nowrap;
+  font-size: 12.5px; font-weight: 600; color: var(--bz-ink-3);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.bz-lq__tab.is-active { color: var(--bz-purple-dark); border-bottom-color: var(--bz-purple); }
+.bz-lq__body { overflow-y: auto; padding: 12px; flex: 1; }
+.bz-lq__item { border: 1px solid var(--bz-line); border-radius: var(--bz-radius); padding: 10px 12px; margin-bottom: 9px; }
+.bz-lq__head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.bz-lq__name { font-weight: 700; font-size: 13px; }
+.bz-lq__code {
+  background: var(--bz-ink); color: #E8E8F0; padding: 9px 11px; border-radius: 5px; margin: 0;
+  font-family: var(--bz-mono); font-size: 11.5px; line-height: 1.55; overflow-x: auto; white-space: pre;
+}
+.bz-lq__desc { font-size: 12px; color: var(--bz-ink-3); margin-top: 7px; line-height: 1.5; }
+.bz-lq__desc code { font-family: var(--bz-mono); background: var(--bz-bg-3); padding: 1px 4px; border-radius: 3px; }
+
+/* Email variants strip */
+.bz-variants { display: flex; align-items: center; gap: 8px; }
+.bz-variant {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: #FDF1DD; border: 1px solid #EBD9B4; color: #7A4A00;
+  border-radius: var(--bz-radius); padding: 5px 11px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+}
+.bz-variant.is-active { background: var(--bz-purple-soft); border-color: var(--bz-purple-line); color: var(--bz-purple-dark); }
+.bz-variant__warn { color: #C7273B; }
+.bz-variantadd {
+  width: 28px; height: 28px; border-radius: var(--bz-radius); border: 1px solid var(--bz-line-2);
+  background: #fff; cursor: pointer; font-size: 15px; color: var(--bz-purple); line-height: 1;
+}
+.bz-variantadd:hover { border-color: var(--bz-purple); background: var(--bz-purple-soft); }
+
+/* Bottom wizard bar (Compose / Schedule / Target / Assign / Review) */
+.bz-wizbar {
+  display: flex; align-items: center; gap: 4px; padding: 9px 16px;
+  border-top: 1px solid var(--bz-line); background: #fff; flex: 0 0 auto;
+}
+.bz-wizbar__step {
+  display: flex; align-items: center; gap: 7px; padding: 6px 12px;
+  border: none; background: none; cursor: pointer; border-radius: var(--bz-radius);
+  font-size: 13px; font-weight: 600; color: var(--bz-ink-3); white-space: nowrap;
+}
+.bz-wizbar__step:hover { background: var(--bz-bg-2); }
+.bz-wizbar__step.is-active { color: var(--bz-purple-dark); }
+.bz-wizbar__step.is-active .bz-wizbar__n { background: var(--bz-purple); color: #fff; border-color: var(--bz-purple); }
+.bz-wizbar__n {
+  width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+  border: 1px solid var(--bz-line-2); background: #fff; font-size: 11px; font-weight: 800; color: var(--bz-ink-3);
+}
+.bz-wizbar__arrow {
+  width: 28px; height: 28px; border-radius: var(--bz-radius); border: 1px solid var(--bz-line-2);
+  background: #fff; cursor: pointer; color: var(--bz-ink-3);
+}
+.bz-wizbar__arrow:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Upload-file link under the build-mode tiles */
+.bz-uploadlink { display: block; text-align: center; margin-top: 12px; font-size: 13px; font-weight: 600; }
+
+/* Keep the bottom wizard bar clear of the floating Ask BrazeAI button. */
+.bz-wizbar { padding-right: 200px; }
+body.bz-op-open .bz-wizbar { padding-right: 16px; }
+
 </style>
 
 <div class="bz-app" id="bz-app"></div>
@@ -2176,6 +2332,15 @@ const BZLiquid = (function () {
           return { type: 'catalog_items', catalog: parts[0], ids: parts.slice(1).map((p) => parseValue(p)), raw: t.raw };
         }
         case 'connected_content': return { type: 'connected_content', args: t.args, raw: t.raw };
+        case 'catalog_selection_items': {
+          const parts = unwrapDollar(t.args).trim().split(/\s+/).filter(Boolean);
+          return { type: 'catalog_selection', catalog: parts[0], selection: parts[1] || '', raw: t.raw };
+        }
+        case 'promotion': {
+          const m = t.args.match(/(['"])([\s\S]*?)\1/);
+          return { type: 'promotion', pool: m ? m[2] : t.args.trim(), raw: t.raw };
+        }
+        case 'message_extras_capture': return { type: 'message_extras', args: t.args, raw: t.raw };
         case 'content_blocks':    return { type: 'content_block', name: unwrapDollar(t.args).trim(), raw: t.raw };
         default:
           return { type: 'unknown', name: t.name, raw: t.raw };
@@ -2375,6 +2540,34 @@ const BZLiquid = (function () {
           }
 
           case 'content_block': out += includeBlock(n.name, scope); break;
+
+          case 'catalog_selection': {
+            const cat = catalogs[n.catalog];
+            if (!cat) { errors.push('Unknown catalog: `' + n.catalog + '`'); scope.items = []; break; }
+            /* A real selection is a saved filter over the catalog. The sandbox
+               has no selection store, so return the first few rows and say so. */
+            scope.items = cat.items.slice(0, 3);
+            warnings.push('catalog selection `' + (n.selection || '(unnamed)') + '` returned the first 3 rows of `' + n.catalog + '` (selections are not modelled here).');
+            break;
+          }
+
+          case 'promotion': {
+            /* Deterministic per user so a preview is stable and two users differ. */
+            const seed = String(scope.user_id || '') + n.pool;
+            let h = 0;
+            for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+            const code = n.pool.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6) + '-' +
+              h.toString(36).toUpperCase().slice(0, 6);
+            scope.promotion = { code, pool: n.pool };
+            break;
+          }
+
+          case 'message_extras': {
+            const kv = {};
+            String(n.args).replace(/(\w+)\s*=\s*(['"])([\s\S]*?)\2/g, (_, k, q, v) => { kv[k] = v; return ''; });
+            scope.message_extras = Object.assign({}, scope.message_extras, kv);
+            break;
+          }
 
           case 'unknown': errors.push('Unsupported tag: {% ' + n.name + ' %}'); break;
           case 'error':   errors.push(n.message); break;
@@ -4339,6 +4532,7 @@ const BZEditor = (function () {
         </select>
         <button class="bz-btn bz-btn--sm" data-act="rand-user">🎲 Random</button>
         <button class="bz-btn bz-btn--sm" data-act="edge-user">⚠️ Edge case</button>
+        <button class="bz-btn bz-btn--sm" data-act="liquid-ref">🔍 Liquid reference</button>
         <button class="bz-btn bz-btn--sm bz-btn--primary" data-act="send-test">Send test</button>
       </div>
       <div class="bz-editor" id="bz-editor">
@@ -4501,6 +4695,45 @@ const BZEditor = (function () {
           U.toast('Previewing ' + edge.first_name + ' ' + edge.last_name + ' — zero stays, null attributes.');
           rerender(); return;
         }
+        if (act.dataset.act === 'liquid-ref') {
+          const R = window.BZLiquidRef;
+          U.modal('Liquid reference', `
+            <input class="bz-input bz-mb16" id="bz-lqm-search" placeholder="Search tags, filters and recipes…">
+            <div id="bz-lqm-body" style="max-height:56vh;overflow:auto"></div>`,
+            '<button class="bz-btn" data-modal-close>Close</button>', true);
+
+          const render = (q) => {
+            const hits = R.search(q);
+            const item = (it, g) => `<div class="bz-lq__item">
+              <div class="bz-lq__head"><span class="bz-lq__name">${U.esc(it.name)}</span>
+                ${g ? `<span class="bz-tag">${U.esc(g)}</span>` : ''}
+                <div class="bz-spacer"></div>
+                <button class="bz-btn bz-btn--sm bz-btn--primary" data-lqm="${U.esc(it.snippet)}">Insert</button></div>
+              <pre class="bz-lq__code">${U.esc(it.snippet)}</pre>
+              ${it.desc ? `<div class="bz-lq__desc">${it.desc}</div>` : ''}</div>`;
+            document.getElementById('bz-lqm-body').innerHTML = hits
+              ? (hits.map((h) => item(h.item, h.group)).join('') || '<div class="bz-muted">No match.</div>')
+              : R.GROUPS.map((g) => `<div class="bz-label bz-mt16">${U.esc(g.label)}</div>${g.items.map((it) => item(it)).join('')}`).join('');
+          };
+          render('');
+          document.getElementById('bz-lqm-search').addEventListener('input', (ev) => render(ev.target.value));
+          document.getElementById('bz-lqm-body').addEventListener('click', (ev) => {
+            const btn = ev.target.closest('[data-lqm]');
+            if (!btn) return;
+            const ta = document.getElementById('bz-body');
+            const snip = btn.dataset.lqm;
+            if (ta) {
+              const st = ta.selectionStart;
+              ta.value = ta.value.slice(0, st) + snip + ta.value.slice(ta.selectionEnd);
+              tpl.body = ta.value;
+            } else {
+              tpl.body += '\n' + snip;
+            }
+            touch(); U.closeModal(); rerender();
+            U.toast('Inserted — check the preview');
+          });
+          return;
+        }
         if (act.dataset.act === 'send-test') {
           const user = window.BZ.userById(previewUserId);
           const r = U.renderLiquid(tpl.body, user, { event_properties: U.triggerEventFor(user, 'booking_started') });
@@ -4523,6 +4756,638 @@ const BZEditor = (function () {
 })();
 
 window.BZEditor = BZEditor;
+
+
+/* ===== js/liquidref.js ===== */
+/* ==========================================================================
+   Braze Sandbox — Liquid reference & inserter
+   Every personalization tag, filter, control-flow tag and Braze-specific tag,
+   with a runnable snippet for each. This is the practice surface: click any
+   entry to insert it at the cursor, then watch it render against a profile.
+   ========================================================================== */
+
+const BZLiquidRef = (function () {
+  'use strict';
+
+  /* Snippets are written with \${…} escaped so the source stays readable. */
+  const G = (id, label, hint, items) => ({ id, label, hint, items });
+  const I = (name, snippet, desc) => ({ name, snippet, desc });
+
+  const GROUPS = [
+
+    G('standard', 'Standard attributes',
+      'Braze knows these natively. Always wrapped in ${…}.', [
+      I('First name', "{{\${first_name}}}", 'Reserved profile field. Add a fallback — a large share of profiles have no first name.'),
+      I('Last name', "{{\${last_name}}}", ''),
+      I('Email address', "{{\${email_address}}}", ''),
+      I('Phone number', "{{\${phone_number}}}", ''),
+      I('External user ID', "{{\${user_id}}}", 'Your own CRM/PMS identifier.'),
+      I('Braze ID', "{{\${braze_id}}}", "Braze's internal id. Use external_id for anything you join on."),
+      I('Country', "{{\${country}}}", ''),
+      I('City', "{{\${city}}}", ''),
+      I('Language', "{{\${language}}}", 'Two-letter code. Drives multi-language blocks.'),
+      I('Time zone', "{{\${time_zone}}}", ''),
+      I('Gender', "{{\${gender}}}", ''),
+      I('Age', "{{\${age}}}", ''),
+      I('Most recent app version', "{{\${most_recent_app_version}}}", 'Null for users who never installed the app.'),
+      I('Unsubscribe URL', "{{\${set_user_to_unsubscribed_url}}}", 'Required in promotional email. Usually already inside your footer Content Block.'),
+    ]),
+
+    G('custom', 'Custom attributes',
+      'Anything your integration writes. Note the namespace before the ${…}.', [
+      I('Loyalty tier', "{{custom_attribute.\${loyalty_tier}}}", ''),
+      I('Points balance', "{{custom_attribute.\${points_balance}}}", ''),
+      I('Next stay hotel', "{{custom_attribute.\${next_stay_hotel}}}", ''),
+      I('Next stay date', "{{custom_attribute.\${next_stay_date}}}", 'A date — pipe through the `date` filter before showing it.'),
+      I('Nights booked', "{{custom_attribute.\${nights_booked}}}", ''),
+      I('Total stays', "{{custom_attribute.\${total_stays}}}", ''),
+      I('Lifetime value', "{{custom_attribute.\${lifetime_value}}}", ''),
+      I('Travels with kids', "{{custom_attribute.\${travels_with_kids}}}", 'Boolean. Compare with `== true`, never rely on truthiness.'),
+      I('Any custom attribute', "{{custom_attribute.\${ATTRIBUTE_NAME}}}", 'Replace ATTRIBUTE_NAME with the exact key, case-sensitive.'),
+      I('Array element', "{{custom_attribute.\${favourite_cities}[0]}}", 'Array-typed custom attributes are indexable.'),
+    ]),
+
+    G('event', 'Event & trigger properties',
+      'Only resolve for action-based or API-triggered sends. Empty in a scheduled campaign.', [
+      I('Event property', "{{event_properties.\${hotel_name}}}", 'A property of the event that triggered this message.'),
+      I('Event property (nights)', "{{event_properties.\${nights}}}", ''),
+      I('Canvas entry property', "{{canvas_entry_properties.\${promo_code}}}", 'Passed in when the Canvas was triggered; readable in every step.'),
+      I('API trigger property', "{{api_trigger_properties.\${offer_id}}}", 'Sent with /campaigns/trigger/send.'),
+      I('Purchase property', "{{event_properties.\${product_id}}}", ''),
+    ]),
+
+    G('content', 'Content Blocks & catalogs', 'Reusable content and joined data.', [
+      I('Content Block', "{{content_blocks.\${aurelia_footer}}}", 'Include a reusable fragment. Edit once, every message updates.'),
+      I('Catalog lookup', "{% catalog_items hotels {{custom_attribute.\${abandoned_hotel_id}}} %}", 'Joins a catalog row into `items`.'),
+      I('Catalog lookup + guard', "{% catalog_items hotels {{custom_attribute.\${abandoned_hotel_id}}} %}\n{% if items.size == 0 %}\n  {% abort_message('No catalog row for this user') %}\n{% endif %}\n{{items[0].name}} — from €{{items[0].price_from}}",
+        'The guard is not optional: a dead id renders an empty hero and a broken image rather than an error.'),
+      I('Catalog field', "{{items[0].name}}", ''),
+      I('Loop catalog items', "{% for item in items %}\n  {{item.name}} — €{{item.price_from}}\n{% endfor %}", ''),
+      I('Catalog selection', "{% catalog_selection_items hotels my_selection %}", 'Returns rows matching a saved selection rather than an explicit id.'),
+    ]),
+
+    G('flow', 'Control flow', 'Standard Liquid tags. Note: no parentheses in Liquid.', [
+      I('if / endif', "{% if custom_attribute.\${loyalty_tier} == 'Platinum' %}\n  …\n{% endif %}", ''),
+      I('if / elsif / else', "{% if custom_attribute.\${loyalty_tier} == 'Platinum' %}\n  Late checkout until 16:00 is already on your reservation.\n{% elsif custom_attribute.\${loyalty_tier} == 'Gold' %}\n  Ask at the desk about 14:00 checkout.\n{% else %}\n  Two more stays and you reach Gold.\n{% endif %}", ''),
+      I('unless', "{% unless custom_attribute.\${has_app} == true %}\n  Download the app and save 10%.\n{% endunless %}", 'The inverse of if. Has no elsif.'),
+      I('case / when', "{% case custom_attribute.\${loyalty_tier} %}\n  {% when 'Platinum' %}…\n  {% when 'Gold' %}…\n  {% else %}…\n{% endcase %}", 'Cleaner than a long elsif chain when testing one value.'),
+      I('for loop', "{% for item in items %}\n  {{item.name}}\n{% endfor %}", ''),
+      I('for over a range', "{% for i in (1..5) %}\n  {{i}}\n{% endfor %}", ''),
+      I('for with limit / offset', "{% for item in items limit:3 offset:1 %}\n  {{item.name}}\n{% endfor %}", ''),
+      I('forloop helpers', "{% for item in items %}\n  {{item.name}}{% unless forloop.last %}, {% endunless %}\n{% endfor %}", 'forloop.index, .index0, .first, .last, .length, .rindex'),
+      I('break / continue', "{% for item in items %}\n  {% if item.sold_out %}{% continue %}{% endif %}\n  {{item.name}}\n{% endfor %}", ''),
+      I('assign', "{% assign nights = custom_attribute.\${nights_booked} %}\n{{nights}} night{% if nights != 1 %}s{% endif %}", 'Compute once, reuse. Essential for readable conditionals.'),
+      I('capture', "{% capture greeting %}Hello {{\${first_name} | default: 'there'}}{% endcapture %}\n{{greeting}}", 'Builds a string from markup and stores it.'),
+      I('increment / decrement', "{% increment counter %}", 'Independent of assign; persists across the template render.'),
+      I('comment', "{% comment %}Not rendered, and not sent.{% endcomment %}", ''),
+      I('raw', "{% raw %}{{ this is not parsed }}{% endraw %}", 'Escape hatch when you need literal braces in the output.'),
+    ]),
+
+    G('ops', 'Operators', 'Usable inside if / unless / case.', [
+      I('equals', "{% if custom_attribute.\${loyalty_tier} == 'Gold' %}…{% endif %}", ''),
+      I('not equals', "{% if custom_attribute.\${loyalty_tier} != 'Blue' %}…{% endif %}", ''),
+      I('greater / less than', "{% if custom_attribute.\${points_balance} > 5000 %}…{% endif %}", ''),
+      I('and', "{% if custom_attribute.\${total_stays} > 3 and \${country} == 'IL' %}…{% endif %}", ''),
+      I('or', "{% if custom_attribute.\${loyalty_tier} == 'Gold' or custom_attribute.\${loyalty_tier} == 'Platinum' %}…{% endif %}", 'Liquid has no parentheses — nest the ifs or pre-compute with assign.'),
+      I('contains', "{% if \${email_address} contains '@example.com' %}…{% endif %}", 'Works on strings and arrays.'),
+      I('blank / nil check', "{% if custom_attribute.\${next_stay_hotel} != blank %}…{% endif %}",
+        'Remember: an empty string and 0 are both TRUTHY in Liquid. Test explicitly.'),
+    ]),
+
+    G('string', 'String filters', '', [
+      I('default', "{{\${first_name} | default: 'there'}}", 'Fires on nil and empty string — but not on a single space.'),
+      I('strip + default', "{{\${first_name} | strip | default: 'there'}}", 'The safe version when your source data is dirty.'),
+      I('upcase / downcase', "{{\${city} | upcase}}", ''),
+      I('capitalize', "{{\${city} | capitalize}}", 'Lowercases the rest — turns "Tel Aviv" into "Tel aviv". Careful with names.'),
+      I('truncate', "{{custom_attribute.\${next_stay_hotel} | truncate: 24}}", ''),
+      I('truncatewords', "{{custom_attribute.\${review_text} | truncatewords: 12}}", ''),
+      I('replace', "{{\${city} | replace: 'Tel Aviv', 'TLV'}}", ''),
+      I('remove', "{{\${last_name} | remove: '-'}}", ''),
+      I('append / prepend', "{{\${first_name} | append: ', welcome back'}}", ''),
+      I('split + join', "{{custom_attribute.\${tags} | split: ',' | join: ' · '}}", ''),
+      I('size', "{{\${first_name} | size}}", 'Length of a string, or count of an array.'),
+      I('url_encode', "{{\${email_address} | url_encode}}", 'Always encode anything you put in a query string.'),
+      I('strip_html', "{{custom_attribute.\${bio} | strip_html}}", ''),
+      I('newline_to_br', "{{custom_attribute.\${notes} | newline_to_br}}", ''),
+    ]),
+
+    G('math', 'Number & math filters', '', [
+      I('number_with_delimiter', "{{custom_attribute.\${points_balance} | number_with_delimiter}}", '18400 → 18,400'),
+      I('plus / minus', "{% assign to_gold = 7 | minus: custom_attribute.\${total_stays} %}{{to_gold}}", ''),
+      I('times', "{{custom_attribute.\${nights_booked} | times: 120}}", ''),
+      I('divided_by (integer)', "{{custom_attribute.\${points_balance} | divided_by: 100}}", 'Truncates when both sides are integers. 18450 → 184, not 185.'),
+      I('divided_by (float)', "{{custom_attribute.\${points_balance} | divided_by: 100.0 | round}}", 'Use 100.0 to keep the remainder, then round.'),
+      I('round / ceil / floor', "{{custom_attribute.\${lifetime_value} | divided_by: 1000.0 | round: 1}}", ''),
+      I('modulo', "{{custom_attribute.\${total_stays} | modulo: 2}}", 'Handy for alternating row colours in a loop.'),
+      I('abs', "{{custom_attribute.\${balance} | abs}}", ''),
+      I('at_least / at_most', "{{custom_attribute.\${points_balance} | at_most: 50000}}", 'Clamps a value.'),
+    ]),
+
+    G('date', 'Date filters', 'strftime formatting. The attribute must be a real date.', [
+      I('Full date', "{{custom_attribute.\${next_stay_date} | date: '%A, %B %e'}}", 'Monday, August 18'),
+      I('Numeric date', "{{custom_attribute.\${next_stay_date} | date: '%d/%m/%Y'}}", '18/08/2026'),
+      I('Short date', "{{custom_attribute.\${next_stay_date} | date: '%b %e, %Y'}}", 'Aug 18, 2026'),
+      I('Time', "{{custom_attribute.\${next_stay_date} | date: '%H:%M'}}", ''),
+      I('Now', "{{'now' | date: '%Y-%m-%d'}}", "Send-time date. Useful for 'valid until' copy."),
+      I('Day name only', "{{custom_attribute.\${next_stay_date} | date: '%A'}}", ''),
+      I('Format reference', "%A full weekday · %a short weekday · %B full month · %b short month\n%d zero-padded day · %-d day · %e space-padded day\n%m month · %Y year · %y 2-digit year · %H hour · %M minute · %p AM/PM",
+        'Reference only — not a snippet to insert.'),
+    ]),
+
+    G('array', 'Array filters', 'Mostly used with catalog items.', [
+      I('first / last', "{{items | first}}", ''),
+      I('map', "{{items | map: 'name' | join: ', '}}", 'Pull one field out of every row.'),
+      I('where', "{{items | where: 'has_spa', true | map: 'name' | join: ', '}}", ''),
+      I('sort', "{% assign cheapest = items | sort: 'price_from' %}{{cheapest[0].name}}", ''),
+      I('uniq', "{{items | map: 'city' | uniq | join: ', '}}", ''),
+      I('reverse', "{{items | reverse | first}}", ''),
+      I('slice', "{{items | slice: 0, 3}}", ''),
+    ]),
+
+    G('braze', 'Braze-specific tags', 'These do not exist in standard Liquid.', [
+      I('abort_message', "{% abort_message('Reason logged in analytics') %}",
+        'Cancels the send for this user only, and is counted as an abort in campaign analytics. The correct way to skip a bad render.'),
+      I('abort with a guard', "{% if custom_attribute.\${next_stay_hotel} == blank %}\n  {% abort_message('No upcoming stay') %}\n{% endif %}", ''),
+      I('connected_content', "{% connected_content https://api.example.com/rates?hotel={{custom_attribute.\${next_stay_hotel_id}}}\n   :basic_auth rates_key\n   :cache 300\n   :save rates %}\n{% if rates.lowest %}From €{{rates.lowest}} tonight.{% endif %}",
+        'Always :cache on a large send — without it your endpoint takes one request per recipient.'),
+      I('connected_content POST', "{% connected_content https://api.example.com/quote\n   :method post\n   :body hotel={{custom_attribute.\${next_stay_hotel_id}}}\n   :headers {\"Accept\": \"application/json\"}\n   :save quote %}", ''),
+      I('promotion code', "{% promotion 'summer_codes' %}\n{{promotion.code}}", 'Draws a unique code from an uploaded pool. Never hard-code a shared code.'),
+      I('message_extras', "{% message_extras_capture key='campaign_theme' value='summer' %}", 'Attaches metadata that flows into Currents.'),
+      I('Multi-language', "{% case \${language} %}\n  {% when 'he' %}שלום {{\${first_name}}}\n  {% when 'de' %}Hallo {{\${first_name}}}\n  {% else %}Hello {{\${first_name}}}\n{% endcase %}",
+        'One message, several languages. Braze also has a dedicated Multi-language feature for this.'),
+    ]),
+
+    G('recipes', 'Recipes you will use weekly', 'Complete, working patterns — paste and adapt.', [
+      I('Safe greeting', "Hello {{\${first_name} | strip | default: 'there'}},", ''),
+      I('Plural-safe nights', "{% assign n = custom_attribute.\${nights_booked} %}\nYour {{n}} night{% if n != 1 %}s{% endif %} at {{custom_attribute.\${next_stay_hotel} | default: 'your hotel'}}\nstart{% if n == 1 %}s{% endif %} on {{custom_attribute.\${next_stay_date} | date: '%A, %B %e'}}.",
+        'Note the verb pluralises the opposite way to the noun.'),
+      I('Tier-based offer', "{% assign tier = custom_attribute.\${loyalty_tier} | default: 'Blue' %}\n{% if tier == 'Gold' or tier == 'Platinum' %}\n  Double points on your next stay — you already have {{custom_attribute.\${points_balance} | number_with_delimiter}}.\n{% else %}\n  Here is 20% off your next stay: WELCOMEBACK20\n{% endif %}",
+        'Never discount a high-value guest when a points bonus will do.'),
+      I('Progress to next tier', "{% assign to_gold = 7 | minus: custom_attribute.\${total_stays} %}\n{% if to_gold > 0 %}\n  You are {{to_gold}} stay{% if to_gold != 1 %}s{% endif %} from Gold.\n{% endif %}",
+        'The if-wrapper stops existing Gold members seeing "-3 stays from Gold".'),
+      I('Abandoned booking hero', "{% catalog_items hotels {{custom_attribute.\${abandoned_hotel_id}}} %}\n{% if items.size == 0 %}{% abort_message('no catalog row') %}{% endif %}\n<h1>Still thinking about {{items[0].city}}?</h1>\n<img src=\"{{items[0].image_url}}\" alt=\"{{items[0].name}}\" width=\"600\">\n<p>From €{{items[0].price_from}} per night</p>", ''),
+      I('Points-to-euros', "Your {{custom_attribute.\${points_balance} | number_with_delimiter}} points are worth about €{{custom_attribute.\${points_balance} | divided_by: 100.0 | round}}.",
+        'The 100.0 matters — integer division would understate the value.'),
+      I('Countdown to arrival', "{% assign days = custom_attribute.\${next_stay_date} | date: '%s' | minus: 'now' | date: '%s' | divided_by: 86400 %}\n{% if days > 0 %}{{days}} days to go{% endif %}",
+        'Date arithmetic via epoch seconds. Fiddly, but it is the standard trick.'),
+      I('Alternating rows', "{% for item in items %}\n  <tr style=\"background:{% if forloop.index0 | modulo: 2 == 0 %}#FFFFFF{% else %}#F7F7FA{% endif %}\">\n    <td>{{item.name}}</td>\n  </tr>\n{% endfor %}", ''),
+      I('Fallback chain', "{{custom_attribute.\${preferred_city} | default: custom_attribute.\${city} | default: 'your next destination'}}",
+        'default can be chained — first non-empty wins.'),
+    ]),
+  ];
+
+  /* Flat searchable index */
+  function search(q) {
+    q = String(q || '').toLowerCase().trim();
+    if (!q) return null;
+    const hits = [];
+    GROUPS.forEach((g) => g.items.forEach((it) => {
+      const hay = (it.name + ' ' + it.snippet + ' ' + it.desc + ' ' + g.label).toLowerCase();
+      if (hay.includes(q)) hits.push({ group: g.label, item: it });
+    }));
+    return hits;
+  }
+
+  const allItems = () => GROUPS.reduce((a, g) => a.concat(g.items), []);
+
+  return { GROUPS, search, allItems };
+})();
+
+window.BZLiquidRef = BZLiquidRef;
+
+
+/* ===== js/htmleditor.js ===== */
+/* ==========================================================================
+   Braze Sandbox — HTML code editor
+   Reproduces Braze's HTML editing experience: the CONTENT rail (Design and
+   Build / Link Management / Gmail Promotion, then Personalization,
+   Multi-language and Create with AI), the HTML | Classic | More tab strip, a
+   line-numbered code pane, and a live Preview with "Expand Content Blocks".
+   The Add Personalization modal and the full Liquid reference make this the
+   place to practise tags.
+   ========================================================================== */
+
+const BZHtmlEditor = (function () {
+  'use strict';
+  const U = window.BZUI;
+
+  let state = {
+    section: 'design',        // design | links | gmail
+    tab: 'html',              // html | classic | more
+    expandBlocks: true,
+    previewUserId: 'AUR-100000',
+    liquidGroup: 'recipes',
+    liquidQuery: '',
+    showLiquid: false,
+  };
+
+  const RAIL = [
+    { id: 'design', label: 'Design and Build' },
+    { id: 'links',  label: 'Link Management' },
+    { id: 'gmail',  label: 'Gmail Promotion' },
+  ];
+
+  /* ---------- line-numbered code pane -------------------------------------- */
+
+  function codePane(code) {
+    const lines = String(code || '').split('\n').length;
+    return `<div class="bz-code">
+      <div class="bz-code__gutter" id="bz-code-gutter">${Array.from({ length: lines }, (_, i) => i + 1).join('\n')}</div>
+      <textarea class="bz-code__area" id="bz-code-area" spellcheck="false">${U.esc(code)}</textarea>
+    </div>`;
+  }
+
+  /* ---------- Liquid reference panel ---------------------------------------- */
+
+  function liquidPanel() {
+    const R = window.BZLiquidRef;
+    const hits = R.search(state.liquidQuery);
+
+    const itemHtml = (it, groupLabel) => `<div class="bz-lq__item">
+      <div class="bz-lq__head">
+        <span class="bz-lq__name">${U.esc(it.name)}</span>
+        ${groupLabel ? `<span class="bz-tag">${U.esc(groupLabel)}</span>` : ''}
+        <div class="bz-spacer"></div>
+        <button class="bz-btn bz-btn--sm bz-btn--primary" data-lq-insert="${U.esc(it.snippet)}">Insert</button>
+        <button class="bz-btn bz-btn--sm" data-lq-copy="${U.esc(it.snippet)}">Copy</button>
+      </div>
+      <pre class="bz-lq__code">${U.esc(it.snippet)}</pre>
+      ${it.desc ? `<div class="bz-lq__desc">${it.desc}</div>` : ''}
+    </div>`;
+
+    return `<div class="bz-lq">
+      <div class="bz-lq__bar">
+        <input class="bz-input bz-input--sm" id="bz-lq-search" placeholder="Search all Liquid tags, filters and recipes…" value="${U.esc(state.liquidQuery)}">
+        <button class="bz-btn bz-btn--sm" data-act="he-liquid-close">✕</button>
+      </div>
+      ${hits ? `<div class="bz-lq__body">
+          <div class="bz-hint bz-mb8">${hits.length} match${hits.length === 1 ? '' : 'es'}</div>
+          ${hits.map((h) => itemHtml(h.item, h.group)).join('') || '<div class="bz-muted bz-small">Nothing matched. Try "date", "catalog", "default" or "loop".</div>'}
+        </div>`
+      : `<div class="bz-lq__groups">
+          ${R.GROUPS.map((g) => `<button class="bz-lq__tab ${g.id === state.liquidGroup ? 'is-active' : ''}" data-lq-group="${g.id}">${U.esc(g.label)}</button>`).join('')}
+        </div>
+        <div class="bz-lq__body">
+          ${(() => {
+            const g = R.GROUPS.find((x) => x.id === state.liquidGroup) || R.GROUPS[0];
+            return `${g.hint ? `<div class="bz-hint bz-mb8">${U.esc(g.hint)}</div>` : ''}
+              ${g.items.map((it) => itemHtml(it)).join('')}`;
+          })()}
+        </div>`}
+    </div>`;
+  }
+
+  /* ---------- preview -------------------------------------------------------- */
+
+  function previewHtml(msg) {
+    const user = window.BZ.userById(state.previewUserId) || window.BZ.users[0];
+    const opts = { event_properties: U.triggerEventFor(user, 'booking_started') };
+    const body = state.expandBlocks
+      ? U.renderLiquid(msg.body, user, opts)
+      : { html: U.esc(msg.body), errors: [], warnings: [], aborted: null };
+
+    if (!String(msg.body || '').trim()) {
+      return `<div class="bz-he__noprev">No content available for preview</div>`;
+    }
+
+    let notes = '';
+    if (body.aborted) notes += `<div class="bz-liqerr"><strong>Send aborted for this user.</strong>\n{% abort_message %}: "${U.esc(body.aborted)}"</div>`;
+    if (body.errors.length) notes += `<div class="bz-liqerr">${U.esc(body.errors.join('\n'))}</div>`;
+    if (body.warnings.length) notes += `<div class="bz-liqerr" style="background:var(--bz-amber-soft);border-color:#EBD9B4;color:#7A4A00">Resolved to nothing: ${U.esc(body.warnings.join(', '))}</div>`;
+
+    return `${notes}<div class="bz-he__paper">${body.aborted ? '' : body.html}</div>`;
+  }
+
+  /* ---------- main view ------------------------------------------------------- */
+
+  function view(msg, opts) {
+    opts = opts || {};
+    const user = window.BZ.userById(state.previewUserId) || window.BZ.users[0];
+
+    const sectionBody = state.section === 'links' ? `
+        <div class="bz-he__pad">
+          <div class="bz-field"><label class="bz-label">Link aliasing</label>
+            <label class="bz-checkline"><input type="checkbox" checked><span>Track clicks on all links</span></label>
+            <label class="bz-checkline"><input type="checkbox" checked><span>Append UTM parameters automatically</span></label>
+          </div>
+          <div class="bz-field"><label class="bz-label">utm_source</label><input class="bz-input" value="braze" data-he="utm_source"></div>
+          <div class="bz-field"><label class="bz-label">utm_medium</label><input class="bz-input" value="email" data-he="utm_medium"></div>
+          <div class="bz-field"><label class="bz-label">utm_campaign</label><input class="bz-input" value="${U.esc((msg.subject || 'campaign').toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 30))}" data-he="utm_campaign"></div>
+          <div class="bz-hint">Click every link in a test send before launch. UTMs that silently disagree with the analytics team's convention are a whole afternoon of reconciliation later.</div>
+        </div>`
+      : state.section === 'gmail' ? `
+        <div class="bz-he__pad">
+          <div class="bz-field"><label class="bz-label">Gmail Promotions annotation</label>
+            <label class="bz-checkline"><input type="checkbox" data-he-bool="gmailAnnotation" ${msg.gmailAnnotation ? 'checked' : ''}><span>Enable annotation in the Promotions tab</span></label>
+            <div class="bz-hint">Adds a preview image, discount badge and expiry to the Gmail Promotions card. Only affects Gmail.</div>
+          </div>
+          <div class="bz-field"><label class="bz-label">Discount description</label>
+            <input class="bz-input" data-he="gmailDiscount" value="${U.esc(msg.gmailDiscount || '20% off your next stay')}"></div>
+          <div class="bz-field"><label class="bz-label">Offer expires</label>
+            <input class="bz-input" data-he="gmailExpiry" value="${U.esc(msg.gmailExpiry || '2026-08-31')}"></div>
+        </div>`
+      : `
+        <div class="bz-he__pad">
+          <div class="bz-field"><label class="bz-label">Subject line</label>
+            <input class="bz-input bz-mono" data-msg="subject" value="${U.esc(msg.subject)}"></div>
+          <div class="bz-field"><label class="bz-label">Preheader</label>
+            <input class="bz-input bz-mono" data-msg="preheader" value="${U.esc(msg.preheader || '')}"></div>
+          <div class="bz-field"><label class="bz-label">From name</label>
+            <input class="bz-input" data-msg="fromName" value="${U.esc(msg.fromName)}"></div>
+          <div class="bz-field"><label class="bz-label">From address</label>
+            <input class="bz-input" data-msg="fromEmail" value="${U.esc(msg.fromEmail)}"></div>
+          <div class="bz-field"><label class="bz-label">Reply-to</label>
+            <input class="bz-input" data-msg="replyTo" value="${U.esc(msg.replyTo || '')}"></div>
+        </div>`;
+
+    return `<div class="bz-he">
+      <div class="bz-he__rail">
+        <div class="bz-he__railicons">
+          <button class="bz-he__ricon is-active" title="Message">✉</button>
+          <button class="bz-he__ricon" title="Edit">✎</button>
+          <button class="bz-he__ricon" title="Preview">👁</button>
+        </div>
+        <div class="bz-he__railbody">
+          <div class="bz-he__railtitle">Content</div>
+          ${RAIL.map((r) => `<button class="bz-he__railitem ${r.id === state.section ? 'is-active' : ''}" data-he-section="${r.id}">${U.esc(r.label)}</button>`).join('')}
+
+          <div class="bz-he__railgroup">
+            <button class="bz-he__railaction" data-act="he-personalization">⊕ Personalization</button>
+            <button class="bz-he__railaction" data-act="he-multilang">🌐 Multi-language</button>
+          </div>
+
+          <div class="bz-he__railtitle">Create with AI</div>
+          <button class="bz-he__railaction bz-he__railaction--ai" data-act="he-liquid">✦ Liquid</button>
+          <button class="bz-he__railaction bz-he__railaction--ai" data-act="he-copy">✎ Copy</button>
+        </div>
+      </div>
+
+      <div class="bz-he__main">
+        <div class="bz-he__tabs">
+          <button class="bz-he__tab ${state.tab === 'html' ? 'is-active' : ''}" data-he-tab="html">HTML</button>
+          <button class="bz-he__tab ${state.tab === 'classic' ? 'is-active' : ''}" data-he-tab="classic">✕ Classic</button>
+          <button class="bz-he__tab ${state.tab === 'more' ? 'is-active' : ''}" data-he-tab="more">More ▾</button>
+          <div class="bz-spacer"></div>
+          <button class="bz-he__icon" data-act="he-multilang" title="Multi-language">🌐</button>
+          <button class="bz-he__icon" data-act="he-media" title="Media library">🖼</button>
+          <button class="bz-he__icon" data-act="he-liquid" title="Liquid reference">🔍</button>
+        </div>
+
+        <div class="bz-he__split">
+          <div class="bz-he__left">
+            ${state.tab === 'html' ? codePane(msg.body)
+              : state.tab === 'classic' ? `<div class="bz-he__pad">
+                  <div class="bz-callout"><div class="bz-callout__t">Classic (plain text)</div>
+                    <p>The plain-text alternative part of the email. Some clients and most accessibility tooling read this instead of the HTML.</p></div>
+                  <textarea class="bz-textarea" data-msg="plaintext" style="min-height:340px">${U.esc(msg.plaintext || '')}</textarea>
+                  <button class="bz-btn bz-btn--sm bz-mt8" data-act="he-genplain">Generate from HTML</button>
+                </div>`
+              : `<div class="bz-he__pad">${sectionBody}</div>`}
+          </div>
+
+          <div class="bz-he__right">
+            <div class="bz-he__prevbar">
+              <span>Preview</span>
+              <div class="bz-spacer"></div>
+              <label class="bz-he__toggle">
+                <input type="checkbox" data-he-bool="expandBlocks" ${state.expandBlocks ? 'checked' : ''}>
+                <span>Expand Content Blocks</span>
+              </label>
+              <select class="bz-select bz-select--sm" style="width:auto" data-he-prevuser>
+                ${window.BZ.users.slice(0, 30).map((u) => `<option value="${u.external_id}" ${u.external_id === state.previewUserId ? 'selected' : ''}>${U.esc(u.first_name + ' ' + u.last_name)} · ${U.esc(u.custom.loyalty_tier)}</option>`).join('')}
+              </select>
+            </div>
+            <div class="bz-he__prevbody" id="bz-he-prev">${previewHtml(msg)}</div>
+            <div class="bz-he__prevnote">Actual rendering may not be identical to this preview depending on the user's environment.</div>
+          </div>
+        </div>
+
+        ${state.showLiquid ? liquidPanel() : ''}
+
+        <div class="bz-he__foot">
+          <button class="bz-btn bz-btn--sm bz-btn--ghost" data-act="he-oldeditor">⇄ Switch to old HTML editor</button>
+          <div class="bz-spacer"></div>
+          <button class="bz-btn bz-btn--sm" data-act="he-download">Download file</button>
+          ${opts.doneLabel ? `<button class="bz-btn bz-btn--primary bz-btn--sm" data-act="he-done">${U.esc(opts.doneLabel)}</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  /* ---------- Add Personalization modal --------------------------------------- */
+
+  const PERSO_TYPES = {
+    'Default Attributes': [
+      ['first_name', "{{\${first_name}}}"], ['last_name', "{{\${last_name}}}"],
+      ['email_address', "{{\${email_address}}}"], ['user_id', "{{\${user_id}}}"],
+      ['country', "{{\${country}}}"], ['city', "{{\${city}}}"],
+      ['language', "{{\${language}}}"], ['phone_number', "{{\${phone_number}}}"],
+    ],
+    'Custom Attributes': window.BZ.customAttributes.map((a) => [a.name, "{{custom_attribute.\${" + a.name + "}}}"]),
+    'Event Properties': ['hotel_name', 'hotel_id', 'city', 'nights', 'total_price', 'check_in', 'rate_plan']
+      .map((p) => [p, "{{event_properties.\${" + p + "}}}"]),
+    'Canvas Entry Properties': ['promo_code', 'offer_id', 'source'].map((p) => [p, "{{canvas_entry_properties.\${" + p + "}}}"]),
+    'Content Blocks': window.BZ.contentBlocks.map((b) => [b.name, "{{content_blocks.\${" + b.name + "}}}"]),
+  };
+
+  function personalizationModal(onInsert) {
+    const types = Object.keys(PERSO_TYPES);
+    const body = `
+      <div class="bz-field">
+        <label class="bz-label">Personalization type</label>
+        <select class="bz-select" id="bz-p-type">${types.map((t) => `<option>${U.esc(t)}</option>`).join('')}</select>
+      </div>
+      <div class="bz-field">
+        <label class="bz-label">Attribute</label>
+        <select class="bz-select" id="bz-p-attr"></select>
+      </div>
+      <div class="bz-field">
+        <label class="bz-label">Default value <span class="bz-muted">(Optional)</span> ⓘ</label>
+        <input class="bz-input" id="bz-p-default" placeholder="Enter default value">
+        <div class="bz-hint">Strongly recommended on anything that appears in a subject line or greeting.
+          Without it a blank profile field renders "Hi ,".</div>
+      </div>
+      <div class="bz-field">
+        <label class="bz-label">Liquid Snippet</label>
+        <div class="bz-row">
+          <input class="bz-input bz-mono" id="bz-p-snippet" readonly>
+          <button class="bz-btn" id="bz-p-copy" title="Copy">⧉</button>
+        </div>
+      </div>`;
+
+    const m = U.modal('Add Personalization', body,
+      '<button class="bz-btn" data-modal-close>Cancel</button><button class="bz-btn bz-btn--primary" id="bz-p-insert">Insert</button>');
+
+    const typeEl = m.querySelector('#bz-p-type');
+    const attrEl = m.querySelector('#bz-p-attr');
+    const defEl = m.querySelector('#bz-p-default');
+    const snipEl = m.querySelector('#bz-p-snippet');
+
+    function fillAttrs() {
+      const list = PERSO_TYPES[typeEl.value] || [];
+      attrEl.innerHTML = '<option value="">Search for an attribute</option>' +
+        list.map(([name, snip]) => `<option value="${U.esc(snip)}">${U.esc(name)}</option>`).join('');
+      build();
+    }
+    function build() {
+      let s = attrEl.value || '';
+      const d = defEl.value.trim();
+      if (s && d) s = s.replace(/\}\}$/, " | default: '" + d.replace(/'/g, "\\'") + "'}}");
+      snipEl.value = s;
+    }
+    typeEl.addEventListener('change', fillAttrs);
+    attrEl.addEventListener('change', build);
+    defEl.addEventListener('input', build);
+    m.querySelector('#bz-p-copy').addEventListener('click', () => {
+      if (navigator.clipboard && snipEl.value) navigator.clipboard.writeText(snipEl.value).catch(() => {});
+      U.toast('Copied');
+    });
+    m.querySelector('#bz-p-insert').addEventListener('click', () => {
+      if (!snipEl.value) { U.toast('Pick an attribute first'); return; }
+      onInsert(snipEl.value);
+      U.closeModal();
+    });
+    fillAttrs();
+  }
+
+  /* ---------- insertion helper ------------------------------------------------- */
+
+  function insertAtCursor(msg, text, repaint) {
+    const ta = document.getElementById('bz-code-area');
+    if (!ta) { msg.body = (msg.body || '') + '\n' + text; repaint(true); return; }
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    ta.value = ta.value.slice(0, start) + text + ta.value.slice(end);
+    msg.body = ta.value;
+    ta.focus();
+    ta.selectionStart = ta.selectionEnd = start + text.length;
+    repaint(false);
+  }
+
+  /* ---------- binding ----------------------------------------------------------- */
+
+  function bind(root, msg, rerender) {
+    const syncGutter = () => {
+      const ta = document.getElementById('bz-code-area');
+      const g = document.getElementById('bz-code-gutter');
+      if (!ta || !g) return;
+      const n = ta.value.split('\n').length;
+      g.textContent = Array.from({ length: n }, (_, i) => i + 1).join('\n');
+      g.scrollTop = ta.scrollTop;
+    };
+    const repaintPreview = () => {
+      const el = document.getElementById('bz-he-prev');
+      if (el) el.innerHTML = previewHtml(msg);
+    };
+    /* full=true means the DOM must be rebuilt (structure changed) */
+    const repaint = (full) => { if (full) rerender(); else { syncGutter(); repaintPreview(); } };
+
+    syncGutter();
+
+    root.addEventListener('scroll', (e) => {
+      if (e.target.id === 'bz-code-area') {
+        const g = document.getElementById('bz-code-gutter');
+        if (g) g.scrollTop = e.target.scrollTop;
+      }
+    }, true);
+
+    root.addEventListener('input', (e) => {
+      if (e.target.id === 'bz-code-area') { msg.body = e.target.value; repaint(false); return; }
+      if (e.target.id === 'bz-lq-search') { state.liquidQuery = e.target.value; rerender(); return; }
+      const mf = e.target.closest('[data-msg]');
+      if (mf) { msg[mf.dataset.msg] = mf.value; repaintPreview(); return; }
+      const hf = e.target.closest('[data-he]');
+      if (hf) { msg[hf.dataset.he] = hf.value; return; }
+    });
+
+    root.addEventListener('change', (e) => {
+      const b = e.target.closest('[data-he-bool]');
+      if (b) {
+        const k = b.dataset.heBool;
+        if (k === 'expandBlocks') { state.expandBlocks = b.checked; repaintPreview(); }
+        else msg[k] = b.checked;
+        return;
+      }
+      if (e.target.hasAttribute('data-he-prevuser')) {
+        state.previewUserId = e.target.value; repaintPreview(); return;
+      }
+    });
+
+    root.addEventListener('click', (e) => {
+      const q = (a) => e.target.closest('[' + a + ']');
+      let t;
+
+      if ((t = q('data-he-section'))) { state.section = t.dataset.heSection; state.tab = 'more'; rerender(); return; }
+      if ((t = q('data-he-tab'))) { state.tab = t.dataset.heTab; rerender(); return; }
+      if ((t = q('data-lq-group'))) { state.liquidGroup = t.dataset.lqGroup; rerender(); return; }
+      if ((t = q('data-lq-insert'))) {
+        if (state.tab !== 'html') { state.tab = 'html'; rerender(); }
+        setTimeout(() => insertAtCursor(msg, t.dataset.lqInsert, repaint), 0);
+        return;
+      }
+      if ((t = q('data-lq-copy'))) {
+        if (navigator.clipboard) navigator.clipboard.writeText(t.dataset.lqCopy).catch(() => {});
+        U.toast('Copied to clipboard');
+        return;
+      }
+
+      const act = q('data-act');
+      if (!act) return;
+      switch (act.dataset.act) {
+        case 'he-personalization':
+          personalizationModal((snip) => {
+            if (state.tab !== 'html') { state.tab = 'html'; rerender(); }
+            setTimeout(() => insertAtCursor(msg, snip, repaint), 0);
+          });
+          break;
+        case 'he-liquid':
+          state.showLiquid = true; state.liquidQuery = ''; rerender(); break;
+        case 'he-liquid-close':
+          state.showLiquid = false; rerender(); break;
+        case 'he-multilang':
+          insertAtCursor(msg, "{% case \${language} %}\n  {% when 'he' %}שלום {{\${first_name}}}\n  {% when 'de' %}Hallo {{\${first_name}}}\n  {% else %}Hello {{\${first_name}}}\n{% endcase %}", repaint);
+          break;
+        case 'he-copy':
+          U.modal('Create with AI — Copy', `<p class="bz-muted">In Braze this drafts subject lines and body copy with BrazeAI.</p>
+            <p class="bz-muted bz-small">This sandbox has no model behind it, so nothing is generated here. The Liquid panel next to it is fully working — that is the part worth practising anyway.</p>`,
+            '<button class="bz-btn" data-modal-close>Close</button>');
+          break;
+        case 'he-media':
+          U.modal('Media Library', `<div class="bz-grid bz-grid--3">
+            ${window.BZ.catalogs.hotels.items.slice(0, 6).map((h) => `<button class="bz-btn" style="padding:0;overflow:hidden;height:auto" data-lq-insert="${U.esc('<img src="' + h.image_url + '" alt="' + h.name + '" width="600" style="display:block;max-width:100%">')}">
+              <img src="${U.esc(h.image_url)}" alt="" style="width:100%;display:block"></button>`).join('')}
+          </div><div class="bz-hint bz-mt8">Click an image to insert it as an <code>&lt;img&gt;</code> tag.</div>`,
+            '<button class="bz-btn" data-modal-close>Close</button>', true);
+          break;
+        case 'he-genplain':
+          msg.plaintext = String(msg.body || '')
+            .replace(/<style[\s\S]*?<\/style>/gi, '')
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+          rerender();
+          break;
+        case 'he-download': {
+          const user = window.BZ.userById(state.previewUserId);
+          const rendered = U.renderLiquid(msg.body, user, {}).html;
+          U.modal('Download file', `<p class="bz-muted bz-small">Braze downloads the raw HTML. Here is both, so you can compare source with what a recipient receives.</p>
+            <div class="bz-label bz-mt16">Source</div>
+            <textarea class="bz-textarea" style="min-height:150px" readonly>${U.esc(msg.body)}</textarea>
+            <div class="bz-label bz-mt16">Rendered for ${U.esc(user.first_name + ' ' + user.last_name)}</div>
+            <textarea class="bz-textarea" style="min-height:150px" readonly>${U.esc(rendered)}</textarea>`,
+            '<button class="bz-btn" data-modal-close>Close</button>', true);
+          break;
+        }
+        case 'he-oldeditor':
+          U.toast('The legacy editor is retired — this is the current one.');
+          break;
+      }
+    });
+  }
+
+  return { view, bind, personalizationModal, state };
+})();
+
+window.BZHtmlEditor = BZHtmlEditor;
 
 
 /* ===== js/emailbuilder.js ===== */
@@ -5120,7 +5985,8 @@ window.BZEmailBuilder = BZEmailBuilder;
    Braze Sandbox — message composers
    The channel picker shown when you click "Create Campaign", plus a composer
    per channel with a realistic device preview. Email additionally offers the
-   three build modes Braze gives you: Drag & Drop, HTML, or a saved template.
+   three build modes Braze gives you: drag-and-drop, HTML code editor, and
+   Templates — plus the Upload file link beneath them.
    ========================================================================== */
 
 const BZCompose = (function () {
@@ -5159,20 +6025,14 @@ const BZCompose = (function () {
 
   /* ---------- email build modes ---------------------------------------------- */
 
-  /* Braze offers exactly TWO editing experiences. Choosing a saved template or
-     uploading a file are options *inside* the HTML editor, not sibling tiles. */
+  /* Three tiles plus an "Upload file" link, matching the Message content step. */
   const EMAIL_MODES = [
-    { id: 'dragdrop', label: 'Drag & Drop Editor', icon: '⬚',
-      desc: 'Create custom, personalized email without writing HTML. Blocks and rows compile to responsive table markup for you.' },
-    { id: 'html', label: 'HTML Editor', icon: '</>',
-      desc: 'Select an existing email template, upload a template from a file, or start from a blank template. Full control over the markup.' },
-  ];
-
-  /* The three starting points offered once you pick the HTML editor. */
-  const HTML_SOURCES = [
-    { id: 'template', label: 'Select an existing template', desc: 'Start from a saved template in Content → Templates.' },
-    { id: 'upload', label: 'Upload a template from a file', desc: 'Paste or import coded HTML your designer produced.' },
-    { id: 'blank', label: 'Use a blank template', desc: 'Start from an empty document.' },
+    { id: 'dragdrop', label: 'Drag-and-drop editor', sub: 'Quick start from scratch', icon: '🖼',
+      desc: 'Build visually from blocks and rows. Braze generates responsive, table-based HTML for you.' },
+    { id: 'html', label: 'HTML code editor', sub: 'Quick start from scratch', icon: '</>',
+      desc: 'Write or paste your own HTML, with a line-numbered editor, live preview and the full Liquid reference.' },
+    { id: 'template', label: 'Templates', sub: 'Choose a template', icon: '▤',
+      desc: 'Start from a saved template. Editing here does not change the saved template.' },
   ];
 
   /* ---------- per-channel message defaults ------------------------------------ */
@@ -5252,27 +6112,20 @@ const BZCompose = (function () {
   /* ---------- email mode picker -------------------------------------------------- */
 
   function emailModeHtml() {
-    return `<div class="bz-modepicker">
-      ${EMAIL_MODES.map((m) => `<button class="bz-modetile" data-emode="${m.id}">
+    return `<div class="bz-modepicker" style="grid-template-columns:repeat(3,1fr);display:grid">
+      ${EMAIL_MODES.map((m) => `<button class="bz-modetile" style="flex-direction:column;text-align:center;align-items:center" data-emode="${m.id}">
         <div class="bz-modetile__ico">${m.icon}</div>
         <div><div class="bz-modetile__t">${U.esc(m.label)}</div>
-        <div class="bz-modetile__d">${U.esc(m.desc)}</div></div>
+        <div class="bz-modetile__d">${U.esc(m.sub)}</div></div>
       </button>`).join('')}
     </div>
+    <a class="bz-uploadlink" href="#" data-emode="upload">Upload file</a>
     <div class="bz-callout bz-mt16">
       <div class="bz-callout__t">Which one in practice</div>
-      <p>Drag &amp; Drop for anything you own end to end — it keeps the markup responsive and stops you hand-editing tables. HTML when a designer hands you coded output, or when you need markup the visual blocks cannot express.</p>
-      <p>You can convert Drag &amp; Drop → HTML at any point. You cannot convert back: once it is raw HTML, Braze can no longer reconstruct the blocks.</p>
-    </div>`;
-  }
-
-  function htmlSourceHtml() {
-    return `<div class="bz-modepicker">
-      ${HTML_SOURCES.map((s) => `<button class="bz-modetile" data-hsrc="${s.id}">
-        <div class="bz-modetile__ico">▤</div>
-        <div><div class="bz-modetile__t">${U.esc(s.label)}</div>
-        <div class="bz-modetile__d">${U.esc(s.desc)}</div></div>
-      </button>`).join('')}
+      <p><strong>Drag-and-drop</strong> for anything you own end to end — it keeps the markup responsive and stops you hand-editing tables.
+      <strong>HTML code editor</strong> when a designer hands you coded output, when you need markup the visual blocks cannot express, or when you want to practise Liquid.
+      <strong>Templates</strong> for an established, repeated message.</p>
+      <p>You can convert drag-and-drop → HTML at any point. You cannot convert back: once it is raw HTML, Braze can no longer reconstruct the blocks.</p>
     </div>`;
   }
 
@@ -5496,7 +6349,7 @@ const BZCompose = (function () {
     if (el.dataset.msgBool) m[el.dataset.msgBool] = el.checked;
   }
 
-  return { CHANNELS, EMAIL_MODES, HTML_SOURCES, channel, newMessage, pickerHtml, emailModeHtml, htmlSourceHtml, preview, composerForm, applyEdit };
+  return { CHANNELS, EMAIL_MODES, channel, newMessage, pickerHtml, emailModeHtml, preview, composerForm, applyEdit };
 })();
 
 window.BZCompose = BZCompose;
@@ -6778,7 +7631,7 @@ window.BZOperator = BZOperator;
     return w.message.body || '';
   }
 
-  const WIZ_STEPS = ['Compose', 'Target Audience', 'Delivery', 'Conversion Events', 'Review & Deploy'];
+  const WIZ_STEPS = ['Compose', 'Schedule', 'Target', 'Assign', 'Review'];
 
   function viewWizard() {
     const w = wizard || (wizard = blankWizard());
@@ -6836,52 +7689,44 @@ window.BZOperator = BZOperator;
             <p class="bz-muted bz-small bz-mb16">You can move from Drag &amp; Drop to HTML later, but not back.</p>
             ${window.BZCompose.emailModeHtml()}
           </div>
-          ${navRow}</div>`;
+          ${wizBar(w)}</div>`;
       }
 
       /* Email · Drag & Drop — full-bleed builder */
       if (w.channelId === 'email' && w.message.mode === 'dragdrop') {
         if (!w.design) w.design = window.BZEmailBuilder.starterDesign('starter');
         return `${topbar}
-          <div style="padding:14px 26px 0">${stepsBar}${emailHeaderFields(w)}</div>
+          <div style="padding:12px 20px 0">${variantStrip(w)}${emailHeaderFields(w)}</div>
           <div style="flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid var(--bz-line)">
             ${window.BZEmailBuilder.view(w.design)}
           </div>
-          <div class="bz-wizfoot">
-            <div class="bz-row">
-              <button class="bz-btn bz-btn--sm" data-act="eb-preview">👁 Preview &amp; Test</button>
-              <button class="bz-btn bz-btn--sm" data-act="eb-tohtml">Convert to HTML editor</button>
-              <div class="bz-spacer"></div>
-              <button class="bz-btn" data-w-nav="-1">← Back</button>
-              <button class="bz-btn bz-btn--primary" data-w-nav="1">Next →</button>
-            </div>
-          </div>`;
+          <div class="bz-he__foot">
+            <button class="bz-btn bz-btn--sm" data-act="eb-preview">👁 Preview &amp; Test</button>
+            <button class="bz-btn bz-btn--sm" data-act="eb-tohtml">Convert to HTML editor</button>
+          </div>
+          ${wizBar(w)}`;
       }
 
-      /* Email · HTML or Template */
+      /* Email · HTML code editor or Templates — the real Braze HTML editor */
       if (w.channelId === 'email') {
-        const r = U.renderLiquid(w.message.body, user, {});
-        return `${topbar}<div class="bz-content">${stepsBar}
-          ${emailHeaderFields(w)}
-          ${w.message.mode === 'template' ? `<div class="bz-field" style="max-width:460px">
-            <label class="bz-label">Start from template</label>
-            <select class="bz-select" data-w-tpl="1">
-              <option value="">— choose —</option>
-              ${window.BZ.templates.map((t) => `<option value="${t.id}" ${t.id === w.message.templateId ? 'selected' : ''}>${U.esc(t.name)}</option>`).join('')}
-            </select>
-            <div class="bz-hint">Editing here does not change the saved template. To push changes back you have to update the template itself.</div>
-          </div>` : ''}
-          <div class="bz-grid bz-grid--2" style="align-items:start">
-            <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">Body HTML</div></div>
-              <div class="bz-card__body"><textarea class="bz-textarea" data-msg="body" style="min-height:420px">${U.esc(w.message.body)}</textarea></div></div>
-            <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">Preview — ${U.esc(user.first_name + ' ' + user.last_name)}</div></div>
-              <div class="bz-card__body">
-                ${r.errors.length ? `<div class="bz-liqerr">${U.esc(r.errors.join('\n'))}</div>` : ''}
-                ${r.warnings.length ? `<div class="bz-liqerr" style="background:var(--bz-amber-soft);border-color:#EBD9B4;color:#7A4A00">Resolved to nothing: ${U.esc(r.warnings.join(', '))}</div>` : ''}
-                <div style="border:1px solid var(--bz-line);border-radius:6px;overflow:auto;max-height:460px">${r.html}</div>
-              </div></div>
+        if (w.message.mode === 'template' && !w.message.templateId) {
+          return `${topbar}<div class="bz-content">${variantStrip(w)}
+            <h2 style="font-size:17px;margin:0 0 12px">Choose a template</h2>
+            <div class="bz-grid bz-grid--2" style="max-width:900px">
+              ${window.BZ.templates.map((t) => `<button class="bz-modetile" data-w-tplpick="${t.id}">
+                <div class="bz-modetile__ico">▤</div>
+                <div><div class="bz-modetile__t">${U.esc(t.name)}</div>
+                <div class="bz-modetile__d bz-mono">${U.esc(t.subject)}</div></div>
+              </button>`).join('')}
+            </div>
+            ${wizBar(w)}</div>`;
+        }
+        return `${topbar}
+          <div style="padding:12px 20px 0">${variantStrip(w)}</div>
+          <div style="flex:1;min-height:0;display:flex;border-top:1px solid var(--bz-line)">
+            ${window.BZHtmlEditor.view(w.message, {})}
           </div>
-          ${navRow}</div>`;
+          ${wizBar(w)}`;
       }
 
       /* Every other channel: form on the left, device preview on the right */
@@ -6893,7 +7738,7 @@ window.BZOperator = BZOperator;
             <div class="bz-spacer"></div><span class="bz-small bz-muted">${U.esc(user.first_name)} ${U.esc(user.last_name)}</span></div>
             <div class="bz-card__body">${window.BZCompose.preview(w.message, user)}</div></div>
         </div>
-        ${navRow}</div>`;
+        ${wizBar(w)}</div>`;
     }
 
     /* ---- Step 2: Target Audience ---------------------------------------- */
@@ -6916,7 +7761,7 @@ window.BZOperator = BZOperator;
           <div class="bz-hint">${U.esc(S.describeSpec(seg)) || 'No filters — this targets everyone.'}</div>
           ${channelReachWarning(w, reach)}` : ''}
         </div></div>
-        ${navRow}</div>`;
+        ${wizBar(w)}</div>`;
     }
 
     /* ---- Step 3: Delivery ------------------------------------------------ */
@@ -6951,7 +7796,7 @@ window.BZOperator = BZOperator;
               <p>Braze gives you a campaign id. Your backend posts to <code>/campaigns/trigger/send</code> with <code>trigger_properties</code>, readable in the message as <code>{{api_trigger_properties.\${…}}}</code>.</p>
               <p class="bz-mono bz-small">POST ${U.esc(window.BZ.workspace.endpoint)}/campaigns/trigger/send</p></div>`}
         </div></div>
-        ${navRow}</div>`;
+        ${wizBar(w)}</div>`;
     }
 
     /* ---- Step 4: Conversion Events --------------------------------------- */
@@ -6968,7 +7813,7 @@ window.BZOperator = BZOperator;
           <div class="bz-callout bz-callout--warn"><div class="bz-callout__t">Do not skip this step</div>
             <p>A campaign with no conversion event can only ever be judged on opens and clicks — which is to say, it cannot be judged.</p></div>
         </div></div>
-        ${navRow}</div>`;
+        ${wizBar(w)}</div>`;
     }
 
     /* ---- Step 5: Review & Deploy ------------------------------------------ */
@@ -7012,7 +7857,37 @@ window.BZOperator = BZOperator;
         </div></div></div>` : `<div class="bz-card bz-mt16">
         <div class="bz-card__head"><div class="bz-card__title">Rendered preview</div></div>
         <div class="bz-card__body">${window.BZCompose.preview(w.message, user)}</div></div>`}
-      ${navRow}</div>`;
+      ${wizBar(w)}</div>`;
+  }
+
+  /* Braze puts the step rail along the BOTTOM, with Save as Draft and
+     Launch Campaign on the right. */
+  function wizBar(w) {
+    return `<div class="bz-wizbar">
+      <button class="bz-wizbar__arrow" data-w-nav="-1" ${w.step <= 1 ? 'disabled' : ''}>‹</button>
+      ${WIZ_STEPS.map((label, i) => `<button class="bz-wizbar__step ${w.step === i + 1 ? 'is-active' : ''}" data-wstep="${i + 1}">
+        <span class="bz-wizbar__n">${i + 1}</span>${U.esc(label)}</button>`).join('')}
+      <button class="bz-wizbar__arrow" data-w-nav="1" ${w.step >= 5 ? 'disabled' : ''}>›</button>
+      <div class="bz-spacer"></div>
+      <button class="bz-btn bz-btn--sm" data-w-nav="save-draft">Save as Draft</button>
+      <button class="bz-btn bz-btn--primary bz-btn--sm" data-w-nav="save">Launch Campaign</button>
+    </div>`;
+  }
+
+  /* Email Variants strip — one variant per A/B arm. */
+  function variantStrip(w) {
+    w.variants = w.variants || [{ name: 'Variant 1' }];
+    w.activeVariant = w.activeVariant || 0;
+    const complete = !!String(w.message && w.message.body || '').trim();
+    return `<div class="bz-mb16">
+      <div class="bz-label">Email Variants</div>
+      <div class="bz-variants">
+        ${w.variants.map((v, i) => `<button class="bz-variant ${i === w.activeVariant ? 'is-active' : ''}" data-w-variant="${i}">
+          ${U.esc(v.name)} ${i === w.activeVariant && !complete ? '<span class="bz-variant__warn" title="No content yet">❶</span>' : ''}
+        </button>`).join('')}
+        <button class="bz-variantadd" data-act="add-variant" title="Add a variant">+</button>
+      </div>
+    </div>`;
   }
 
   function emailHeaderFields(w) {
@@ -7625,6 +8500,9 @@ window.BZOperator = BZOperator;
             bindFn = (root) => window.BZEmailBuilder.bind(root, w.design, (canvasAlreadyPainted) => {
               if (!canvasAlreadyPainted) render();
             });
+          } else if (w && w.step === 1 && w.channelId === 'email' &&
+                     (w.message.mode === 'html' || (w.message.mode === 'template' && w.message.templateId))) {
+            bindFn = (root) => window.BZHtmlEditor.bind(root, w.message, render);
           }
         }
         else if (parts[1])      main = viewCampaign(parts[1], parts[2]);
@@ -7763,6 +8641,7 @@ window.BZOperator = BZOperator;
       if (!wizard) return;
       const v = wnav.dataset.wNav;
       if (v === 'save') { saveWizard(); return; }
+      if (v === 'save-draft') { saveWizard(true); return; }
       if (v === '0') { wizard.step = 0; render(); return; }
       const next = wizard.step + Number(v);
       /* Step 1 with no channel chosen means we are on the message-type picker. */
@@ -7781,6 +8660,23 @@ window.BZOperator = BZOperator;
       render(); return;
     }
 
+    /* -- a template was picked in the Templates flow ---------------------- */
+    const tplPick = e.target.closest('[data-w-tplpick]');
+    if (tplPick && wizard && wizard.message) {
+      const t = window.BZ.templates.find((x) => x.id === tplPick.dataset.wTplpick);
+      if (t) {
+        wizard.message.templateId = t.id;
+        wizard.message.body = t.body;
+        wizard.message.subject = t.subject;
+        wizard.message.preheader = t.preheader;
+        U.toast('Loaded "' + t.name + '" — edits here do not change the saved template');
+      }
+      render(); return;
+    }
+
+    const varBtn = e.target.closest('[data-w-variant]');
+    if (varBtn && wizard) { wizard.activeVariant = +varBtn.dataset.wVariant; render(); return; }
+
     /* -- email build mode chosen ----------------------------------------- */
     const modeTile = e.target.closest('[data-emode]');
     if (modeTile && wizard && wizard.message) {
@@ -7788,6 +8684,10 @@ window.BZOperator = BZOperator;
       wizard.message.mode = mode;
       if (mode === 'dragdrop') {
         wizard.design = window.BZEmailBuilder.starterDesign('starter');
+      } else if (mode === 'upload') {
+        wizard.message.mode = 'html';
+        wizard.message.body = '<!-- Paste the HTML your designer produced here. -->\n';
+        U.toast('Upload lands you in the HTML editor with the file contents.');
       } else if (mode === 'html') {
         wizard.message.body = "{{content_blocks.${aurelia_header}}}\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  <tr><td style=\"padding:34px 28px;font:400 15px/1.6 Helvetica,Arial,sans-serif;color:#43434E\">\n    <h1 style=\"margin:0 0 12px;font:700 25px/1.3 Helvetica,Arial,sans-serif;color:#0F1B2D\">\n      Hello {{${first_name} | default: 'there'}}\n    </h1>\n    <p>Write your email here. Liquid works exactly as it does in production.</p>\n  </td></tr>\n</table>\n{{content_blocks.${aurelia_footer}}}";
       }
@@ -7856,6 +8756,14 @@ window.BZOperator = BZOperator;
             U.closeModal(); U.toast('Converted to the HTML editor'); render();
           };
           return;
+        }
+        case 'add-variant': {
+          if (!wizard) break;
+          wizard.variants = wizard.variants || [{ name: 'Variant 1' }];
+          wizard.variants.push({ name: 'Variant ' + (wizard.variants.length + 1) });
+          wizard.activeVariant = wizard.variants.length - 1;
+          U.toast('Variants split traffic. Test one variable at a time, and keep a control if you want incrementality.');
+          render(); break;
         }
         case 'reset-store':
           U.modal('Reset sandbox data', '<p>This clears everything you have created or edited and restores the seeded workspace. Case-study progress is not affected.</p>',
@@ -8006,10 +8914,10 @@ window.BZOperator = BZOperator;
            window.BZ.segments[window.BZ.segments.length - 1];
   }
 
-  function saveWizard() {
+  function saveWizard(asDraft) {
     const w = wizard;
     const c = {
-      id: U.uid('cmp'), name: w.name.trim() || 'Untitled campaign', status: 'active', _userCreated: true,
+      id: U.uid('cmp'), name: w.name.trim() || 'Untitled campaign', status: asDraft ? 'draft' : 'active', _userCreated: true,
       channels: [w.channel], deliveryType: w.deliveryType,
       trigger: w.deliveryType === 'action_based'
         ? { event: w.trigger, delay: w.delay, exception: w.exception || undefined }
@@ -8018,11 +8926,19 @@ window.BZOperator = BZOperator;
       conversionEvents: [{ event: w.conv, window: w.convWindow, primary: true }],
       stats: { sent: 0, delivered: 0, opens: 0, clicks: 0, conversions: 0, revenue: 0, unsubscribes: 0, bounces: 0 },
       createdBy: 'You', updated: new Date().toISOString(), tags: ['sandbox'], trend: new Array(14).fill(0),
+      campaignType: ({ email: 'Email', push: 'Push Notification', sms: 'SMS/MMS', whatsapp: 'WhatsApp',
+        inapp: 'In-App Message', contentcard: 'Content Card', multichannel: 'Multichannel',
+        banner: 'Banner', line: 'LINE', webhook: 'Webhook' })[w.channelId] || 'Email',
+      entrySchedule: w.deliveryType === 'action_based' ? 'Action-Based'
+        : w.deliveryType === 'api_triggered' ? 'API-Triggered'
+        : /recurring/i.test(w.schedule) ? 'Recurring' : 'One Time',
+      stopDate: null,
+      builtBody: wizardBodyHtml(w),
     };
     window.BZ.campaigns.push(c);
     U.Store.save();
     wizard = null;
-    U.toast('Campaign launched — open Analytics to see it with zero data, exactly as it would look on day one.');
+    U.toast(asDraft ? 'Saved as draft.' : 'Campaign launched — open Analytics to see it with zero data, exactly as it would look on day one.');
     location.hash = '#/campaigns/' + c.id;
   }
 

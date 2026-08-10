@@ -208,7 +208,10 @@ const check = (name, cond, detail) => {
   await page.locator('[data-chan="email"]').click();
   await page.waitForTimeout(250);
   const modes = await page.locator('[data-emode]').count();
-  check('email offers exactly two build modes (Drag & Drop, HTML)', modes === 2, 'got ' + modes);
+  check('email offers three build tiles plus the Upload file link', modes === 4, 'got ' + modes);
+  for (const m of ['dragdrop', 'html', 'template', 'upload']) {
+    check(`build mode "${m}" is offered`, await page.locator(`[data-emode="${m}"]`).count() === 1);
+  }
 
   await page.locator('[data-emode="dragdrop"]').click();
   await page.waitForTimeout(350);
@@ -243,6 +246,96 @@ const check = (name, cond, detail) => {
   }
   const checksShown = await page.locator('.bz-checkline').count();
   check('wizard reaches Review with pre-launch checks', checksShown >= 7, 'checkline count: ' + checksShown);
+
+  // HTML code editor: rail, tabs, line numbers, Liquid reference, personalization
+  console.log('\nHTML code editor');
+  await page.evaluate(() => { location.hash = '#/campaigns'; });
+  await page.waitForTimeout(150);
+  await page.locator('[data-act="new-campaign"]').click();
+  await page.waitForTimeout(200);
+  await page.locator('[data-chan="email"]').click();
+  await page.waitForTimeout(250);
+  await page.locator('[data-emode="html"]').click();
+  await page.waitForTimeout(400);
+
+  check('CONTENT rail renders Design and Build / Link Management / Gmail Promotion',
+    await page.locator('[data-he-section="design"]').count() === 1 &&
+    await page.locator('[data-he-section="links"]').count() === 1 &&
+    await page.locator('[data-he-section="gmail"]').count() === 1);
+  check('HTML / Classic / More tab strip renders', await page.locator('.bz-he__tab').count() === 3);
+  check('code pane has line numbers', (await page.locator('#bz-code-gutter').innerText()).trim().startsWith('1'));
+  check('preview pane has the Expand Content Blocks toggle',
+    await page.locator('[data-he-bool="expandBlocks"]').count() === 1);
+  check('footer has Switch to old HTML editor / Download file',
+    await page.locator('[data-act="he-oldeditor"]').count() === 1 &&
+    await page.locator('[data-act="he-download"]').count() === 1);
+
+  // bottom wizard bar with Braze's real step names
+  const wizSteps = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('.bz-wizbar__step')).map(b => b.textContent.replace(/\d/g, '').trim()));
+  check('bottom wizard bar uses Compose / Schedule / Target / Assign / Review',
+    wizSteps.join(',') === 'Compose,Schedule,Target,Assign,Review', wizSteps.join(','));
+  check('Save as Draft and Launch Campaign are present',
+    await page.locator('[data-w-nav="save-draft"]').count() === 1 &&
+    await page.locator('[data-w-nav="save"]').count() === 1);
+  check('Email Variants strip renders with an add button',
+    await page.locator('.bz-variant').count() >= 1 && await page.locator('[data-act="add-variant"]').count() === 1);
+
+  // Liquid reference: open, search, insert
+  await page.locator('[data-act="he-liquid"]').first().click();
+  await page.waitForTimeout(300);
+  const groupTabs = await page.locator('[data-lq-group]').count();
+  check('Liquid reference opens with every category', groupTabs >= 10, 'groups: ' + groupTabs);
+
+  const refStats = await page.evaluate(() => ({
+    groups: BZLiquidRef.GROUPS.length,
+    items: BZLiquidRef.allItems().length,
+    hits: BZLiquidRef.search('catalog').length,
+  }));
+  check('Liquid reference covers 10+ categories', refStats.groups >= 10, 'got ' + refStats.groups);
+  check('Liquid reference has 80+ entries', refStats.items >= 80, 'got ' + refStats.items);
+  check('Liquid reference is searchable', refStats.hits > 0, 'catalog hits: ' + refStats.hits);
+
+  const bodyBeforeInsert = await page.evaluate(() => BZApp.wizard.message.body.length);
+  await page.locator('[data-lq-insert]').first().click();
+  await page.waitForTimeout(300);
+  check('inserting a Liquid snippet writes into the code pane',
+    await page.evaluate(() => BZApp.wizard.message.body.length) > bodyBeforeInsert);
+
+  // every reference snippet must actually parse
+  const badSnippets = await page.evaluate(() => {
+    /* Jonas has an abandoned_hotel_id, so catalog snippets resolve. */
+    const u = BZ.userById('AUR-100001');
+    return BZLiquidRef.allItems().filter((it) => {
+      if (/Format reference/.test(it.name)) return false;   // documentation, not a snippet
+      const r = BZUI.renderLiquid(it.snippet, u, { event_properties: { hotel_name: 'X', nights: 2, product_id: 'p1', city: 'Eilat', total_price: 100, check_in: '2026-08-18', rate_plan: 'Flexible', hotel_id: 'eil-club' } });
+      return r.errors.length > 0;
+    }).map((it) => it.name + ': ' + (BZUI.renderLiquid(it.snippet, u, {}).errors[0] || ''));
+  });
+  check('every Liquid reference snippet parses without error',
+    badSnippets.length === 0, badSnippets.slice(0, 4).join(' | '));
+
+  // Add Personalization modal
+  await page.locator('[data-act="he-personalization"]').click();
+  await page.waitForTimeout(300);
+  check('Add Personalization modal has type / attribute / default / snippet',
+    await page.locator('#bz-p-type').count() === 1 && await page.locator('#bz-p-attr').count() === 1 &&
+    await page.locator('#bz-p-default').count() === 1 && await page.locator('#bz-p-snippet').count() === 1);
+  await page.selectOption('#bz-p-type', 'Custom Attributes');
+  await page.waitForTimeout(150);
+  const attrOpts = await page.locator('#bz-p-attr option').count();
+  check('attribute list populates from the workspace schema', attrOpts > 5, 'options: ' + attrOpts);
+  await page.selectOption('#bz-p-attr', { index: 1 });
+  await page.fill('#bz-p-default', 'there');
+  await page.waitForTimeout(150);
+  const snip = await page.inputValue('#bz-p-snippet');
+  check('default value is folded into the generated snippet',
+    /\| default: 'there'\}\}$/.test(snip), snip);
+  await page.locator('#bz-p-insert').click();
+  await page.waitForTimeout(300);
+  check('personalization inserts into the body',
+    (await page.evaluate(() => BZApp.wizard.message.body)).includes("default: 'there'"));
+
 
   // Non-email channel composer + device preview
   await page.evaluate(() => { location.hash = '#/campaigns'; });

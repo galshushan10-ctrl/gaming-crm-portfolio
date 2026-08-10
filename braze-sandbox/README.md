@@ -15,7 +15,7 @@ then rebuild the single file:
 
 ```bash
 python3 build.py          # -> dist/braze-sandbox.html
-node smoke-test.js        # 119 assertions: engines, routes, composers, builder, operator
+node smoke-test.js        # 141 assertions: engines, routes, composers, editors, operator
 ```
 
 The smoke test needs `npm install playwright`; it points at the pre-installed Chromium
@@ -77,7 +77,9 @@ lint results — is computed, not scripted.
 | Area | What you can do |
 |---|---|
 | Campaigns | List with Status/Tag/Filters/Columns, idle banner and campaign-type pills. Creation starts at the **message-type picker** (Multichannel, Email, Push, In-App, Content Card, Banner, SMS/MMS/RCS, WhatsApp, LINE, Webhook), then the five-step composer |
-| Email building | Two build modes exactly as Braze offers them — **Drag & Drop Editor** and **HTML Editor** (template / upload / blank inside it). The visual builder has Content / Rows / Settings tabs and Basic / Media / Advanced block categories |
+| Email building | The three tiles Braze shows on the Message content step — **Drag-and-drop editor**, **HTML code editor**, **Templates** — plus the **Upload file** link. The visual builder has Content / Rows / Settings tabs and Basic / Media / Advanced blocks |
+| HTML code editor | The real Braze layout: CONTENT rail (Design and Build / Link Management / Gmail Promotion, then Personalization, Multi-language, Create with AI), HTML / Classic / More tabs, line-numbered code pane, live Preview with **Expand Content Blocks**, and the Add Personalization modal |
+| Liquid reference | 11 categories, 90+ runnable snippets — every personalization namespace, ~40 filters, all control flow, and the Braze-only tags (`abort_message`, `catalog_items`, `catalog_selection_items`, `connected_content`, `promotion`, `message_extras_capture`). Click to insert at the cursor. Every snippet is asserted to parse |
 | Other channels | Push, SMS (with GSM-7 vs Unicode segment counting), WhatsApp (positional template variables), In-App, Content Card, Banner, LINE, Webhook — each with a device preview |
 | Canvases | Full Canvas Flow builder — add, configure, delete and branch. Message, Delay, Action Paths, Audience Paths, Experiment Paths, Decision Split, Agent, Feature Flag, Webhook, Update User Profile, Exit. Entry settings with re-eligibility and conversion windows |
 | Email Templates | HTML + Liquid editor with live preview against a real profile, personalization palette, snippet library, per-user "Send test", and an **Edge case** button that previews against a null-heavy profile |
@@ -126,8 +128,13 @@ wrong:
 - **Segmentation is no longer AND-only.** Segment Builder 2.0 supports OR within a filter
   group and between groups. Older training (and an earlier version of this sandbox) taught
   the AND-only workaround — that described the legacy builder.
-- **The email composer has two tiles, not three.** Drag & Drop and HTML. Choosing a saved
-  template or uploading a file are options *inside* the HTML editor.
+- **The Message content step shows three tiles plus an Upload file link** —
+  Drag-and-drop editor, HTML code editor, Templates. (An earlier pass had this as two
+  tiles on the strength of a documentation reading; a screenshot of the live product
+  settled it.)
+- **The campaign wizard steps are Compose / Schedule / Target / Assign / Review**, in a
+  bar along the *bottom* with Save as Draft and Launch Campaign on the right — not a
+  top-of-page wizard.
 - **Feature Flags are not in the campaign channel picker** — they are created from
   Messaging → Feature Flags.
 - **SMS / MMS / RCS is one channel family**, chosen inside the composer.

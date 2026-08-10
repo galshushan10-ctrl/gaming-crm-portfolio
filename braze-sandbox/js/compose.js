@@ -2,7 +2,8 @@
    Braze Sandbox — message composers
    The channel picker shown when you click "Create Campaign", plus a composer
    per channel with a realistic device preview. Email additionally offers the
-   three build modes Braze gives you: Drag & Drop, HTML, or a saved template.
+   three build modes Braze gives you: drag-and-drop, HTML code editor, and
+   Templates — plus the Upload file link beneath them.
    ========================================================================== */
 
 const BZCompose = (function () {
@@ -41,20 +42,14 @@ const BZCompose = (function () {
 
   /* ---------- email build modes ---------------------------------------------- */
 
-  /* Braze offers exactly TWO editing experiences. Choosing a saved template or
-     uploading a file are options *inside* the HTML editor, not sibling tiles. */
+  /* Three tiles plus an "Upload file" link, matching the Message content step. */
   const EMAIL_MODES = [
-    { id: 'dragdrop', label: 'Drag & Drop Editor', icon: '⬚',
-      desc: 'Create custom, personalized email without writing HTML. Blocks and rows compile to responsive table markup for you.' },
-    { id: 'html', label: 'HTML Editor', icon: '</>',
-      desc: 'Select an existing email template, upload a template from a file, or start from a blank template. Full control over the markup.' },
-  ];
-
-  /* The three starting points offered once you pick the HTML editor. */
-  const HTML_SOURCES = [
-    { id: 'template', label: 'Select an existing template', desc: 'Start from a saved template in Content → Templates.' },
-    { id: 'upload', label: 'Upload a template from a file', desc: 'Paste or import coded HTML your designer produced.' },
-    { id: 'blank', label: 'Use a blank template', desc: 'Start from an empty document.' },
+    { id: 'dragdrop', label: 'Drag-and-drop editor', sub: 'Quick start from scratch', icon: '🖼',
+      desc: 'Build visually from blocks and rows. Braze generates responsive, table-based HTML for you.' },
+    { id: 'html', label: 'HTML code editor', sub: 'Quick start from scratch', icon: '</>',
+      desc: 'Write or paste your own HTML, with a line-numbered editor, live preview and the full Liquid reference.' },
+    { id: 'template', label: 'Templates', sub: 'Choose a template', icon: '▤',
+      desc: 'Start from a saved template. Editing here does not change the saved template.' },
   ];
 
   /* ---------- per-channel message defaults ------------------------------------ */
@@ -134,27 +129,20 @@ const BZCompose = (function () {
   /* ---------- email mode picker -------------------------------------------------- */
 
   function emailModeHtml() {
-    return `<div class="bz-modepicker">
-      ${EMAIL_MODES.map((m) => `<button class="bz-modetile" data-emode="${m.id}">
+    return `<div class="bz-modepicker" style="grid-template-columns:repeat(3,1fr);display:grid">
+      ${EMAIL_MODES.map((m) => `<button class="bz-modetile" style="flex-direction:column;text-align:center;align-items:center" data-emode="${m.id}">
         <div class="bz-modetile__ico">${m.icon}</div>
         <div><div class="bz-modetile__t">${U.esc(m.label)}</div>
-        <div class="bz-modetile__d">${U.esc(m.desc)}</div></div>
+        <div class="bz-modetile__d">${U.esc(m.sub)}</div></div>
       </button>`).join('')}
     </div>
+    <a class="bz-uploadlink" href="#" data-emode="upload">Upload file</a>
     <div class="bz-callout bz-mt16">
       <div class="bz-callout__t">Which one in practice</div>
-      <p>Drag &amp; Drop for anything you own end to end — it keeps the markup responsive and stops you hand-editing tables. HTML when a designer hands you coded output, or when you need markup the visual blocks cannot express.</p>
-      <p>You can convert Drag &amp; Drop → HTML at any point. You cannot convert back: once it is raw HTML, Braze can no longer reconstruct the blocks.</p>
-    </div>`;
-  }
-
-  function htmlSourceHtml() {
-    return `<div class="bz-modepicker">
-      ${HTML_SOURCES.map((s) => `<button class="bz-modetile" data-hsrc="${s.id}">
-        <div class="bz-modetile__ico">▤</div>
-        <div><div class="bz-modetile__t">${U.esc(s.label)}</div>
-        <div class="bz-modetile__d">${U.esc(s.desc)}</div></div>
-      </button>`).join('')}
+      <p><strong>Drag-and-drop</strong> for anything you own end to end — it keeps the markup responsive and stops you hand-editing tables.
+      <strong>HTML code editor</strong> when a designer hands you coded output, when you need markup the visual blocks cannot express, or when you want to practise Liquid.
+      <strong>Templates</strong> for an established, repeated message.</p>
+      <p>You can convert drag-and-drop → HTML at any point. You cannot convert back: once it is raw HTML, Braze can no longer reconstruct the blocks.</p>
     </div>`;
   }
 
@@ -378,7 +366,7 @@ const BZCompose = (function () {
     if (el.dataset.msgBool) m[el.dataset.msgBool] = el.checked;
   }
 
-  return { CHANNELS, EMAIL_MODES, HTML_SOURCES, channel, newMessage, pickerHtml, emailModeHtml, htmlSourceHtml, preview, composerForm, applyEdit };
+  return { CHANNELS, EMAIL_MODES, channel, newMessage, pickerHtml, emailModeHtml, preview, composerForm, applyEdit };
 })();
 
 window.BZCompose = BZCompose;

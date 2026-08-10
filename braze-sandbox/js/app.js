@@ -439,7 +439,7 @@
     return w.message.body || '';
   }
 
-  const WIZ_STEPS = ['Compose', 'Target Audience', 'Delivery', 'Conversion Events', 'Review & Deploy'];
+  const WIZ_STEPS = ['Compose', 'Schedule', 'Target', 'Assign', 'Review'];
 
   function viewWizard() {
     const w = wizard || (wizard = blankWizard());
@@ -497,52 +497,44 @@
             <p class="bz-muted bz-small bz-mb16">You can move from Drag &amp; Drop to HTML later, but not back.</p>
             ${window.BZCompose.emailModeHtml()}
           </div>
-          ${navRow}</div>`;
+          ${wizBar(w)}</div>`;
       }
 
       /* Email · Drag & Drop — full-bleed builder */
       if (w.channelId === 'email' && w.message.mode === 'dragdrop') {
         if (!w.design) w.design = window.BZEmailBuilder.starterDesign('starter');
         return `${topbar}
-          <div style="padding:14px 26px 0">${stepsBar}${emailHeaderFields(w)}</div>
+          <div style="padding:12px 20px 0">${variantStrip(w)}${emailHeaderFields(w)}</div>
           <div style="flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid var(--bz-line)">
             ${window.BZEmailBuilder.view(w.design)}
           </div>
-          <div class="bz-wizfoot">
-            <div class="bz-row">
-              <button class="bz-btn bz-btn--sm" data-act="eb-preview">👁 Preview &amp; Test</button>
-              <button class="bz-btn bz-btn--sm" data-act="eb-tohtml">Convert to HTML editor</button>
-              <div class="bz-spacer"></div>
-              <button class="bz-btn" data-w-nav="-1">← Back</button>
-              <button class="bz-btn bz-btn--primary" data-w-nav="1">Next →</button>
-            </div>
-          </div>`;
+          <div class="bz-he__foot">
+            <button class="bz-btn bz-btn--sm" data-act="eb-preview">👁 Preview &amp; Test</button>
+            <button class="bz-btn bz-btn--sm" data-act="eb-tohtml">Convert to HTML editor</button>
+          </div>
+          ${wizBar(w)}`;
       }
 
-      /* Email · HTML or Template */
+      /* Email · HTML code editor or Templates — the real Braze HTML editor */
       if (w.channelId === 'email') {
-        const r = U.renderLiquid(w.message.body, user, {});
-        return `${topbar}<div class="bz-content">${stepsBar}
-          ${emailHeaderFields(w)}
-          ${w.message.mode === 'template' ? `<div class="bz-field" style="max-width:460px">
-            <label class="bz-label">Start from template</label>
-            <select class="bz-select" data-w-tpl="1">
-              <option value="">— choose —</option>
-              ${window.BZ.templates.map((t) => `<option value="${t.id}" ${t.id === w.message.templateId ? 'selected' : ''}>${U.esc(t.name)}</option>`).join('')}
-            </select>
-            <div class="bz-hint">Editing here does not change the saved template. To push changes back you have to update the template itself.</div>
-          </div>` : ''}
-          <div class="bz-grid bz-grid--2" style="align-items:start">
-            <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">Body HTML</div></div>
-              <div class="bz-card__body"><textarea class="bz-textarea" data-msg="body" style="min-height:420px">${U.esc(w.message.body)}</textarea></div></div>
-            <div class="bz-card"><div class="bz-card__head"><div class="bz-card__title">Preview — ${U.esc(user.first_name + ' ' + user.last_name)}</div></div>
-              <div class="bz-card__body">
-                ${r.errors.length ? `<div class="bz-liqerr">${U.esc(r.errors.join('\n'))}</div>` : ''}
-                ${r.warnings.length ? `<div class="bz-liqerr" style="background:var(--bz-amber-soft);border-color:#EBD9B4;color:#7A4A00">Resolved to nothing: ${U.esc(r.warnings.join(', '))}</div>` : ''}
-                <div style="border:1px solid var(--bz-line);border-radius:6px;overflow:auto;max-height:460px">${r.html}</div>
-              </div></div>
+        if (w.message.mode === 'template' && !w.message.templateId) {
+          return `${topbar}<div class="bz-content">${variantStrip(w)}
+            <h2 style="font-size:17px;margin:0 0 12px">Choose a template</h2>
+            <div class="bz-grid bz-grid--2" style="max-width:900px">
+              ${window.BZ.templates.map((t) => `<button class="bz-modetile" data-w-tplpick="${t.id}">
+                <div class="bz-modetile__ico">▤</div>
+                <div><div class="bz-modetile__t">${U.esc(t.name)}</div>
+                <div class="bz-modetile__d bz-mono">${U.esc(t.subject)}</div></div>
+              </button>`).join('')}
+            </div>
+            ${wizBar(w)}</div>`;
+        }
+        return `${topbar}
+          <div style="padding:12px 20px 0">${variantStrip(w)}</div>
+          <div style="flex:1;min-height:0;display:flex;border-top:1px solid var(--bz-line)">
+            ${window.BZHtmlEditor.view(w.message, {})}
           </div>
-          ${navRow}</div>`;
+          ${wizBar(w)}`;
       }
 
       /* Every other channel: form on the left, device preview on the right */
@@ -554,7 +546,7 @@
             <div class="bz-spacer"></div><span class="bz-small bz-muted">${U.esc(user.first_name)} ${U.esc(user.last_name)}</span></div>
             <div class="bz-card__body">${window.BZCompose.preview(w.message, user)}</div></div>
         </div>
-        ${navRow}</div>`;
+        ${wizBar(w)}</div>`;
     }
 
     /* ---- Step 2: Target Audience ---------------------------------------- */
@@ -577,7 +569,7 @@
           <div class="bz-hint">${U.esc(S.describeSpec(seg)) || 'No filters — this targets everyone.'}</div>
           ${channelReachWarning(w, reach)}` : ''}
         </div></div>
-        ${navRow}</div>`;
+        ${wizBar(w)}</div>`;
     }
 
     /* ---- Step 3: Delivery ------------------------------------------------ */
@@ -612,7 +604,7 @@
               <p>Braze gives you a campaign id. Your backend posts to <code>/campaigns/trigger/send</code> with <code>trigger_properties</code>, readable in the message as <code>{{api_trigger_properties.\${…}}}</code>.</p>
               <p class="bz-mono bz-small">POST ${U.esc(window.BZ.workspace.endpoint)}/campaigns/trigger/send</p></div>`}
         </div></div>
-        ${navRow}</div>`;
+        ${wizBar(w)}</div>`;
     }
 
     /* ---- Step 4: Conversion Events --------------------------------------- */
@@ -629,7 +621,7 @@
           <div class="bz-callout bz-callout--warn"><div class="bz-callout__t">Do not skip this step</div>
             <p>A campaign with no conversion event can only ever be judged on opens and clicks — which is to say, it cannot be judged.</p></div>
         </div></div>
-        ${navRow}</div>`;
+        ${wizBar(w)}</div>`;
     }
 
     /* ---- Step 5: Review & Deploy ------------------------------------------ */
@@ -673,7 +665,37 @@
         </div></div></div>` : `<div class="bz-card bz-mt16">
         <div class="bz-card__head"><div class="bz-card__title">Rendered preview</div></div>
         <div class="bz-card__body">${window.BZCompose.preview(w.message, user)}</div></div>`}
-      ${navRow}</div>`;
+      ${wizBar(w)}</div>`;
+  }
+
+  /* Braze puts the step rail along the BOTTOM, with Save as Draft and
+     Launch Campaign on the right. */
+  function wizBar(w) {
+    return `<div class="bz-wizbar">
+      <button class="bz-wizbar__arrow" data-w-nav="-1" ${w.step <= 1 ? 'disabled' : ''}>‹</button>
+      ${WIZ_STEPS.map((label, i) => `<button class="bz-wizbar__step ${w.step === i + 1 ? 'is-active' : ''}" data-wstep="${i + 1}">
+        <span class="bz-wizbar__n">${i + 1}</span>${U.esc(label)}</button>`).join('')}
+      <button class="bz-wizbar__arrow" data-w-nav="1" ${w.step >= 5 ? 'disabled' : ''}>›</button>
+      <div class="bz-spacer"></div>
+      <button class="bz-btn bz-btn--sm" data-w-nav="save-draft">Save as Draft</button>
+      <button class="bz-btn bz-btn--primary bz-btn--sm" data-w-nav="save">Launch Campaign</button>
+    </div>`;
+  }
+
+  /* Email Variants strip — one variant per A/B arm. */
+  function variantStrip(w) {
+    w.variants = w.variants || [{ name: 'Variant 1' }];
+    w.activeVariant = w.activeVariant || 0;
+    const complete = !!String(w.message && w.message.body || '').trim();
+    return `<div class="bz-mb16">
+      <div class="bz-label">Email Variants</div>
+      <div class="bz-variants">
+        ${w.variants.map((v, i) => `<button class="bz-variant ${i === w.activeVariant ? 'is-active' : ''}" data-w-variant="${i}">
+          ${U.esc(v.name)} ${i === w.activeVariant && !complete ? '<span class="bz-variant__warn" title="No content yet">❶</span>' : ''}
+        </button>`).join('')}
+        <button class="bz-variantadd" data-act="add-variant" title="Add a variant">+</button>
+      </div>
+    </div>`;
   }
 
   function emailHeaderFields(w) {
@@ -1286,6 +1308,9 @@
             bindFn = (root) => window.BZEmailBuilder.bind(root, w.design, (canvasAlreadyPainted) => {
               if (!canvasAlreadyPainted) render();
             });
+          } else if (w && w.step === 1 && w.channelId === 'email' &&
+                     (w.message.mode === 'html' || (w.message.mode === 'template' && w.message.templateId))) {
+            bindFn = (root) => window.BZHtmlEditor.bind(root, w.message, render);
           }
         }
         else if (parts[1])      main = viewCampaign(parts[1], parts[2]);
@@ -1424,6 +1449,7 @@
       if (!wizard) return;
       const v = wnav.dataset.wNav;
       if (v === 'save') { saveWizard(); return; }
+      if (v === 'save-draft') { saveWizard(true); return; }
       if (v === '0') { wizard.step = 0; render(); return; }
       const next = wizard.step + Number(v);
       /* Step 1 with no channel chosen means we are on the message-type picker. */
@@ -1442,6 +1468,23 @@
       render(); return;
     }
 
+    /* -- a template was picked in the Templates flow ---------------------- */
+    const tplPick = e.target.closest('[data-w-tplpick]');
+    if (tplPick && wizard && wizard.message) {
+      const t = window.BZ.templates.find((x) => x.id === tplPick.dataset.wTplpick);
+      if (t) {
+        wizard.message.templateId = t.id;
+        wizard.message.body = t.body;
+        wizard.message.subject = t.subject;
+        wizard.message.preheader = t.preheader;
+        U.toast('Loaded "' + t.name + '" — edits here do not change the saved template');
+      }
+      render(); return;
+    }
+
+    const varBtn = e.target.closest('[data-w-variant]');
+    if (varBtn && wizard) { wizard.activeVariant = +varBtn.dataset.wVariant; render(); return; }
+
     /* -- email build mode chosen ----------------------------------------- */
     const modeTile = e.target.closest('[data-emode]');
     if (modeTile && wizard && wizard.message) {
@@ -1449,6 +1492,10 @@
       wizard.message.mode = mode;
       if (mode === 'dragdrop') {
         wizard.design = window.BZEmailBuilder.starterDesign('starter');
+      } else if (mode === 'upload') {
+        wizard.message.mode = 'html';
+        wizard.message.body = '<!-- Paste the HTML your designer produced here. -->\n';
+        U.toast('Upload lands you in the HTML editor with the file contents.');
       } else if (mode === 'html') {
         wizard.message.body = "{{content_blocks.${aurelia_header}}}\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  <tr><td style=\"padding:34px 28px;font:400 15px/1.6 Helvetica,Arial,sans-serif;color:#43434E\">\n    <h1 style=\"margin:0 0 12px;font:700 25px/1.3 Helvetica,Arial,sans-serif;color:#0F1B2D\">\n      Hello {{${first_name} | default: 'there'}}\n    </h1>\n    <p>Write your email here. Liquid works exactly as it does in production.</p>\n  </td></tr>\n</table>\n{{content_blocks.${aurelia_footer}}}";
       }
@@ -1517,6 +1564,14 @@
             U.closeModal(); U.toast('Converted to the HTML editor'); render();
           };
           return;
+        }
+        case 'add-variant': {
+          if (!wizard) break;
+          wizard.variants = wizard.variants || [{ name: 'Variant 1' }];
+          wizard.variants.push({ name: 'Variant ' + (wizard.variants.length + 1) });
+          wizard.activeVariant = wizard.variants.length - 1;
+          U.toast('Variants split traffic. Test one variable at a time, and keep a control if you want incrementality.');
+          render(); break;
         }
         case 'reset-store':
           U.modal('Reset sandbox data', '<p>This clears everything you have created or edited and restores the seeded workspace. Case-study progress is not affected.</p>',
@@ -1667,10 +1722,10 @@
            window.BZ.segments[window.BZ.segments.length - 1];
   }
 
-  function saveWizard() {
+  function saveWizard(asDraft) {
     const w = wizard;
     const c = {
-      id: U.uid('cmp'), name: w.name.trim() || 'Untitled campaign', status: 'active', _userCreated: true,
+      id: U.uid('cmp'), name: w.name.trim() || 'Untitled campaign', status: asDraft ? 'draft' : 'active', _userCreated: true,
       channels: [w.channel], deliveryType: w.deliveryType,
       trigger: w.deliveryType === 'action_based'
         ? { event: w.trigger, delay: w.delay, exception: w.exception || undefined }
@@ -1679,11 +1734,19 @@
       conversionEvents: [{ event: w.conv, window: w.convWindow, primary: true }],
       stats: { sent: 0, delivered: 0, opens: 0, clicks: 0, conversions: 0, revenue: 0, unsubscribes: 0, bounces: 0 },
       createdBy: 'You', updated: new Date().toISOString(), tags: ['sandbox'], trend: new Array(14).fill(0),
+      campaignType: ({ email: 'Email', push: 'Push Notification', sms: 'SMS/MMS', whatsapp: 'WhatsApp',
+        inapp: 'In-App Message', contentcard: 'Content Card', multichannel: 'Multichannel',
+        banner: 'Banner', line: 'LINE', webhook: 'Webhook' })[w.channelId] || 'Email',
+      entrySchedule: w.deliveryType === 'action_based' ? 'Action-Based'
+        : w.deliveryType === 'api_triggered' ? 'API-Triggered'
+        : /recurring/i.test(w.schedule) ? 'Recurring' : 'One Time',
+      stopDate: null,
+      builtBody: wizardBodyHtml(w),
     };
     window.BZ.campaigns.push(c);
     U.Store.save();
     wizard = null;
-    U.toast('Campaign launched — open Analytics to see it with zero data, exactly as it would look on day one.');
+    U.toast(asDraft ? 'Saved as draft.' : 'Campaign launched — open Analytics to see it with zero data, exactly as it would look on day one.');
     location.hash = '#/campaigns/' + c.id;
   }
 

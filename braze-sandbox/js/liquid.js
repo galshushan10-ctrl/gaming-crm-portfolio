@@ -399,6 +399,15 @@ const BZLiquid = (function () {
           return { type: 'catalog_items', catalog: parts[0], ids: parts.slice(1).map((p) => parseValue(p)), raw: t.raw };
         }
         case 'connected_content': return { type: 'connected_content', args: t.args, raw: t.raw };
+        case 'catalog_selection_items': {
+          const parts = unwrapDollar(t.args).trim().split(/\s+/).filter(Boolean);
+          return { type: 'catalog_selection', catalog: parts[0], selection: parts[1] || '', raw: t.raw };
+        }
+        case 'promotion': {
+          const m = t.args.match(/(['"])([\s\S]*?)\1/);
+          return { type: 'promotion', pool: m ? m[2] : t.args.trim(), raw: t.raw };
+        }
+        case 'message_extras_capture': return { type: 'message_extras', args: t.args, raw: t.raw };
         case 'content_blocks':    return { type: 'content_block', name: unwrapDollar(t.args).trim(), raw: t.raw };
         default:
           return { type: 'unknown', name: t.name, raw: t.raw };
@@ -598,6 +607,34 @@ const BZLiquid = (function () {
           }
 
           case 'content_block': out += includeBlock(n.name, scope); break;
+
+          case 'catalog_selection': {
+            const cat = catalogs[n.catalog];
+            if (!cat) { errors.push('Unknown catalog: `' + n.catalog + '`'); scope.items = []; break; }
+            /* A real selection is a saved filter over the catalog. The sandbox
+               has no selection store, so return the first few rows and say so. */
+            scope.items = cat.items.slice(0, 3);
+            warnings.push('catalog selection `' + (n.selection || '(unnamed)') + '` returned the first 3 rows of `' + n.catalog + '` (selections are not modelled here).');
+            break;
+          }
+
+          case 'promotion': {
+            /* Deterministic per user so a preview is stable and two users differ. */
+            const seed = String(scope.user_id || '') + n.pool;
+            let h = 0;
+            for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+            const code = n.pool.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6) + '-' +
+              h.toString(36).toUpperCase().slice(0, 6);
+            scope.promotion = { code, pool: n.pool };
+            break;
+          }
+
+          case 'message_extras': {
+            const kv = {};
+            String(n.args).replace(/(\w+)\s*=\s*(['"])([\s\S]*?)\2/g, (_, k, q, v) => { kv[k] = v; return ''; });
+            scope.message_extras = Object.assign({}, scope.message_extras, kv);
+            break;
+          }
 
           case 'unknown': errors.push('Unsupported tag: {% ' + n.name + ' %}'); break;
           case 'error':   errors.push(n.message); break;

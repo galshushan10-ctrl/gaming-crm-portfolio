@@ -79,6 +79,7 @@ const BZEditor = (function () {
         </select>
         <button class="bz-btn bz-btn--sm" data-act="rand-user">🎲 Random</button>
         <button class="bz-btn bz-btn--sm" data-act="edge-user">⚠️ Edge case</button>
+        <button class="bz-btn bz-btn--sm" data-act="liquid-ref">🔍 Liquid reference</button>
         <button class="bz-btn bz-btn--sm bz-btn--primary" data-act="send-test">Send test</button>
       </div>
       <div class="bz-editor" id="bz-editor">
@@ -240,6 +241,45 @@ const BZEditor = (function () {
           previewUserId = edge.external_id;
           U.toast('Previewing ' + edge.first_name + ' ' + edge.last_name + ' — zero stays, null attributes.');
           rerender(); return;
+        }
+        if (act.dataset.act === 'liquid-ref') {
+          const R = window.BZLiquidRef;
+          U.modal('Liquid reference', `
+            <input class="bz-input bz-mb16" id="bz-lqm-search" placeholder="Search tags, filters and recipes…">
+            <div id="bz-lqm-body" style="max-height:56vh;overflow:auto"></div>`,
+            '<button class="bz-btn" data-modal-close>Close</button>', true);
+
+          const render = (q) => {
+            const hits = R.search(q);
+            const item = (it, g) => `<div class="bz-lq__item">
+              <div class="bz-lq__head"><span class="bz-lq__name">${U.esc(it.name)}</span>
+                ${g ? `<span class="bz-tag">${U.esc(g)}</span>` : ''}
+                <div class="bz-spacer"></div>
+                <button class="bz-btn bz-btn--sm bz-btn--primary" data-lqm="${U.esc(it.snippet)}">Insert</button></div>
+              <pre class="bz-lq__code">${U.esc(it.snippet)}</pre>
+              ${it.desc ? `<div class="bz-lq__desc">${it.desc}</div>` : ''}</div>`;
+            document.getElementById('bz-lqm-body').innerHTML = hits
+              ? (hits.map((h) => item(h.item, h.group)).join('') || '<div class="bz-muted">No match.</div>')
+              : R.GROUPS.map((g) => `<div class="bz-label bz-mt16">${U.esc(g.label)}</div>${g.items.map((it) => item(it)).join('')}`).join('');
+          };
+          render('');
+          document.getElementById('bz-lqm-search').addEventListener('input', (ev) => render(ev.target.value));
+          document.getElementById('bz-lqm-body').addEventListener('click', (ev) => {
+            const btn = ev.target.closest('[data-lqm]');
+            if (!btn) return;
+            const ta = document.getElementById('bz-body');
+            const snip = btn.dataset.lqm;
+            if (ta) {
+              const st = ta.selectionStart;
+              ta.value = ta.value.slice(0, st) + snip + ta.value.slice(ta.selectionEnd);
+              tpl.body = ta.value;
+            } else {
+              tpl.body += '\n' + snip;
+            }
+            touch(); U.closeModal(); rerender();
+            U.toast('Inserted — check the preview');
+          });
+          return;
         }
         if (act.dataset.act === 'send-test') {
           const user = window.BZ.userById(previewUserId);

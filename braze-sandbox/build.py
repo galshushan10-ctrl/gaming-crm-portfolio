@@ -23,6 +23,8 @@ JS_ORDER = [
     "js/ui.js",
     "js/canvas.js",
     "js/editor.js",
+    "js/liquidref.js",
+    "js/htmleditor.js",
     "js/emailbuilder.js",
     "js/compose.js",
     "js/operator.js",
