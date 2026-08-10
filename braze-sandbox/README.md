@@ -15,7 +15,7 @@ then rebuild the single file:
 
 ```bash
 python3 build.py          # -> dist/braze-sandbox.html
-node smoke-test.js        # 141 assertions: engines, routes, composers, editors, operator
+node smoke-test.js        # 164 assertions: engines, routes, composers, editors, settings
 ```
 
 The smoke test needs `npm install playwright`; it points at the pre-installed Chromium
@@ -85,7 +85,9 @@ lint results — is computed, not scripted.
 | Email Templates | HTML + Liquid editor with live preview against a real profile, personalization palette, snippet library, per-user "Send test", and an **Edge case** button that previews against a null-heavy profile |
 | Segments | Filter-group builder with AND/OR join badges, per-group counts, live totals, breakdowns and a sample of matched users |
 | Users | Profile explorer: standard and custom attributes, event timeline, subscription groups, message history |
-| Catalogs, Content Blocks, Subscription Groups, Custom Data | The supporting objects, populated |
+| Content Blocks | Full CRUD. List with live thumbnails, Status/Tags filters and list/grid toggle; detail screen with the generated **Liquid tag**, **API identifier**, inclusion count and an HTML editor with live preview. Name validation, duplicate detection, and an archive guard when the block is in use |
+| Settings | **Connected Content credentials** (add, copy the `:basic_auth` snippet, delete), **Frequency Capping rules**, API Keys and sending-domain/DNS status |
+| Catalogs, Subscription Groups, Custom Data | The supporting objects, populated |
 | Analytics | Campaign league table, funnels, channel mix |
 | Case Studies | Nine courses with tasks and solution keys |
 | BrazeAI Operator | Context-aware assistant that answers *and* builds — see above |

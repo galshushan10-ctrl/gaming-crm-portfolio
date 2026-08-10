@@ -14,6 +14,8 @@ const ROUTES = [
   '#/segments', '#/segments/seg-abandoners', '#/segments/seg-upcoming-stay',
   '#/users', '#/users/AUR-100000', '#/users/AUR-100001',
   '#/catalogs', '#/subscriptions', '#/data', '#/analytics',
+  '#/blocks', '#/blocks/cb-footer',
+  '#/settings/connected', '#/settings/frequency', '#/settings/keys', '#/settings/email',
   '#/learn', '#/learn/c-foundations', '#/learn/c-liquid', '#/learn/c-canvas', '#/learn/c-scenarios',
 ];
 
@@ -556,6 +558,97 @@ const check = (name, cond, detail) => {
   await page.waitForTimeout(250);
   check('context label follows navigation', /Analytics/.test(await page.locator('#bz-op-ctx').innerText()));
   check('panel stays open across navigation', await page.locator('.bz-op.is-open').count() === 1);
+
+  // Content Blocks: list, create, validate, use
+  console.log('\nContent Blocks & Settings');
+  await page.evaluate(() => { location.hash = '#/blocks'; });
+  await page.waitForTimeout(250);
+  const cbHeads = (await page.locator('.bz-table th').allInnerTexts()).join(',').toLowerCase();
+  check('Content Blocks list has Preview / Inclusion count / Type columns',
+    cbHeads.includes('preview') && cbHeads.includes('inclusion count') && cbHeads.includes('type'), cbHeads);
+  check('list renders live thumbnails', await page.locator('.bz-cbthumb').count() >= 3);
+  await page.locator('[data-act="cb-grid"]').click();
+  await page.waitForTimeout(200);
+  check('grid view toggles', await page.locator('.bz-cbthumb--lg').count() >= 3);
+  await page.locator('[data-act="cb-list"]').click();
+  await page.waitForTimeout(150);
+
+  const cbCountBefore = await page.evaluate(() => BZ.contentBlocks.length);
+  await page.locator('[data-act="new-block"]').click();
+  await page.waitForTimeout(300);
+  check('Create Content Block opens the details screen',
+    await page.locator('[data-cb="name"]').count() === 1);
+  check('details screen shows the Liquid tag and API identifier',
+    (await page.locator('#bz-mainpane').innerText()).includes('API identifier'));
+
+  // invalid name is rejected
+  await page.fill('[data-cb="name"]', 'Bad Name With Spaces');
+  await page.waitForTimeout(120);
+  await page.locator('[data-act="cb-save"]').click();
+  await page.waitForTimeout(250);
+  check('invalid Content Block name is rejected',
+    await page.evaluate(() => BZ.contentBlocks[BZ.contentBlocks.length - 1].status) === 'draft');
+
+  await page.fill('[data-cb="name"]', 'sandbox_promo_bar');
+  await page.fill('[data-cb="content"]', "<p>{{${first_name} | default: 'there'}}, members save 10%.</p>");
+  await page.waitForTimeout(150);
+  await page.locator('[data-act="cb-save"]').click();
+  await page.waitForTimeout(300);
+  const cbState = await page.evaluate(() => {
+    const b = BZ.contentBlocks.find(x => x.name === 'sandbox_promo_bar');
+    return { exists: !!b, status: b && b.status, n: BZ.contentBlocks.length };
+  });
+  check('Content Block saves and becomes active', cbState.exists && cbState.status === 'active');
+  check('new block was added to the workspace', cbState.n === cbCountBefore + 1);
+
+  // the new block is immediately usable in Liquid
+  const usable = await page.evaluate(() =>
+    BZUI.renderLiquid('{{content_blocks.${sandbox_promo_bar}}}', BZ.userById('AUR-100000'), {}));
+  check('a block created in the UI resolves in Liquid straight away',
+    usable.html.includes('members save 10%') && usable.errors.length === 0, JSON.stringify(usable).slice(0, 120));
+  check('personalization inside the new block renders', usable.html.includes('Maya'));
+
+  // duplicate name rejected
+  await page.evaluate(() => { location.hash = '#/blocks'; });
+  await page.waitForTimeout(200);
+  await page.locator('[data-act="new-block"]').click();
+  await page.waitForTimeout(300);
+  await page.fill('[data-cb="name"]', 'sandbox_promo_bar');
+  await page.waitForTimeout(120);
+  await page.locator('[data-act="cb-save"]').click();
+  await page.waitForTimeout(250);
+  check('duplicate Content Block name is rejected',
+    await page.evaluate(() => BZ.contentBlocks.filter(b => b.name === 'sandbox_promo_bar' && b.status === 'active').length) === 1);
+
+  // Settings -> Connected Content
+  await page.evaluate(() => { location.hash = '#/settings/connected'; });
+  await page.waitForTimeout(300);
+  const credsBefore = await page.evaluate(() => BZ.connectedContentCredentials.length);
+  check('Connected Content lists stored credentials', await page.locator('.bz-cred').count() === credsBefore);
+  await page.locator('[data-act="cc-add"]').click();
+  await page.waitForTimeout(250);
+  await page.fill('#bz-cc-name', 'weather_api');
+  await page.fill('#bz-cc-domain', 'api.weather.example');
+  await page.locator('#bz-cc-save').click();
+  await page.waitForTimeout(300);
+  check('a Connected Content credential can be created',
+    await page.evaluate(() => BZ.connectedContentCredentials.some(c => c.name === 'weather_api')));
+  check('credential list grew', await page.locator('.bz-cred').count() === credsBefore + 1);
+
+  // Settings -> Frequency Capping
+  await page.evaluate(() => { location.hash = '#/settings/frequency'; });
+  await page.waitForTimeout(250);
+  const capsBefore = await page.evaluate(() => BZ.frequencyCaps.length);
+  check('frequency capping rules render, ANDed', await page.locator('.bz-fcrule').count() === capsBefore &&
+    await page.locator('.bz-fcand').count() === capsBefore - 1);
+  await page.locator('[data-act="fc-add"]').click();
+  await page.waitForTimeout(250);
+  await page.locator('#bz-fc-save').click();
+  await page.waitForTimeout(250);
+  check('a frequency cap can be added', await page.evaluate(() => BZ.frequencyCaps.length) === capsBefore + 1);
+  await page.locator('[data-act="fc-del"]').first().click();
+  await page.waitForTimeout(250);
+  check('a frequency cap can be deleted', await page.evaluate(() => BZ.frequencyCaps.length) === capsBefore);
 
   /* ---------- 5. No runtime errors --------------------------------------- */
   console.log('\nRuntime');

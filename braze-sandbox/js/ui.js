@@ -33,7 +33,8 @@ const BZUI = (function () {
   /* ---------- small components -------------------------------------------- */
 
   function statusChip(status) {
-    const map = { active: 'active', draft: 'draft', scheduled: 'scheduled', stopped: 'stopped', paused: 'paused' };
+    const map = { active: 'active', idle: 'idle', draft: 'draft', scheduled: 'scheduled',
+                  stopped: 'stopped', paused: 'paused', archived: 'draft' };
     return `<span class="bz-chip bz-chip--${map[status] || 'draft'}"><span class="bz-chip__dot"></span>${esc(status)}</span>`;
   }
 
@@ -117,7 +118,7 @@ const BZUI = (function () {
         const raw = localStorage.getItem(KEY);
         if (!raw) return;
         const saved = JSON.parse(raw);
-        ['segments', 'campaigns', 'canvases', 'templates'].forEach((k) => {
+        ['segments', 'campaigns', 'canvases', 'templates', 'contentBlocks'].forEach((k) => {
           (saved[k] || []).forEach((item) => {
             const i = window.BZ[k].findIndex((x) => x.id === item.id);
             if (i > -1) window.BZ[k][i] = item; else window.BZ[k].push(item);
@@ -128,7 +129,7 @@ const BZUI = (function () {
     save() {
       try {
         const out = {};
-        ['segments', 'campaigns', 'canvases', 'templates'].forEach((k) => {
+        ['segments', 'campaigns', 'canvases', 'templates', 'contentBlocks'].forEach((k) => {
           out[k] = window.BZ[k].filter((x) => x._userCreated || x._edited);
         });
         localStorage.setItem(KEY, JSON.stringify(out));

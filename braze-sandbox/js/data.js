@@ -326,8 +326,10 @@ BZ.userById = (id) => BZ.users.find(u => u.external_id === id);
 
 BZ.contentBlocks = [
   {
-    id: 'cb-header',
-    name: 'aurelia_header',
+    id: 'cb-header', apiId: 'b7e374a2-c344-427d-8545-fca18852d3e4',
+    name: 'aurelia_header', status: 'active', type: 'HTML',
+    tags: ['06_Audience_General', '07_Geo_Global'], inclusions: 4,
+    lastEdited: daysFromNow(-31),
     description: 'Brand bar used at the top of every marketing email.',
     content:
 `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0F1B2D;">
@@ -337,8 +339,10 @@ BZ.contentBlocks = [
 </table>`,
   },
   {
-    id: 'cb-footer',
-    name: 'aurelia_footer',
+    id: 'cb-footer', apiId: '3f9a1c05-8de2-41b7-9a0e-2c7b5d4e1f88',
+    name: 'aurelia_footer', status: 'active', type: 'HTML',
+    tags: ['06_Audience_General', '07_Geo_Global'], inclusions: 6,
+    lastEdited: daysFromNow(-12),
     description: 'Legal footer with the unsubscribe link. Required on all promotional sends.',
     content:
 `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F3F4F7;">
@@ -351,8 +355,10 @@ BZ.contentBlocks = [
 </table>`,
   },
   {
-    id: 'cb-tierbadge',
-    name: 'tier_badge',
+    id: 'cb-tierbadge', apiId: '9c21e7b4-6a55-4d18-b3ff-70e9a2c6d411',
+    name: 'tier_badge', status: 'active', type: 'HTML',
+    tags: ['08_Incentive_Points'], inclusions: 1,
+    lastEdited: daysFromNow(-3),
     description: 'Loyalty tier pill. Reads custom_attribute.${loyalty_tier} directly.',
     content:
 `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#F3E8FD;color:#5B10A0;font:700 12px Helvetica,Arial,sans-serif;">
@@ -840,3 +846,34 @@ BZ.overview = {
     { channel: 'In-App',pct: 3,  sends: 12384 },
   ],
 };
+
+
+/* ---------- workspace settings ------------------------------------------- */
+
+/* Connected Content credentials — stored once under Settings, then referenced
+   by name in a template with :basic_auth. The secret never appears in Liquid. */
+BZ.connectedContentCredentials = [
+  { id: 'cc-rates', name: 'rates_api', type: 'Basic authentication',
+    username: 'braze_rates', secret: '••••••••••••••••', domain: 'api.aureliahotels.com',
+    created: daysFromNow(-210), lastUsed: daysFromNow(-1),
+    note: 'Live nightly rates for the pre-arrival and abandonment templates.' },
+  { id: 'cc-loyalty', name: 'loyalty_api', type: 'Bearer token',
+    username: '', secret: '••••••••••••••••', domain: 'loyalty.aureliahotels.com',
+    created: daysFromNow(-96), lastUsed: daysFromNow(-14),
+    note: 'Points balance lookup. Cached 300s — it is called once per recipient otherwise.' },
+];
+
+/* Frequency capping — workspace-wide rules, ANDed together. */
+BZ.frequencyCaps = [
+  { id: 'fc-1', channel: 'Email',    tag: '01_Level_L3', count: 2, per: 'week' },
+  { id: 'fc-2', channel: 'Email',    tag: '01_Level_L4', count: 1, per: 'week' },
+  { id: 'fc-3', channel: 'Push',     tag: 'All tags',    count: 1, per: 'day' },
+  { id: 'fc-4', channel: 'WhatsApp', tag: '01_Level_L4', count: 2, per: 'week' },
+];
+
+BZ.apiKeys = [
+  { id: 'k1', name: 'Website integration', key: 'a1b2c3d4-5e6f-7890-abcd-ef1234567890',
+    perms: 'users.track, users.export.ids', created: daysFromNow(-400) },
+  { id: 'k2', name: 'PMS sync', key: 'f0e9d8c7-b6a5-4321-9876-543210fedcba',
+    perms: 'users.track, campaigns.trigger.send, canvas.trigger.send', created: daysFromNow(-180) },
+];

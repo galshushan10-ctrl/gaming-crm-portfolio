@@ -1086,6 +1086,33 @@ body.bz-op-open .bz-wizfoot { padding-right: 26px; }
 .bz-wizbar { padding-right: 200px; }
 body.bz-op-open .bz-wizbar { padding-right: 16px; }
 
+/* ---------- Content Blocks & Settings ------------------------------------ */
+
+.bz-cbthumb {
+  width: 96px; height: 62px; overflow: hidden; border: 1px solid var(--bz-line);
+  border-radius: 4px; background: #fff; position: relative;
+}
+.bz-cbthumb > * { transform: scale(.16); transform-origin: top left; width: 620px; position: absolute; top: 0; left: 0; }
+.bz-cbthumb--lg { width: 100%; height: 150px; border: none; border-bottom: 1px solid var(--bz-line); border-radius: 0; }
+.bz-cbthumb--lg > * { transform: scale(.42); width: 620px; }
+
+.bz-cred {
+  display: flex; gap: 16px; align-items: flex-start;
+  border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg);
+  padding: 14px 16px; margin-bottom: 12px; background: var(--bz-bg-2);
+}
+.bz-cred__main { flex: 1; min-width: 0; }
+
+.bz-fcrule {
+  display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+  border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg);
+  padding: 14px 16px; background: #fff;
+}
+.bz-fcand {
+  font-size: 11px; font-weight: 800; letter-spacing: .6px; color: var(--bz-ink-3);
+  padding: 10px 0 10px 6px;
+}
+
 </style>
 </head>
 <body>
@@ -1420,8 +1447,10 @@ BZ.userById = (id) => BZ.users.find(u => u.external_id === id);
 
 BZ.contentBlocks = [
   {
-    id: 'cb-header',
-    name: 'aurelia_header',
+    id: 'cb-header', apiId: 'b7e374a2-c344-427d-8545-fca18852d3e4',
+    name: 'aurelia_header', status: 'active', type: 'HTML',
+    tags: ['06_Audience_General', '07_Geo_Global'], inclusions: 4,
+    lastEdited: daysFromNow(-31),
     description: 'Brand bar used at the top of every marketing email.',
     content:
 `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0F1B2D;">
@@ -1431,8 +1460,10 @@ BZ.contentBlocks = [
 </table>`,
   },
   {
-    id: 'cb-footer',
-    name: 'aurelia_footer',
+    id: 'cb-footer', apiId: '3f9a1c05-8de2-41b7-9a0e-2c7b5d4e1f88',
+    name: 'aurelia_footer', status: 'active', type: 'HTML',
+    tags: ['06_Audience_General', '07_Geo_Global'], inclusions: 6,
+    lastEdited: daysFromNow(-12),
     description: 'Legal footer with the unsubscribe link. Required on all promotional sends.',
     content:
 `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F3F4F7;">
@@ -1445,8 +1476,10 @@ BZ.contentBlocks = [
 </table>`,
   },
   {
-    id: 'cb-tierbadge',
-    name: 'tier_badge',
+    id: 'cb-tierbadge', apiId: '9c21e7b4-6a55-4d18-b3ff-70e9a2c6d411',
+    name: 'tier_badge', status: 'active', type: 'HTML',
+    tags: ['08_Incentive_Points'], inclusions: 1,
+    lastEdited: daysFromNow(-3),
     description: 'Loyalty tier pill. Reads custom_attribute.${loyalty_tier} directly.',
     content:
 `<span style="display:inline-block;padding:4px 12px;border-radius:999px;background:#F3E8FD;color:#5B10A0;font:700 12px Helvetica,Arial,sans-serif;">
@@ -1934,6 +1967,37 @@ BZ.overview = {
     { channel: 'In-App',pct: 3,  sends: 12384 },
   ],
 };
+
+
+/* ---------- workspace settings ------------------------------------------- */
+
+/* Connected Content credentials — stored once under Settings, then referenced
+   by name in a template with :basic_auth. The secret never appears in Liquid. */
+BZ.connectedContentCredentials = [
+  { id: 'cc-rates', name: 'rates_api', type: 'Basic authentication',
+    username: 'braze_rates', secret: '••••••••••••••••', domain: 'api.aureliahotels.com',
+    created: daysFromNow(-210), lastUsed: daysFromNow(-1),
+    note: 'Live nightly rates for the pre-arrival and abandonment templates.' },
+  { id: 'cc-loyalty', name: 'loyalty_api', type: 'Bearer token',
+    username: '', secret: '••••••••••••••••', domain: 'loyalty.aureliahotels.com',
+    created: daysFromNow(-96), lastUsed: daysFromNow(-14),
+    note: 'Points balance lookup. Cached 300s — it is called once per recipient otherwise.' },
+];
+
+/* Frequency capping — workspace-wide rules, ANDed together. */
+BZ.frequencyCaps = [
+  { id: 'fc-1', channel: 'Email',    tag: '01_Level_L3', count: 2, per: 'week' },
+  { id: 'fc-2', channel: 'Email',    tag: '01_Level_L4', count: 1, per: 'week' },
+  { id: 'fc-3', channel: 'Push',     tag: 'All tags',    count: 1, per: 'day' },
+  { id: 'fc-4', channel: 'WhatsApp', tag: '01_Level_L4', count: 2, per: 'week' },
+];
+
+BZ.apiKeys = [
+  { id: 'k1', name: 'Website integration', key: 'a1b2c3d4-5e6f-7890-abcd-ef1234567890',
+    perms: 'users.track, users.export.ids', created: daysFromNow(-400) },
+  { id: 'k2', name: 'PMS sync', key: 'f0e9d8c7-b6a5-4321-9876-543210fedcba',
+    perms: 'users.track, campaigns.trigger.send, canvas.trigger.send', created: daysFromNow(-180) },
+];
 
 
 /* ===== js/liquid.js ===== */
@@ -3831,7 +3895,8 @@ const BZUI = (function () {
   /* ---------- small components -------------------------------------------- */
 
   function statusChip(status) {
-    const map = { active: 'active', draft: 'draft', scheduled: 'scheduled', stopped: 'stopped', paused: 'paused' };
+    const map = { active: 'active', idle: 'idle', draft: 'draft', scheduled: 'scheduled',
+                  stopped: 'stopped', paused: 'paused', archived: 'draft' };
     return `<span class="bz-chip bz-chip--${map[status] || 'draft'}"><span class="bz-chip__dot"></span>${esc(status)}</span>`;
   }
 
@@ -3915,7 +3980,7 @@ const BZUI = (function () {
         const raw = localStorage.getItem(KEY);
         if (!raw) return;
         const saved = JSON.parse(raw);
-        ['segments', 'campaigns', 'canvases', 'templates'].forEach((k) => {
+        ['segments', 'campaigns', 'canvases', 'templates', 'contentBlocks'].forEach((k) => {
           (saved[k] || []).forEach((item) => {
             const i = window.BZ[k].findIndex((x) => x.id === item.id);
             if (i > -1) window.BZ[k][i] = item; else window.BZ[k].push(item);
@@ -3926,7 +3991,7 @@ const BZUI = (function () {
     save() {
       try {
         const out = {};
-        ['segments', 'campaigns', 'canvases', 'templates'].forEach((k) => {
+        ['segments', 'campaigns', 'canvases', 'templates', 'contentBlocks'].forEach((k) => {
           out[k] = window.BZ[k].filter((x) => x._userCreated || x._edited);
         });
         localStorage.setItem(KEY, JSON.stringify(out));
@@ -7259,13 +7324,22 @@ window.BZOperator = BZOperator;
       { route: 'data', label: 'Custom Attributes & Events' },
       { route: 'products', label: 'Products' },
     ]},
+    { id: 'settings', icon: '⚙', label: 'Settings', children: [
+      { route: 'settings/connected', label: 'Connected Content' },
+      { route: 'settings/frequency', label: 'Frequency Capping' },
+      { route: 'settings/keys', label: 'API Keys' },
+      { route: 'settings/email', label: 'Email Settings' },
+    ]},
     { id: 'learn', icon: '🎓', label: 'Learning', children: [
       { route: 'learn', label: 'Case Studies' },
     ]},
   ];
 
   const ROUTE_PARENT = {};
-  NAV.concat(SETTINGS_NAV).forEach((g) => (g.children || []).forEach((c) => { ROUTE_PARENT[c.route] = g.id; }));
+  NAV.concat(SETTINGS_NAV).forEach((g) => (g.children || []).forEach((c) => {
+    ROUTE_PARENT[c.route] = g.id;
+    ROUTE_PARENT[c.route.split('/')[0]] = g.id;   // sub-tab routes share a parent
+  }));
 
   let navOpen = {};
 
@@ -7970,17 +8044,308 @@ window.BZOperator = BZOperator;
         </tr>`).join('')}</tbody></table></div></div>`);
   }
 
+  /* ---------- Content Blocks ----------------------------------------------- */
+
+  let cbFilter = { status: 'Active', tag: '', q: '', grid: false };
+
   function viewBlocks() {
-    return page('Content Blocks', 'Reusable fragments included with {{content_blocks.${name}}}. Edit once, every template updates.', '', `
-      <div class="bz-grid bz-grid--2">${window.BZ.contentBlocks.map((b) => `
-        <div class="bz-card">
-          <div class="bz-card__head"><div class="bz-card__title bz-mono">${U.esc(b.name)}</div></div>
-          <div class="bz-card__body">
-            <p class="bz-small bz-muted">${U.esc(b.description)}</p>
-            <textarea class="bz-textarea" data-block="${b.id}" style="min-height:160px">${U.esc(b.content)}</textarea>
-            <div class="bz-hint">Insert with <code>{{content_blocks.\${${U.esc(b.name)}}}}</code></div>
+    const all = window.BZ.contentBlocks;
+    const list = all.filter((b) => {
+      if (cbFilter.status && (b.status || 'active') !== cbFilter.status.toLowerCase()) return false;
+      if (cbFilter.tag && !(b.tags || []).includes(cbFilter.tag)) return false;
+      if (cbFilter.q && !b.name.toLowerCase().includes(cbFilter.q.toLowerCase())) return false;
+      return true;
+    });
+    const tags = Array.from(new Set(all.reduce((a, b) => a.concat(b.tags || []), []))).sort();
+
+    const rows = list.map((b) => `<tr class="is-clickable" data-go="#/blocks/${b.id}">
+      <td><div class="bz-cbthumb">${U.renderLiquid(b.content, window.BZ.userById('AUR-100000'), {}).html}</div></td>
+      <td><a class="bz-table__name" href="#/blocks/${b.id}" style="text-decoration:underline">${U.esc(b.name)}</a></td>
+      <td>${U.statusChip(b.status || 'active')}</td>
+      <td class="bz-nowrap">${b.inclusions || 0}</td>
+      <td class="bz-small">${U.esc(b.type || 'HTML')}</td>
+      <td>${(b.tags || []).map((t) => `<span class="bz-tag">${U.esc(t)}</span>`).join('')}</td>
+    </tr>`).join('');
+
+    return page('Content Blocks', '',
+      '<button class="bz-btn bz-btn--primary bz-btn--sm" data-act="new-block">+ Create Content Block</button>', `
+      <div class="bz-tabs"><span class="bz-tab is-active">Content Block Templates</span></div>
+
+      <h1 style="font-size:26px;margin:0 0 18px;letter-spacing:-.4px">Content Blocks
+        <span class="bz-viewonly">👁 Editable</span></h1>
+
+      <div class="bz-listbar">
+        <div class="bz-listbar__f"><label class="bz-label">Status</label>
+          <select class="bz-select" data-cbf="status">
+            <option value="">All</option>
+            ${['Active', 'Draft', 'Archived'].map((x) => `<option ${x === cbFilter.status ? 'selected' : ''}>${x}</option>`).join('')}
+          </select></div>
+        <div class="bz-listbar__f"><label class="bz-label">Tags</label>
+          <select class="bz-select" data-cbf="tag">
+            <option value="">All Tags</option>
+            ${tags.map((t) => `<option ${t === cbFilter.tag ? 'selected' : ''}>${U.esc(t)}</option>`).join('')}
+          </select></div>
+        <button class="bz-btn" data-act="cmp-filters">⚙ Filters</button>
+        <div class="bz-listbar__search">
+          <input class="bz-input" data-cbf="q" value="${U.esc(cbFilter.q)}" placeholder="Search Content Block name">
+          <button class="bz-btn">🔍</button>
+        </div>
+      </div>
+
+      <div class="bz-appliedchips">
+        ${cbFilter.status ? `<span class="bz-appliedchip">Status: ${U.esc(cbFilter.status)}<button data-act="cb-clear-status">✕</button></span>` : ''}
+        ${cbFilter.tag ? `<span class="bz-appliedchip">Tag: ${U.esc(cbFilter.tag)}<button data-act="cb-clear-tag">✕</button></span>` : ''}
+      </div>
+
+      <div class="bz-row bz-mb8">
+        <div class="bz-results bz-mb0">${U.num(list.length)} Result${list.length === 1 ? '' : 's'}</div>
+        <div class="bz-spacer"></div>
+        <button class="bz-btn bz-btn--sm ${!cbFilter.grid ? 'bz-btn--primary' : ''}" data-act="cb-list">☰</button>
+        <button class="bz-btn bz-btn--sm ${cbFilter.grid ? 'bz-btn--primary' : ''}" data-act="cb-grid">▦</button>
+      </div>
+
+      ${cbFilter.grid ? `<div class="bz-grid bz-grid--3">
+          ${list.map((b) => `<div class="bz-card is-clickable" data-go="#/blocks/${b.id}">
+            <div class="bz-cbthumb bz-cbthumb--lg">${U.renderLiquid(b.content, window.BZ.userById('AUR-100000'), {}).html}</div>
+            <div class="bz-card__body">
+              <div class="bz-table__name">${U.esc(b.name)}</div>
+              <div class="bz-row bz-mt8">${U.statusChip(b.status || 'active')}
+                <span class="bz-tag">${b.inclusions || 0} inclusions</span>
+                <span class="bz-tag">${U.esc(b.type || 'HTML')}</span></div>
+            </div></div>`).join('')}
+        </div>`
+      : `<div class="bz-card"><div class="bz-tablewrap"><table class="bz-table">
+          <thead><tr><th>Preview</th><th>Name ⇅</th><th>Status</th><th>Inclusion count</th><th>Type ⇅</th><th>Tags</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="6" class="bz-muted">No Content Blocks match these filters.</td></tr>'}</tbody>
+        </table></div></div>`}`);
+  }
+
+  function viewBlock(id) {
+    const b = window.BZ.contentBlocks.find((x) => x.id === id);
+    if (!b) return page('Not found', '', '', 'No such Content Block.');
+
+    const liquidTag = '{{content_blocks.${' + (b.name || 'your_block_name') + '}}}';
+    const usedIn = window.BZ.templates.filter((t) => t.body.includes('${' + b.name + '}'));
+
+    return `
+      <div class="bz-topbar">
+        <a href="#/blocks" class="bz-btn bz-btn--ghost bz-btn--sm">←</a>
+        <div><div class="bz-topbar__title">${U.esc(b.name || 'New Content Block')}</div>
+          <div class="bz-topbar__sub">Content Block Details</div></div>
+        <div class="bz-topbar__spacer"></div>
+        ${U.statusChip(b.status || 'draft')}
+        <button class="bz-btn bz-btn--sm" data-act="cb-archive" data-id="${b.id}">${b.status === 'archived' ? 'Restore' : 'Archive'}</button>
+        <button class="bz-btn bz-btn--primary bz-btn--sm" data-act="cb-save" data-id="${b.id}">Save Content Block</button>
+      </div>
+      <div class="bz-content">
+        <div class="bz-card bz-mb16" style="max-width:900px"><div class="bz-card__body">
+          <h2 style="font-size:19px;margin:0 0 6px">Content Block Details</h2>
+          <p class="bz-muted bz-small bz-mb16">Your Content Block name is used in the Liquid tag and can't be changed after launch.</p>
+
+          <div class="bz-field" style="max-width:580px">
+            <label class="bz-label">Content Block Name</label>
+            <input class="bz-input bz-mono" data-cb="name" value="${U.esc(b.name)}"
+              placeholder="lowercase_with_underscores" ${b.status === 'active' && !b._userCreated ? 'readonly' : ''}>
+            <div class="bz-hint">${b.status === 'active' && !b._userCreated
+              ? 'Locked because this block is live and referenced by templates. Renaming it would break every message including it.'
+              : 'Lowercase, no spaces — this becomes the Liquid tag. Pick a name you can live with.'}</div>
           </div>
-        </div>`).join('')}</div>`);
+
+          <div class="bz-field" style="max-width:580px">
+            <label class="bz-label">${b.description ? 'Description' : '+ Add description'}</label>
+            <input class="bz-input" data-cb="description" value="${U.esc(b.description || '')}" placeholder="What is this block for?">
+          </div>
+
+          <div class="bz-field" style="max-width:580px">
+            <label class="bz-label">Content Block Liquid tag ⓘ</label>
+            <div class="bz-row">
+              <input class="bz-input bz-mono" readonly value="${U.esc(liquidTag)}">
+              <button class="bz-btn" data-copy-text="${U.esc(liquidTag)}" title="Copy">⧉</button>
+            </div>
+            <div class="bz-hint">Paste this anywhere in a template, a drag-and-drop HTML block, or another Content Block.</div>
+          </div>
+
+          <div class="bz-field" style="max-width:580px">
+            <label class="bz-label">API identifier ⓘ</label>
+            <div class="bz-row">
+              <input class="bz-input bz-mono" readonly value="${U.esc(b.apiId)}">
+              <button class="bz-btn" data-copy-text="${U.esc(b.apiId)}" title="Copy">⧉</button>
+            </div>
+            <div class="bz-hint">Used with the <code>/content_blocks/update</code> endpoint when a system of record owns this content.</div>
+          </div>
+
+          <div class="bz-row bz-mt16">
+            <button class="bz-btn">🌐 Team ▾</button>
+            <button class="bz-btn" data-act="cb-tags" data-id="${b.id}">🏷 Tags ▾</button>
+            ${(b.tags || []).map((t) => `<span class="bz-tag">${U.esc(t)}</span>`).join('')}
+          </div>
+        </div></div>
+
+        <div class="bz-card bz-mb16" style="max-width:900px"><div class="bz-card__body">
+          <h3 style="font-size:16px;margin:0 0 6px">Inclusion</h3>
+          <div class="bz-row">
+            <div>This Content Block has ${usedIn.length || b.inclusions || 0} inclusion${(usedIn.length || b.inclusions) === 1 ? '' : 's'}.</div>
+            <div class="bz-spacer"></div>
+            ${usedIn.length ? '<button class="bz-btn bz-btn--sm" data-act="cb-inclusions" data-id="' + b.id + '">View Details →</button>' : ''}
+          </div>
+          ${usedIn.length ? `<div class="bz-hint">Editing this block changes every one of them on the next send. That is the point — and the risk.</div>` : ''}
+        </div></div>
+
+        <div class="bz-card" style="max-width:900px">
+          <div class="bz-card__head"><div class="bz-card__title">Content Block</div>
+            <div class="bz-spacer"></div>
+            <span class="bz-small bz-muted">&lt;/&gt; HTML Editor</span></div>
+          <div class="bz-card__body">
+            <div class="bz-grid bz-grid--2" style="align-items:start">
+              <div>
+                <label class="bz-label">Body</label>
+                <textarea class="bz-textarea" data-cb="content" style="min-height:300px">${U.esc(b.content)}</textarea>
+                <button class="bz-btn bz-btn--sm bz-mt8" data-act="cb-liquid">🔍 Liquid reference</button>
+              </div>
+              <div>
+                <label class="bz-label">Preview — Maya Levi</label>
+                ${(() => {
+                  const r = U.renderLiquid(b.content, window.BZ.userById('AUR-100000'), {});
+                  return `${r.errors.length ? `<div class="bz-liqerr">${U.esc(r.errors.join('\n'))}</div>` : ''}
+                    ${r.warnings.length ? `<div class="bz-liqerr" style="background:var(--bz-amber-soft);border-color:#EBD9B4;color:#7A4A00">Resolved to nothing: ${U.esc(r.warnings.join(', '))}</div>` : ''}
+                    <div style="border:1px solid var(--bz-line);border-radius:6px;overflow:auto;max-height:320px">${r.html}</div>`;
+                })()}
+              </div>
+            </div>
+          </div>
+          <div class="bz-card__foot bz-small bz-muted">
+            A Content Block can contain Liquid, including other Content Blocks. Keep nesting shallow — a block that includes a block that includes a block is very hard to debug from a broken send.
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ---------- Settings ------------------------------------------------------- */
+
+  function viewSettings(tab) {
+    tab = tab || 'connected';
+    const tabsHtml = U.tabs([
+      { id: 'connected', label: 'Connected Content' },
+      { id: 'frequency', label: 'Frequency Capping' },
+      { id: 'keys', label: 'API Keys' },
+      { id: 'email', label: 'Email Settings' },
+    ], tab, (t) => `#/settings/${t}`);
+
+    let body = '';
+
+    if (tab === 'connected') {
+      body = `
+        <div class="bz-card bz-mb16" style="max-width:920px">
+          <div class="bz-card__head"><div class="bz-card__title">Connected Content credentials</div>
+            <div class="bz-spacer"></div>
+            <button class="bz-btn bz-btn--primary bz-btn--sm" data-act="cc-add">+ Add credential</button></div>
+          <div class="bz-card__body">
+            <p class="bz-muted bz-small bz-mb16">Store the secret once here, then reference it by name in a template with
+              <code>:basic_auth &lt;name&gt;</code>. The secret never appears in Liquid, never ends up in a template export,
+              and can be rotated without touching a single message.</p>
+            ${window.BZ.connectedContentCredentials.map((c) => `<div class="bz-cred">
+              <div class="bz-cred__main">
+                <div class="bz-row"><code class="bz-mono" style="font-weight:700">${U.esc(c.name)}</code>
+                  <span class="bz-tag">${U.esc(c.type)}</span></div>
+                <div class="bz-small bz-muted bz-mt8">${U.esc(c.note)}</div>
+                <div class="bz-kv bz-mt8" style="grid-template-columns:130px 1fr">
+                  <div class="bz-kv__k">Allowed domain</div><div class="bz-kv__v bz-mono">${U.esc(c.domain)}</div>
+                  ${c.username ? `<div class="bz-kv__k">Username</div><div class="bz-kv__v bz-mono">${U.esc(c.username)}</div>` : ''}
+                  <div class="bz-kv__k">Secret</div><div class="bz-kv__v bz-mono">${U.esc(c.secret)}</div>
+                  <div class="bz-kv__k">Last used</div><div class="bz-kv__v">${U.relTime(c.lastUsed)}</div>
+                </div>
+              </div>
+              <div>
+                <button class="bz-btn bz-btn--sm" data-copy-text="${U.esc(':basic_auth ' + c.name)}">Copy Liquid</button>
+                <button class="bz-btn bz-btn--sm bz-btn--danger" data-act="cc-del" data-id="${c.id}">Delete</button>
+              </div>
+            </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="bz-card" style="max-width:920px">
+          <div class="bz-card__head"><div class="bz-card__title">Using a credential in a message</div></div>
+          <div class="bz-card__body">
+            <pre class="bz-lq__code">{% connected_content https://api.aureliahotels.com/rates?hotel={{custom_attribute.\${next_stay_hotel_id}}}
+   :basic_auth rates_api
+   :cache 300
+   :save rates %}
+{% if rates.lowest %}Rooms from €{{rates.lowest}} tonight.{% endif %}</pre>
+            <div class="bz-callout bz-callout--warn bz-mt16">
+              <div class="bz-callout__t">The two rules that matter</div>
+              <p><strong>Always <code>:cache</code></strong> on a large send. Without it Braze calls your endpoint once per recipient — a 200k send will take your API down, and it will be your name on the incident.</p>
+              <p><strong>Always handle failure.</strong> If the endpoint errors or times out, Braze carries on with the value unset. Guard with <code>{% if %}</code> or <code>{% abort_message %}</code>, or you will send an email with a blank price.</p>
+            </div>
+            <button class="bz-btn bz-btn--sm bz-mt16" data-act="cc-try">Try it in a template →</button>
+          </div>
+        </div>`;
+    }
+
+    if (tab === 'frequency') {
+      body = `
+        <div class="bz-card" style="max-width:920px">
+          <div class="bz-card__head"><div class="bz-card__title">Frequency Capping Rules</div>
+            <div class="bz-spacer"></div>
+            <button class="bz-btn bz-btn--sm" data-act="fc-add">+ Add rule</button></div>
+          <div class="bz-card__body">
+            <p class="bz-muted bz-small bz-mb16">Limit how often users can receive certain messages within a set timeframe to help prevent message fatigue.
+              These rules apply to campaign and Canvas steps. Some channels are not affected.</p>
+            ${window.BZ.frequencyCaps.map((f, i) => `
+              ${i ? '<div class="bz-fcand">AND</div>' : ''}
+              <div class="bz-fcrule">
+                <div><span class="bz-muted bz-small">Channel:</span> <strong>${U.esc(f.channel)}</strong></div>
+                <div><span class="bz-muted bz-small">Tag:</span> <strong>${U.esc(f.tag)}</strong></div>
+                <div><span class="bz-muted bz-small">Cap:</span> <strong>${f.count} message${f.count === 1 ? '' : 's'} every ${U.esc(f.per)}</strong></div>
+                <div class="bz-spacer"></div>
+                <button class="bz-btn bz-btn--sm bz-btn--ghost" data-act="fc-del" data-id="${f.id}">🗑</button>
+              </div>`).join('')}
+          </div>
+          <div class="bz-card__foot">
+            <div class="bz-row"><span class="bz-banner__ico">!</span>
+              <span class="bz-small">Frequency capping rules will not be applied to in-app messages, Content Cards, and User Update Canvas steps.</span></div>
+          </div>
+        </div>
+        <div class="bz-callout bz-mt16" style="max-width:920px">
+          <div class="bz-callout__t">What this protects you from</div>
+          <p>Capping is set once at workspace level and every campaign inherits it, including ones built by colleagues who never think about it. That is the whole value.</p>
+          <p><strong>Mark transactional and service campaigns exempt</strong>, or a busy promotional week will silently suppress someone's check-in instructions. And remember capping <em>drops recipients without telling you</em> — if a send goes out much smaller than forecast, check capping before you check your segment.</p>
+        </div>`;
+    }
+
+    if (tab === 'keys') {
+      body = `<div class="bz-card" style="max-width:920px">
+        <div class="bz-card__head"><div class="bz-card__title">REST API Keys</div></div>
+        <div class="bz-tablewrap"><table class="bz-table">
+          <thead><tr><th>Name</th><th>Key</th><th>Permissions</th><th>Created</th></tr></thead>
+          <tbody>${window.BZ.apiKeys.map((k) => `<tr>
+            <td class="bz-table__name">${U.esc(k.name)}</td>
+            <td class="bz-mono bz-small">${U.esc(k.key)}</td>
+            <td class="bz-small bz-muted">${U.esc(k.perms)}</td>
+            <td class="bz-small">${U.fmtDate(k.created)}</td>
+          </tr>`).join('')}</tbody>
+        </table></div>
+        <div class="bz-card__foot bz-small bz-muted">Endpoint for this workspace: <code>${U.esc(window.BZ.workspace.endpoint)}</code>. Scope every key to the minimum it needs.</div>
+      </div>`;
+    }
+
+    if (tab === 'email') {
+      body = `<div class="bz-card" style="max-width:920px">
+        <div class="bz-card__head"><div class="bz-card__title">Sending domains</div></div>
+        <div class="bz-card__body">
+          <div class="bz-kv">
+            <div class="bz-kv__k">Marketing subdomain</div><div class="bz-kv__v bz-mono">offers.aureliahotels.com</div>
+            <div class="bz-kv__k">Transactional subdomain</div><div class="bz-kv__v bz-mono">stay.aureliahotels.com</div>
+            <div class="bz-kv__k">SPF</div><div class="bz-kv__v"><span class="bz-chip bz-chip--active">verified</span></div>
+            <div class="bz-kv__k">DKIM</div><div class="bz-kv__v"><span class="bz-chip bz-chip--active">verified</span></div>
+            <div class="bz-kv__k">DMARC</div><div class="bz-kv__v"><span class="bz-chip bz-chip--paused">p=quarantine</span></div>
+          </div>
+          <div class="bz-callout bz-mt16"><div class="bz-callout__t">Why two subdomains</div>
+            <p>A bad promotional week damages the reputation of the domain that sent it. Keeping transactional traffic on a separate subdomain means a burnt marketing reputation cannot take booking confirmations down with it.</p></div>
+        </div>
+      </div>`;
+    }
+
+    return page('Settings', 'Workspace-level configuration.', '', tabsHtml + body);
   }
 
   /* ======================================================================== */
@@ -8526,7 +8891,8 @@ window.BZOperator = BZOperator;
           bindFn = (root) => window.BZEditor.bind(root, parts[1], render);
         } else main = viewTemplates();
         break;
-      case 'blocks':        main = viewBlocks(); break;
+      case 'blocks':        main = parts[1] ? viewBlock(parts[1]) : viewBlocks(); break;
+      case 'settings':      main = viewSettings(parts[1]); break;
       case 'segments':      main = parts[1] ? viewSegment(parts[1]) : viewSegments(); break;
       case 'users':         main = parts[1] ? viewUser(parts[1]) : viewUsers(); break;
       case 'catalogs':      main = viewCatalogs(); break;
@@ -8587,6 +8953,14 @@ window.BZOperator = BZOperator;
     const prevAs = e.target.closest('[data-preview-as]');
 
     if (prevAs) { window.BZEditor.setPreviewUser(prevAs.dataset.previewAs); return; }
+
+    const copyBtn = e.target.closest('[data-copy-text]');
+    if (copyBtn) {
+      const v = copyBtn.dataset.copyText;
+      if (navigator.clipboard) navigator.clipboard.writeText(v).catch(() => {});
+      U.toast('Copied ' + (v.length > 40 ? v.slice(0, 40) + '…' : v));
+      return;
+    }
 
     if (sol) {
       const el = document.getElementById('sol-' + sol.dataset.sol);
@@ -8711,6 +9085,168 @@ window.BZOperator = BZOperator;
 
     if (act) {
       switch (act.dataset.act) {
+        case 'new-block': {
+          const nb = {
+            id: U.uid('cb'), apiId: U.uid('api') + '-' + U.uid('x') + '-' + U.uid('y'),
+            name: '', status: 'draft', type: 'HTML', tags: [], inclusions: 0,
+            description: '',
+            content: "<!-- Your reusable HTML. Liquid works here. -->\n<p>Hello {{${first_name} | default: 'there'}}</p>",
+            lastEdited: new Date().toISOString(), _userCreated: true,
+          };
+          window.BZ.contentBlocks.push(nb);
+          U.Store.save();
+          location.hash = '#/blocks/' + nb.id;
+          return;
+        }
+        case 'cb-list': cbFilter.grid = false; render(); return;
+        case 'cb-grid': cbFilter.grid = true; render(); return;
+        case 'cb-clear-status': cbFilter.status = ''; render(); return;
+        case 'cb-clear-tag': cbFilter.tag = ''; render(); return;
+        case 'cb-save': {
+          const b = window.BZ.contentBlocks.find((x) => x.id === act.dataset.id);
+          if (!b) return;
+          if (!/^[a-z0-9_]+$/.test(b.name || '')) {
+            U.toast('Name must be lowercase letters, numbers and underscores only.');
+            return;
+          }
+          if (window.BZ.contentBlocks.some((x) => x.id !== b.id && x.name === b.name)) {
+            U.toast('That name is already taken — Liquid tags must be unique.');
+            return;
+          }
+          b.status = 'active';
+          b.lastEdited = new Date().toISOString();
+          b._edited = true; U.Store.save();
+          U.toast('Saved. Insert it anywhere with {{content_blocks.${' + b.name + '}}}');
+          render(); return;
+        }
+        case 'cb-archive': {
+          const b = window.BZ.contentBlocks.find((x) => x.id === act.dataset.id);
+          if (!b) return;
+          if (b.status !== 'archived' && (b.inclusions || 0) > 0) {
+            U.modal('Archive Content Block', `<p>This block is included in <strong>${b.inclusions}</strong> message${b.inclusions === 1 ? '' : 's'}.</p>
+              <p class="bz-muted">Archiving does not remove it from them — they keep rendering the last saved content. It only hides it from the list and stops new messages using it.</p>`,
+              '<button class="bz-btn" data-modal-close>Cancel</button><button class="bz-btn bz-btn--danger" id="bz-cb-arch">Archive anyway</button>');
+            document.getElementById('bz-cb-arch').onclick = () => {
+              b.status = 'archived'; b._edited = true; U.Store.save(); U.closeModal(); render();
+            };
+            return;
+          }
+          b.status = b.status === 'archived' ? 'active' : 'archived';
+          b._edited = true; U.Store.save(); render(); return;
+        }
+        case 'cb-tags': {
+          const b = window.BZ.contentBlocks.find((x) => x.id === act.dataset.id);
+          if (!b) return;
+          U.modal('Tags', `<div class="bz-field"><label class="bz-label">Comma-separated tags</label>
+            <input class="bz-input" id="bz-cb-tags" value="${U.esc((b.tags || []).join(', '))}">
+            <div class="bz-hint">Teams use a numbered taxonomy so tags sort predictably, e.g. <code>06_Audience_General</code>.</div></div>`,
+            '<button class="bz-btn" data-modal-close>Cancel</button><button class="bz-btn bz-btn--primary" id="bz-cb-tagsave">Save</button>');
+          document.getElementById('bz-cb-tagsave').onclick = () => {
+            b.tags = document.getElementById('bz-cb-tags').value.split(',').map((x) => x.trim()).filter(Boolean);
+            b._edited = true; U.Store.save(); U.closeModal(); render();
+          };
+          return;
+        }
+        case 'cb-inclusions': {
+          const b = window.BZ.contentBlocks.find((x) => x.id === act.dataset.id);
+          const used = window.BZ.templates.filter((t) => t.body.includes('${' + b.name + '}'));
+          U.modal('Inclusions of ' + b.name, `<table class="bz-table"><thead><tr><th>Message</th><th>Type</th></tr></thead>
+            <tbody>${used.map((t) => `<tr><td class="bz-table__name">${U.esc(t.name)}</td><td>Email template</td></tr>`).join('')}</tbody></table>
+            <div class="bz-hint bz-mt8">Every one of these renders the block's current content on the next send.</div>`,
+            '<button class="bz-btn" data-modal-close>Close</button>', true);
+          return;
+        }
+        case 'cb-liquid': {
+          const parts2 = parseHash();
+          const b = window.BZ.contentBlocks.find((x) => x.id === parts2[1]);
+          if (!b) return;
+          const R = window.BZLiquidRef;
+          U.modal('Liquid reference', `<input class="bz-input bz-mb16" id="bz-cbl-search" placeholder="Search…">
+            <div id="bz-cbl-body" style="max-height:56vh;overflow:auto"></div>`,
+            '<button class="bz-btn" data-modal-close>Close</button>', true);
+          const paint = (q) => {
+            const hits = R.search(q);
+            const item = (it, g) => `<div class="bz-lq__item"><div class="bz-lq__head">
+                <span class="bz-lq__name">${U.esc(it.name)}</span>${g ? `<span class="bz-tag">${U.esc(g)}</span>` : ''}
+                <div class="bz-spacer"></div>
+                <button class="bz-btn bz-btn--sm bz-btn--primary" data-cbl="${U.esc(it.snippet)}">Insert</button></div>
+              <pre class="bz-lq__code">${U.esc(it.snippet)}</pre></div>`;
+            document.getElementById('bz-cbl-body').innerHTML = hits
+              ? (hits.map((h) => item(h.item, h.group)).join('') || '<div class="bz-muted">No match.</div>')
+              : R.GROUPS.map((g) => `<div class="bz-label bz-mt16">${U.esc(g.label)}</div>${g.items.map((it) => item(it)).join('')}`).join('');
+          };
+          paint('');
+          document.getElementById('bz-cbl-search').addEventListener('input', (ev) => paint(ev.target.value));
+          document.getElementById('bz-cbl-body').addEventListener('click', (ev) => {
+            const btn = ev.target.closest('[data-cbl]');
+            if (!btn) return;
+            b.content += '\n' + btn.dataset.cbl;
+            b._edited = true; U.Store.save(); U.closeModal(); render();
+          });
+          return;
+        }
+        case 'cc-add': {
+          U.modal('Add credential', `
+            <div class="bz-field"><label class="bz-label">Credential name</label>
+              <input class="bz-input bz-mono" id="bz-cc-name" placeholder="rates_api">
+              <div class="bz-hint">This is what you write in the template: <code>:basic_auth rates_api</code>.</div></div>
+            <div class="bz-field"><label class="bz-label">Type</label>
+              <select class="bz-select" id="bz-cc-type"><option>Basic authentication</option><option>Bearer token</option></select></div>
+            <div class="bz-field"><label class="bz-label">Username <span class="bz-muted">(Basic only)</span></label>
+              <input class="bz-input" id="bz-cc-user"></div>
+            <div class="bz-field"><label class="bz-label">Secret / token</label>
+              <input class="bz-input" id="bz-cc-secret" type="password" placeholder="Stored encrypted, never rendered in Liquid"></div>
+            <div class="bz-field"><label class="bz-label">Allowed domain</label>
+              <input class="bz-input bz-mono" id="bz-cc-domain" placeholder="api.aureliahotels.com">
+              <div class="bz-hint">Restricting the credential to one domain means a copied template cannot leak it to somebody else's endpoint.</div></div>`,
+            '<button class="bz-btn" data-modal-close>Cancel</button><button class="bz-btn bz-btn--primary" id="bz-cc-save">Add credential</button>');
+          document.getElementById('bz-cc-save').onclick = () => {
+            const name = document.getElementById('bz-cc-name').value.trim();
+            if (!/^[a-z0-9_]+$/.test(name)) { U.toast('Name must be lowercase with underscores.'); return; }
+            window.BZ.connectedContentCredentials.push({
+              id: U.uid('cc'), name,
+              type: document.getElementById('bz-cc-type').value,
+              username: document.getElementById('bz-cc-user').value.trim(),
+              secret: '••••••••••••••••',
+              domain: document.getElementById('bz-cc-domain').value.trim() || 'api.example.com',
+              created: new Date().toISOString(), lastUsed: null,
+              note: 'Added in the sandbox.',
+            });
+            U.closeModal(); U.toast('Credential added — reference it with :basic_auth ' + name); render();
+          };
+          return;
+        }
+        case 'cc-del': {
+          window.BZ.connectedContentCredentials = window.BZ.connectedContentCredentials.filter((c) => c.id !== act.dataset.id);
+          render(); return;
+        }
+        case 'cc-try': location.hash = '#/templates/tpl-prearrival'; return;
+        case 'fc-add': {
+          U.modal('Add frequency cap', `
+            <div class="bz-field"><label class="bz-label">Channel</label>
+              <select class="bz-select" id="bz-fc-ch">${['Email', 'Push', 'SMS', 'WhatsApp', 'All channels'].map((c) => `<option>${c}</option>`).join('')}</select></div>
+            <div class="bz-field"><label class="bz-label">Tag</label>
+              <input class="bz-input" id="bz-fc-tag" value="All tags"></div>
+            <div class="bz-field"><label class="bz-label">Cap</label>
+              <div class="bz-row"><input class="bz-input" type="number" id="bz-fc-n" value="2" min="1" style="width:90px">
+                <span class="bz-muted">messages every</span>
+                <select class="bz-select" id="bz-fc-per" style="width:auto"><option>day</option><option selected>week</option><option>month</option></select></div></div>`,
+            '<button class="bz-btn" data-modal-close>Cancel</button><button class="bz-btn bz-btn--primary" id="bz-fc-save">Add rule</button>');
+          document.getElementById('bz-fc-save').onclick = () => {
+            window.BZ.frequencyCaps.push({
+              id: U.uid('fc'),
+              channel: document.getElementById('bz-fc-ch').value,
+              tag: document.getElementById('bz-fc-tag').value.trim() || 'All tags',
+              count: Number(document.getElementById('bz-fc-n').value) || 1,
+              per: document.getElementById('bz-fc-per').value,
+            });
+            U.closeModal(); render();
+          };
+          return;
+        }
+        case 'fc-del':
+          window.BZ.frequencyCaps = window.BZ.frequencyCaps.filter((f) => f.id !== act.dataset.id);
+          render(); return;
         case 'dismiss-banner': cmpFilter.bannerDismissed = true; render(); return;
         case 'show-idle':      cmpFilter.status = 'Idle'; render(); return;
         case 'clear-status':   cmpFilter.status = ''; render(); return;
@@ -8873,6 +9409,30 @@ window.BZOperator = BZOperator;
     /* campaign list filters */
     const cf = e.target.closest('[data-cf]');
     if (cf) { cmpFilter[cf.dataset.cf] = cf.value; render(); return; }
+    const cbf = e.target.closest('[data-cbf]');
+    if (cbf) { cbFilter[cbf.dataset.cbf] = cbf.value; render(); return; }
+
+    const cbEdit = e.target.closest('[data-cb]');
+    if (cbEdit) {
+      const parts2 = parseHash();
+      const b = window.BZ.contentBlocks.find((x) => x.id === parts2[1]);
+      if (b) {
+        b[cbEdit.dataset.cb] = cbEdit.value;
+        b._edited = true; U.Store.save();
+        if (cbEdit.dataset.cb === 'content') {
+          /* repaint just the preview so the textarea keeps focus */
+          const box = document.querySelector('.bz-card__body .bz-grid--2 > div:last-child');
+          if (box) {
+            const r = U.renderLiquid(b.content, window.BZ.userById('AUR-100000'), {});
+            box.innerHTML = `<label class="bz-label">Preview — Maya Levi</label>
+              ${r.errors.length ? `<div class="bz-liqerr">${U.esc(r.errors.join('\n'))}</div>` : ''}
+              <div style="border:1px solid var(--bz-line);border-radius:6px;overflow:auto;max-height:320px">${r.html}</div>`;
+          }
+        }
+      }
+      return;
+    }
+
     const blk = e.target.closest('[data-block]');
     if (blk) {
       const b = window.BZ.contentBlocks.find((x) => x.id === blk.dataset.block);
