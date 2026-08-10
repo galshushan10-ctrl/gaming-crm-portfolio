@@ -199,28 +199,12 @@ ${rows}
 
   /* ---------- starter designs ----------------------------------------------- */
 
-  function starterDesign(kind) {
+  /* A fresh editor always opens empty — one single-column row so there is a
+     real drop target, and nothing else. Braze's "quick start from scratch"
+     means from scratch.                                                     */
+  function starterDesign() {
     const d = newDesign();
-    const row = (blocks, background) => ({ id: U.uid('r'), background, columns: [{ width: 100, blocks }] });
-
-    const header = BLOCKS.content_block.make(); header.name = 'aurelia_header';
-    const footer = BLOCKS.content_block.make(); footer.name = 'aurelia_footer';
-    d.rows.push(row([header]));
-
-    if (kind === 'blank') {
-      const t = BLOCKS.paragraph.make();
-      d.rows.push(row([t]));
-    } else {
-      const h = BLOCKS.title.make();
-      const t = BLOCKS.paragraph.make();
-      const img = BLOCKS.image.make();
-      const btn = BLOCKS.button.make();
-      img.src = window.BZ.catalogs.hotels.items[2].image_url;
-      img.alt = 'Aurelia Club Eilat';
-      t.html = "<p>Your dates are still available — from €210 per night. Members save an extra 10%, applied at checkout.</p>";
-      d.rows.push(row([h, img, t, btn]));
-    }
-    d.rows.push(row([footer]));
+    d.rows.push({ id: U.uid('r'), columns: [{ width: 100, blocks: [] }] });
     return d;
   }
 
@@ -580,6 +564,7 @@ ${rows}
 
   const select = (id) => { selected = id; };
   const reset = () => { selected = null; selectedRow = null; panelTab = 'content'; };
+
 
   return { newDesign, starterDesign, compile, view, bind, select, reset, BLOCKS, CATEGORIES, LAYOUTS, findBlock };
 })();

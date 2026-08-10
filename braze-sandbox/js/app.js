@@ -1759,7 +1759,17 @@
       const v = wnav.dataset.wNav;
       if (v === 'save') { saveWizard(); return; }
       if (v === 'save-draft') { saveWizard(true); return; }
-      if (v === '0') { wizard.step = 0; render(); return; }
+      if (v === '0') {
+        /* Going back to the message-type picker discards the draft, so the
+           next editor you open is empty. */
+        wizard.step = 0;
+        wizard.channelId = null;
+        wizard.message = null;
+        wizard.design = null;
+        window.BZEmailBuilder.reset();
+        window.BZHtmlEditor.reset();
+        render(); return;
+      }
       const next = wizard.step + Number(v);
       /* Step 1 with no channel chosen means we are on the message-type picker. */
       wizard.step = Math.max(0, Math.min(5, next));
@@ -1798,15 +1808,25 @@
     const modeTile = e.target.closest('[data-emode]');
     if (modeTile && wizard && wizard.message) {
       const mode = modeTile.dataset.emode;
+
+      /* Entering an editor always starts from scratch — no content, layout or
+         panel state carried over from a previous attempt. */
+      window.BZEmailBuilder.reset();
+      window.BZHtmlEditor.reset();
+      wizard.message.body = '';
+      wizard.message.plaintext = '';
+      wizard.message.templateId = null;
+      wizard.design = null;
+
       wizard.message.mode = mode;
       if (mode === 'dragdrop') {
-        wizard.design = window.BZEmailBuilder.starterDesign('starter');
+        wizard.design = window.BZEmailBuilder.starterDesign();
       } else if (mode === 'upload') {
         wizard.message.mode = 'html';
-        wizard.message.body = '<!-- Paste the HTML your designer produced here. -->\n';
-        U.toast('Upload lands you in the HTML editor with the file contents.');
+        wizard.message.body = '';
+        U.toast('Upload lands you in the HTML editor. Paste your file contents into the empty editor.');
       } else if (mode === 'html') {
-        wizard.message.body = "{{content_blocks.${aurelia_header}}}\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  <tr><td style=\"padding:34px 28px;font:400 15px/1.6 Helvetica,Arial,sans-serif;color:#43434E\">\n    <h1 style=\"margin:0 0 12px;font:700 25px/1.3 Helvetica,Arial,sans-serif;color:#0F1B2D\">\n      Hello {{${first_name} | default: 'there'}}\n    </h1>\n    <p>Write your email here. Liquid works exactly as it does in production.</p>\n  </td></tr>\n</table>\n{{content_blocks.${aurelia_footer}}}";
+        wizard.message.body = '';   // truly blank, like "quick start from scratch"
       }
       render(); return;
     }

@@ -13,6 +13,10 @@ const BZHtmlEditor = (function () {
   const U = window.BZUI;
 
   let state = {
+    mode: 'content',          // content | preview
+    ptab: 'user',             // user | testsend   (Preview as a User / Test Send)
+    device: 'desktop',        // desktop | mobile | plaintext
+    testRecipients: '',
     section: 'design',        // design | links | gmail
     tab: 'html',              // html | classic | more
     expandBlocks: true,
@@ -99,10 +103,126 @@ const BZHtmlEditor = (function () {
     return `${notes}<div class="bz-he__paper">${body.aborted ? '' : body.html}</div>`;
   }
 
+  /* ---------- Preview & Test -------------------------------------------------- */
+
+  function previewTestView(msg) {
+    const user = window.BZ.userById(state.previewUserId) || window.BZ.users[0];
+    const opts = { event_properties: U.triggerEventFor(user, 'booking_started') };
+    const body = U.renderLiquid(msg.body, user, opts);
+    const subject = U.renderLiquid(msg.subject || '', user, opts);
+
+    const width = state.device === 'mobile' ? 390 : 660;
+
+    const plain = String(msg.plaintext || '').trim() ||
+      body.html.replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+    const rendered = state.device === 'plaintext'
+      ? `<pre class="bz-he__plain">${U.esc(plain)}</pre>`
+      : `<div class="bz-he__paper" style="max-width:${width}px;margin:0 auto">${body.aborted ? '' : body.html}</div>`;
+
+    const notes = [
+      body.aborted ? `<div class="bz-liqerr"><strong>Send aborted for this user.</strong>\n{% abort_message %}: "${U.esc(body.aborted)}"\nIn production this user is skipped and counted as an abort.</div>` : '',
+      body.errors.length ? `<div class="bz-liqerr">${U.esc(body.errors.join('\n'))}</div>` : '',
+      body.warnings.length ? `<div class="bz-liqerr" style="background:var(--bz-amber-soft);border-color:#EBD9B4;color:#7A4A00">Resolved to nothing: ${U.esc(body.warnings.join(', '))}</div>` : '',
+    ].join('');
+
+    const left = state.ptab === 'user' ? `
+        <div class="bz-he__pad">
+          <div class="bz-field">
+            <label class="bz-label">Preview message as user</label>
+            <select class="bz-select" data-pt-user>
+              <option value="__random__">Random User</option>
+              ${window.BZ.users.slice(0, 40).map((u) => `<option value="${u.external_id}" ${u.external_id === state.previewUserId ? 'selected' : ''}>
+                ${U.esc(u.first_name + ' ' + u.last_name)} · ${U.esc(u.custom.loyalty_tier)} · ${U.esc(u.external_id)}</option>`).join('')}
+            </select>
+          </div>
+          <button class="bz-btn bz-btn--primary" data-act="pt-random">Get Random User</button>
+          <button class="bz-btn bz-mt8" style="display:block" data-act="pt-edge">Get an edge-case user</button>
+          <div class="bz-hint">Random is the habit Braze nudges you into, and it is the right one — previewing against the same tidy profile every time is how a template with no fallbacks reaches production.</div>
+
+          <div class="bz-field bz-mt24">
+            <label class="bz-label">This user's data</label>
+            <div class="bz-kv" style="grid-template-columns:150px 1fr;font-size:12.5px;gap:0 10px">
+              <div class="bz-kv__k">first_name</div><div class="bz-kv__v">${U.esc(user.first_name) || '<span class="bz-muted">(empty)</span>'}</div>
+              <div class="bz-kv__k">loyalty_tier</div><div class="bz-kv__v">${U.esc(user.custom.loyalty_tier)}</div>
+              <div class="bz-kv__k">points_balance</div><div class="bz-kv__v">${U.num(user.custom.points_balance)}</div>
+              <div class="bz-kv__k">next_stay_hotel</div><div class="bz-kv__v">${user.custom.next_stay_hotel ? U.esc(user.custom.next_stay_hotel) : '<span class="bz-muted">null</span>'}</div>
+              <div class="bz-kv__k">abandoned_hotel_id</div><div class="bz-kv__v">${user.custom.abandoned_hotel_id ? U.esc(user.custom.abandoned_hotel_id) : '<span class="bz-muted">null</span>'}</div>
+            </div>
+            <div class="bz-hint"><a href="#/users/${U.esc(user.external_id)}">Open the full profile →</a></div>
+          </div>
+        </div>`
+      : `
+        <div class="bz-he__pad">
+          <div class="bz-field">
+            <label class="bz-label">Send a test to</label>
+            <textarea class="bz-textarea" data-pt-recipients placeholder="you@company.com, colleague@company.com" style="min-height:80px">${U.esc(state.testRecipients)}</textarea>
+            <div class="bz-hint">Comma-separated. In Braze you can also target a saved <strong>seed list</strong> so the whole team sees exactly what guests see.</div>
+          </div>
+          <div class="bz-field">
+            <label class="bz-label">Send as user</label>
+            <select class="bz-select" data-pt-user>
+              ${window.BZ.users.slice(0, 40).map((u) => `<option value="${u.external_id}" ${u.external_id === state.previewUserId ? 'selected' : ''}>
+                ${U.esc(u.first_name + ' ' + u.last_name)} · ${U.esc(u.custom.loyalty_tier)}</option>`).join('')}
+            </select>
+            <div class="bz-hint">The test renders with that profile's data, not the recipient's.</div>
+          </div>
+          <button class="bz-btn bz-btn--primary" data-act="pt-send">Send Test</button>
+          <div class="bz-callout bz-callout--warn bz-mt16">
+            <div class="bz-callout__t">A test send is not a QA pass</div>
+            <p>It proves the message renders for <em>one</em> profile in <em>your</em> client. It does not test your audience, your timing, frequency caps or conversion tracking. Preview against an edge-case user before you trust it.</p>
+          </div>
+        </div>`;
+
+    return `<div class="bz-he">
+      <div class="bz-he__rail">
+        <div class="bz-he__railicons">
+          <button class="bz-he__ricon" data-act="pt-tocontent" title="Message">✉</button>
+          <button class="bz-he__ricon" data-act="pt-tocontent" title="Edit">✎</button>
+          <button class="bz-he__ricon is-active" title="Preview &amp; Test">👁</button>
+        </div>
+        <div class="bz-he__railbody">
+          <div class="bz-he__railtitle">Preview &amp; Test</div>
+          <button class="bz-he__railitem is-active">Preview &amp; Test Send</button>
+        </div>
+      </div>
+
+      <div class="bz-he__main">
+        <div class="bz-he__tabs">
+          <button class="bz-he__tab ${state.ptab === 'user' ? 'is-active' : ''}" data-pt-tab="user">Preview as a User</button>
+          <button class="bz-he__tab ${state.ptab === 'testsend' ? 'is-active' : ''}" data-pt-tab="testsend">Test Send</button>
+        </div>
+
+        <div class="bz-he__split">
+          <div class="bz-he__left" style="flex:0 0 340px">${left}</div>
+          <div class="bz-he__right">
+            <div class="bz-he__prevbar">
+              ${['desktop', 'mobile', 'plaintext'].map((d) =>
+                `<button class="bz-he__tab ${state.device === d ? 'is-active' : ''}" data-pt-device="${d}">${d[0].toUpperCase() + d.slice(1)}</button>`).join('')}
+              <div class="bz-spacer"></div>
+              <label class="bz-he__toggle"><input type="checkbox" data-he-bool="expandBlocks" ${state.expandBlocks ? 'checked' : ''}><span>Expand Content Blocks</span></label>
+            </div>
+            <div class="bz-he__prevbody">
+              <div class="bz-he__mailmeta">
+                <div><strong>From:</strong> ${U.esc(msg.fromName)} ${U.esc(msg.fromEmail)}</div>
+                <div><strong>Reply-To:</strong> ${U.esc(msg.replyTo || msg.fromEmail)}</div>
+                <div><strong>Subject:</strong> ${U.esc(subject.html) || '<span class="bz-muted">(empty)</span>'}</div>
+              </div>
+              ${notes}
+              ${String(msg.body || '').trim() ? rendered : '<div class="bz-he__noprev">No content available for preview</div>'}
+            </div>
+            <div class="bz-he__prevnote">Actual rendering may not be identical to this preview depending on the user's environment.</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
   /* ---------- main view ------------------------------------------------------- */
 
   function view(msg, opts) {
     opts = opts || {};
+    if (state.mode === 'preview') return previewTestView(msg);
     const user = window.BZ.userById(state.previewUserId) || window.BZ.users[0];
 
     const sectionBody = state.section === 'links' ? `
@@ -146,7 +266,7 @@ const BZHtmlEditor = (function () {
         <div class="bz-he__railicons">
           <button class="bz-he__ricon is-active" title="Message">✉</button>
           <button class="bz-he__ricon" title="Edit">✎</button>
-          <button class="bz-he__ricon" title="Preview">👁</button>
+          <button class="bz-he__ricon" data-act="pt-open" title="Preview &amp; Test">👁</button>
         </div>
         <div class="bz-he__railbody">
           <div class="bz-he__railtitle">Content</div>
@@ -338,6 +458,7 @@ const BZHtmlEditor = (function () {
       if (mf) { msg[mf.dataset.msg] = mf.value; repaintPreview(); return; }
       const hf = e.target.closest('[data-he]');
       if (hf) { msg[hf.dataset.he] = hf.value; return; }
+      if (e.target.hasAttribute('data-pt-recipients')) { state.testRecipients = e.target.value; return; }
     });
 
     root.addEventListener('change', (e) => {
@@ -351,12 +472,23 @@ const BZHtmlEditor = (function () {
       if (e.target.hasAttribute('data-he-prevuser')) {
         state.previewUserId = e.target.value; repaintPreview(); return;
       }
+      if (e.target.hasAttribute('data-pt-user')) {
+        if (e.target.value === '__random__') {
+          const pool = window.BZ.users;
+          state.previewUserId = pool[Math.floor(Math.random() * pool.length)].external_id;
+        } else {
+          state.previewUserId = e.target.value;
+        }
+        rerender(); return;
+      }
     });
 
     root.addEventListener('click', (e) => {
       const q = (a) => e.target.closest('[' + a + ']');
       let t;
 
+      if ((t = q('data-pt-tab'))) { state.ptab = t.dataset.ptTab; rerender(); return; }
+      if ((t = q('data-pt-device'))) { state.device = t.dataset.ptDevice; rerender(); return; }
       if ((t = q('data-he-section'))) { state.section = t.dataset.heSection; state.tab = 'more'; rerender(); return; }
       if ((t = q('data-he-tab'))) { state.tab = t.dataset.heTab; rerender(); return; }
       if ((t = q('data-lq-group'))) { state.liquidGroup = t.dataset.lqGroup; rerender(); return; }
@@ -374,6 +506,32 @@ const BZHtmlEditor = (function () {
       const act = q('data-act');
       if (!act) return;
       switch (act.dataset.act) {
+        case 'pt-open':      state.mode = 'preview'; rerender(); break;
+        case 'pt-tocontent': state.mode = 'content'; rerender(); break;
+        case 'pt-random': {
+          const pool = window.BZ.users;
+          state.previewUserId = pool[Math.floor(Math.random() * pool.length)].external_id;
+          rerender(); break;
+        }
+        case 'pt-edge': {
+          const edge = window.BZ.users.find((u) => u.custom.total_stays === 0 && !u.custom.next_stay_hotel) || window.BZ.users[1];
+          state.previewUserId = edge.external_id;
+          U.toast('Previewing ' + edge.first_name + ' ' + edge.last_name + ' — zero stays, null attributes.');
+          rerender(); break;
+        }
+        case 'pt-send': {
+          const to = state.testRecipients.trim();
+          if (!to) { U.toast('Add at least one recipient.'); break; }
+          const u2 = window.BZ.userById(state.previewUserId);
+          const r = U.renderLiquid(msg.body, u2, { event_properties: U.triggerEventFor(u2, 'booking_started') });
+          U.modal('Test send', `
+            <p class="bz-muted bz-small">Nothing leaves this sandbox. This is exactly what would arrive at
+              <strong>${U.esc(to)}</strong>, rendered with ${U.esc(u2.first_name + ' ' + u2.last_name)}'s data.</p>
+            ${r.aborted ? `<div class="bz-liqerr">Aborted: ${U.esc(r.aborted)} — nothing would be sent.</div>`
+              : `<div style="border:1px solid var(--bz-line);border-radius:6px;overflow:auto;max-height:56vh">${r.html}</div>`}`,
+            '<button class="bz-btn" data-modal-close>Close</button>', true);
+          break;
+        }
         case 'he-personalization':
           personalizationModal((snip) => {
             if (state.tab !== 'html') { state.tab = 'html'; rerender(); }
@@ -425,7 +583,20 @@ const BZHtmlEditor = (function () {
     });
   }
 
-  return { view, bind, personalizationModal, state };
+  /* Called whenever a build mode is (re)chosen, so the editor opens clean. */
+  function reset() {
+    state.mode = 'content';
+    state.ptab = 'user';
+    state.device = 'desktop';
+    state.section = 'design';
+    state.tab = 'html';
+    state.showLiquid = false;
+    state.liquidQuery = '';
+    state.testRecipients = '';
+    state.previewUserId = 'AUR-100000';
+  }
+
+  return { view, bind, personalizationModal, reset, state };
 })();
 
 window.BZHtmlEditor = BZHtmlEditor;

@@ -650,6 +650,96 @@ const check = (name, cond, detail) => {
   await page.waitForTimeout(250);
   check('a frequency cap can be deleted', await page.evaluate(() => BZ.frequencyCaps.length) === capsBefore);
 
+  // Preview & Test panel (the eye icon in the CONTENT rail)
+  console.log('\nPreview & Test');
+  await page.evaluate(() => { location.hash = '#/campaigns'; });
+  await page.waitForTimeout(150);
+  await page.locator('[data-act="new-campaign"]').click();
+  await page.waitForTimeout(200);
+  await page.locator('[data-chan="email"]').click();
+  await page.waitForTimeout(250);
+  await page.locator('[data-emode="html"]').click();
+  await page.waitForTimeout(350);
+
+  // clean start: the HTML editor opens empty
+  check('HTML editor opens with an empty body',
+    (await page.evaluate(() => BZApp.wizard.message.body)) === '');
+  check('empty editor shows "No content available for preview"',
+    (await page.locator('.bz-he__noprev').count()) === 1);
+
+  await page.fill('#bz-code-area', "<h1>Hi {{${first_name} | default: 'there'}}</h1>");
+  await page.waitForTimeout(250);
+
+  await page.locator('[data-act="pt-open"]').click();
+  await page.waitForTimeout(350);
+  check('Preview & Test opens from the rail eye icon',
+    (await page.locator('[data-pt-tab="user"]').count()) === 1);
+  check('it has Preview as a User and Test Send tabs',
+    (await page.locator('[data-pt-tab]').count()) === 2);
+  check('Desktop / Mobile / Plaintext switches are present',
+    (await page.locator('[data-pt-device]').count()) === 3);
+  check('From / Reply-To / Subject header renders',
+    /Reply-To/.test(await page.locator('.bz-he__mailmeta').innerText()));
+  check('Get Random User button is present',
+    (await page.locator('[data-act="pt-random"]').count()) === 1);
+
+  const beforeRandom = await page.evaluate(() => BZHtmlEditor.state.previewUserId);
+  for (let i = 0; i < 6; i++) {
+    await page.locator('[data-act="pt-random"]').click();
+    await page.waitForTimeout(120);
+    if ((await page.evaluate(() => BZHtmlEditor.state.previewUserId)) !== beforeRandom) break;
+  }
+  check('Get Random User changes the previewed profile',
+    (await page.evaluate(() => BZHtmlEditor.state.previewUserId)) !== beforeRandom);
+
+  const renderedName = await page.locator('.bz-he__paper').innerText();
+  const previewedUser = await page.evaluate(() => {
+    const u = BZ.userById(BZHtmlEditor.state.previewUserId);
+    return u.first_name;
+  });
+  check('preview renders with the selected profile\'s data',
+    renderedName.includes(previewedUser), `${renderedName.slice(0, 60)} / ${previewedUser}`);
+
+  await page.locator('[data-pt-device="plaintext"]').click();
+  await page.waitForTimeout(250);
+  check('Plaintext view strips the HTML', (await page.locator('.bz-he__plain').count()) === 1);
+  await page.locator('[data-pt-device="desktop"]').click();
+  await page.waitForTimeout(200);
+
+  await page.locator('[data-pt-tab="testsend"]').click();
+  await page.waitForTimeout(250);
+  check('Test Send tab has a recipients field and a Send button',
+    (await page.locator('[data-pt-recipients]').count()) === 1 &&
+    (await page.locator('[data-act="pt-send"]').count()) === 1);
+  await page.fill('[data-pt-recipients]', 'me@example.com');
+  await page.waitForTimeout(120);
+  await page.locator('[data-act="pt-send"]').click();
+  await page.waitForTimeout(300);
+  check('Send Test shows what would arrive', (await page.locator('.bz-modal').count()) === 1);
+  await page.locator('[data-modal-close]').first().click();
+  await page.waitForTimeout(200);
+
+  // clean start: switching message type discards the draft
+  await page.locator('[data-act="pt-tocontent"]').first().click();
+  await page.waitForTimeout(250);
+  await page.locator('[data-w-nav="0"]').click();
+  await page.waitForTimeout(250);
+  check('Change message type clears the draft',
+    (await page.evaluate(() => BZApp.wizard.message)) === null);
+
+  await page.locator('[data-chan="email"]').click();
+  await page.waitForTimeout(250);
+  await page.locator('[data-emode="dragdrop"]').click();
+  await page.waitForTimeout(400);
+  const ddState = await page.evaluate(() => ({
+    rows: BZApp.wizard.design.rows.length,
+    blocks: BZApp.wizard.design.rows.reduce((n, r) => n + r.columns.reduce((m, c) => m + c.blocks.length, 0), 0),
+  }));
+  check('drag & drop opens with one empty row and no blocks',
+    ddState.rows === 1 && ddState.blocks === 0, JSON.stringify(ddState));
+  check('empty canvas still offers a drop target',
+    (await page.locator('.bz-eb__dropzone').count()) >= 1);
+
   /* ---------- 5. No runtime errors --------------------------------------- */
   console.log('\nRuntime');
   check('no uncaught page errors', errors.length === 0, errors.slice(0, 5).join('\n      '));

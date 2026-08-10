@@ -15,7 +15,7 @@ then rebuild the single file:
 
 ```bash
 python3 build.py          # -> dist/braze-sandbox.html
-node smoke-test.js        # 164 assertions: engines, routes, composers, editors, settings
+node smoke-test.js        # 179 assertions: engines, routes, composers, editors, settings
 ```
 
 The smoke test needs `npm install playwright`; it points at the pre-installed Chromium
@@ -79,6 +79,7 @@ lint results — is computed, not scripted.
 | Campaigns | List with Status/Tag/Filters/Columns, idle banner and campaign-type pills. Creation starts at the **message-type picker** (Multichannel, Email, Push, In-App, Content Card, Banner, SMS/MMS/RCS, WhatsApp, LINE, Webhook), then the five-step composer |
 | Email building | The three tiles Braze shows on the Message content step — **Drag-and-drop editor**, **HTML code editor**, **Templates** — plus the **Upload file** link. The visual builder has Content / Rows / Settings tabs and Basic / Media / Advanced blocks |
 | HTML code editor | The real Braze layout: CONTENT rail (Design and Build / Link Management / Gmail Promotion, then Personalization, Multi-language, Create with AI), HTML / Classic / More tabs, line-numbered code pane, live Preview with **Expand Content Blocks**, and the Add Personalization modal |
+| Preview & Test | The eye icon in the rail opens Braze's real panel: **Preview as a User** / **Test Send** tabs, a user selector with **Get Random User**, the previewed profile's data shown beside the render, **Desktop / Mobile / Plaintext** switches, and the From / Reply-To / Subject header |
 | Liquid reference | 11 categories, 90+ runnable snippets — every personalization namespace, ~40 filters, all control flow, and the Braze-only tags (`abort_message`, `catalog_items`, `catalog_selection_items`, `connected_content`, `promotion`, `message_extras_capture`). Click to insert at the cursor. Every snippet is asserted to parse |
 | Other channels | Push, SMS (with GSM-7 vs Unicode segment counting), WhatsApp (positional template variables), In-App, Content Card, Banner, LINE, Webhook — each with a device preview |
 | Canvases | Full Canvas Flow builder — add, configure, delete and branch. Message, Delay, Action Paths, Audience Paths, Experiment Paths, Decision Split, Agent, Feature Flag, Webhook, Update User Profile, Exit. Entry settings with re-eligibility and conversion windows |
