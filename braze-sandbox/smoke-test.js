@@ -156,7 +156,7 @@ const check = (name, cond, detail) => {
   await page.locator('.bz-cvaddbtn').first().click();
   await page.waitForTimeout(120);
   const pickerOpen = await page.locator('.bz-steppicker__item').count();
-  check('step picker opens with all step types', pickerOpen === 11, 'got ' + pickerOpen);
+  check('step picker opens with all step types', pickerOpen === 14, 'got ' + pickerOpen);
   check('step picker groups the step types',
     (await page.locator('.bz-steppicker__g').count()) >= 5);
   await page.locator('.bz-steppicker__item[data-kind="audience_paths"]').click();
@@ -510,6 +510,13 @@ const check = (name, cond, detail) => {
     ['what conversion window should i use', 'Conversion'],
     ['explain incrementality', 'Incrementality'],
     ['is 0 truthy in liquid', 'truthiness'],
+    ['what is brazeai', 'BrazeAI'],
+    ['what can the operator do', 'Operator'],
+    ['what is the agent console', 'Agent Console'],
+    ['how does decisioning studio work', 'Decisioning'],
+    ['explain intelligent timing', 'Intelligence Suite'],
+    ['what is predictive churn', 'Predictive'],
+    ['can you write copy with generative ai', 'Generative'],
   ];
   for (const [q, expect] of kb) {
     await page.fill('#bz-op-in', q);
@@ -766,8 +773,13 @@ const check = (name, cond, detail) => {
   /* it opens on Canvas Details, because nothing has been decided yet */
   check('a new Canvas opens on Canvas Details',
     (await page.locator('[data-detail="name"]').count()) === 1);
-  check('the wizard shows all four Canvas steps',
-    (await page.locator('[data-cvwiz]').count()) === 4);
+  check('the wizard shows all six Canvas steps',
+    (await page.locator('[data-cvwiz]').count()) === 6);
+  check('Basics has the Canvas ID and Conversion Events',
+    (await page.locator('[data-copy-text]').count()) >= 1 &&
+    (await page.locator('[data-add-conv]').count()) === 1);
+  check('the Build Canvas step has a Components panel',
+    (await page.locator('[data-cvwiz="flow"]').count()) === 1);
 
   /* naming it, then moving through the wizard */
   await page.fill('[data-detail="name"]', 'Second stay journey');
@@ -792,11 +804,39 @@ const check = (name, cond, detail) => {
     (await page.locator('.bz-cvaddbtn').count()) === 1);
   check('the board has zoom controls', (await page.locator('[data-zoom]').count()) === 3);
 
+  /* the Components panel, grouped like the real product */
+  check('Build Canvas shows the Components panel', (await page.locator('.bz-cvcomp').count()) === 1);
+  check('components are grouped (Basic / Flow Controls / Audience Updates / Optimization / Other)',
+    (await page.locator('.bz-cvcomp__g').count()) === 5);
+  check('the Components panel has a Clean Up Canvas action',
+    (await page.locator('[data-act="cv-clean"]').count()) === 1);
+  /* clicking a component adds that step to the flow */
+  await page.locator('.bz-cvcomp__item[data-comp="message"]').click();
+  await page.waitForTimeout(250);
+  check('clicking a component adds a step to the flow',
+    (await page.evaluate((id) => BZ.canvases.find((c) => c.id === id).steps.length, fresh.id)) === 1);
+  check('adding a Message step opens its drawer with variant editing',
+    (await page.locator('[data-add-var]').count()) === 1);
+  /* remove it again so the empty-flow validation below still holds */
+  await page.evaluate((id) => { BZ.canvases.find((c) => c.id === id).steps = []; }, fresh.id);
+  await page.locator('[data-cvwiz="send"]').click();
+  await page.waitForTimeout(250);
+  check('Send Settings exposes quiet hours and frequency capping',
+    (await page.locator('[data-send="quietHoursEnabled"]').count()) === 1 &&
+    (await page.locator('[data-send="frequencyCapping"]').count()) === 1);
+  await page.locator('[data-cvwiz="flow"]').click();
+  await page.waitForTimeout(200);
+
   /* launch must be blocked while the flow is unbuildable */
   const v0 = await page.evaluate((id) =>
     BZCanvas.validate(BZ.canvases.find((c) => c.id === id)), fresh.id);
   check('an empty, untriggered Canvas fails validation', v0.ok === false && v0.errors.length >= 2,
     JSON.stringify(v0.errors));
+  /* Launch lives on the Summary step */
+  await page.locator('[data-cvwiz="summary"]').click();
+  await page.waitForTimeout(250);
+  check('the Summary step lists the blocking problems',
+    (await page.locator('.bz-cvproblems__h--err').count()) === 1);
   await page.locator('[data-act="canvas-launch"]').click();
   await page.waitForTimeout(300);
   check('launching an invalid Canvas opens the problem list, not a launch',
@@ -812,6 +852,7 @@ const check = (name, cond, detail) => {
     c.entry.conversionEvents.push({ event: 'booking_completed', window: '14 days', primary: true });
     const m = BZCanvas.newStep('message');
     m.templateId = BZ.templates[0].id;
+    m.variants[0].templateId = BZ.templates[0].id;
     c.steps.push(m, BZCanvas.newStep('delay'));
   }, fresh.id);
   const v1 = await page.evaluate((id) =>

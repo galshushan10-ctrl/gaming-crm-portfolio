@@ -2196,7 +2196,7 @@
         case 'new-canvas': {
           const cv = {
             id: U.uid('cv'), name: 'Untitled Canvas', status: 'draft', _userCreated: true, _fresh: true,
-            description: '', tags: [], team: '',
+            description: '', tags: [], team: '', canvasId: window.BZCanvas.uuid(),
             entry: window.BZCanvas.newEntry(),
             stats: { entered: 0, converted: 0, revenue: 0 },
             /* Empty. A new Canvas in Braze has an Entry node and nothing else —

@@ -15,7 +15,7 @@ then rebuild the single file:
 
 ```bash
 python3 build.py          # -> dist/braze-sandbox.html
-node smoke-test.js        # 233 assertions: engines, routes, composers, editors, settings, graded cases
+node smoke-test.js        # 249 assertions: engines, routes, composers, editors, settings, graded cases
 ```
 
 The smoke test needs `npm install playwright`; it points at the pre-installed Chromium
@@ -64,7 +64,7 @@ It **acts**, not just answers:
 | "review this Canvas for problems" | walks the flow for missing catch-alls, long waits before the first message, lead-time gaps, re-eligibility mistakes |
 | "run a pre-launch check" | the machine-checkable half of the launch checklist |
 
-It also answers ~35 knowledge topics drawn from the same material as the courses.
+It also answers the **BrazeAI** curriculum in full — ask it "what is BrazeAI", "what can the Operator do", "what is the Agent Console", "how does Decisioning Studio work", "explain Intelligent Timing", "what is predictive churn", "generative AI / Sage" — alongside ~35 other topics drawn from the same material as the courses.
 
 **It is not a language model.** A published artifact page has no model access — the only
 runtime capabilities available are `downloads` and `mcp`. So this is intent matching over
@@ -82,7 +82,7 @@ lint results — is computed, not scripted.
 | Preview & Test | The eye icon in the rail opens Braze's real panel: **Preview as a User** / **Test Send** tabs, a user selector with **Get Random User**, the previewed profile's data shown beside the render, **Desktop / Mobile / Plaintext** switches, and the From / Reply-To / Subject header |
 | Liquid reference | 11 categories, 90+ runnable snippets — every personalization namespace, ~40 filters, all control flow, and the Braze-only tags (`abort_message`, `catalog_items`, `catalog_selection_items`, `connected_content`, `promotion`, `message_extras_capture`). Click to insert at the cursor. Every snippet is asserted to parse |
 | Other channels | Push, SMS (with GSM-7 vs Unicode segment counting), WhatsApp (positional template variables), In-App, Content Card, Banner, LINE, Webhook — each with a device preview |
-| Canvases | Four-step builder — **Canvas Details / Entry Schedule / Target Audience / Canvas Flow** in a bottom bar with Save as Draft and Launch Canvas. **A new Canvas starts empty**: an Entry node and one `+`, nothing else. The flow board has zoom controls, inserters on every connector, branch labels marked *catch-all* and *control*, and a right-hand **configuration drawer** with inline step renaming. Steps that are not finished are flagged on the card, and **Launch is blocked** with a list of what is wrong — separated into blocking errors and things that will silently cost you users |
+| Canvases | **Six-step creation wizard** shown as a numbered stepper at the top — **Basics / Entry Schedule / Target Audience / Send Settings / Build Canvas / Summary** — matching the live product. Basics holds the name, tags, the read-only **Canvas ID** (the key for the Canvas Trigger API) and **conversion events** (up to four, fixed after launch). Build Canvas is a node board with a left-hand **Components** panel grouped *Basic Components / Flow Controls / Audience Updates / Optimization / Other*, plus a Clean Up Canvas action and "+" inserters on every connector. **A new Canvas starts empty.** Message steps support **variants** with a percentage split. Steps that are unfinished are flagged, and **Launch is blocked** from the Summary with a separated list of blocking errors and non-blocking warnings |
 | Email Templates | HTML + Liquid editor with live preview against a real profile, personalization palette, snippet library, per-user "Send test", and an **Edge case** button that previews against a null-heavy profile |
 | Segments | Filter-group builder with AND/OR join badges, per-group counts, live totals, breakdowns and a sample of matched users |
 | Users | Profile explorer: standard and custom attributes, event timeline, subscription groups, message history |

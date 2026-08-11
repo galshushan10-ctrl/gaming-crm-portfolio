@@ -280,6 +280,75 @@ Promotions &amp; Offers is subscribed</code></pre>
       <li>Experiment Paths on discount depth, including a points-only arm.</li>
       <li>Holdout — win-back without one is indistinguishable from natural return.</li>
       <li>Revisit the lapse definition once you see who came back.</li></ol>` },
+
+    /* ===================== BrazeAI ===================================== */
+
+    { keys: ['brazeai', 'braze ai', 'ai', 'what ai', 'ai features', 'ai tools', 'intelligence'], t: 'BrazeAI — the whole suite', a: `
+      <p><strong>BrazeAI</strong> is the umbrella over every AI feature in the platform. It splits into five areas, and it is worth knowing which is which because interviewers conflate them:</p>
+      <table><tr><th>Area</th><th>What it does</th></tr>
+      <tr><td><strong>Operator</strong></td><td>The conversational assistant — me. Type a request, it maps it to a Braze action and does it or drafts it.</td></tr>
+      <tr><td><strong>Agent Console</strong></td><td>Build your own autonomous agents and drop them into a Canvas or a Catalog.</td></tr>
+      <tr><td><strong>Decisioning Studio</strong></td><td>1:1 decisions — which offer/channel/timing per user — optimised against a business KPI with reinforcement learning.</td></tr>
+      <tr><td><strong>Intelligence Suite</strong></td><td>Intelligent Timing, Intelligent Channel, Intelligent Selection — narrower optimisations you switch on inside a message.</td></tr>
+      <tr><td><strong>Predictive Suite</strong></td><td>Per-user scores: churn risk, purchase propensity, likelihood of any custom event.</td></tr></table>
+      <p>Underneath, <strong>Sage AI</strong> is the generative engine that powers the copywriting, image generation and the predictive/optimisation models.</p>
+      <p class="bz-small">Ask me about any one of these by name for the detail — "what is Decisioning Studio", "how does Intelligent Timing work", "predictive churn", "agent console".</p>` },
+
+    { keys: ['operator', 'assistant', 'what can you do', 'help me', 'who are you', 'what do you do'], t: 'What the Operator does', a: `
+      <p>I am <strong>BrazeAI Operator</strong> — a conversational assistant that lives inside the dashboard. In the real product you type a request in plain language and I interpret the intent, map it to the right Braze action, and either <strong>execute it or draft it for your review</strong>. I know where you are, so "explain this" or "check this" work without you naming the object.</p>
+      <p>What Operator does in Braze:</p>
+      <ul>
+        <li><strong>Builds audiences</strong> — turn a description into real segment filters.</li>
+        <li><strong>Writes content</strong> — email HTML, Liquid, subject lines, push copy.</li>
+        <li><strong>Builds journeys</strong> — assemble a Canvas from a prompt.</li>
+        <li><strong>Troubleshoots</strong> — why a segment is empty, why a template renders blank, why a send under-delivered.</li>
+        <li><strong>Spins up agents</strong> — with the Agent Console it writes the instructions, sets guardrails, wires in customer data and deploys an agent into a Canvas or Catalog.</li>
+      </ul>
+      <p>Here in the sandbox I do a real subset of that: build segments, count audiences, add Canvas steps, write Liquid, lint a template, review a Canvas, run a pre-launch check. Try <em>"build a segment of lapsed Gold members in Israel"</em> or <em>"write Liquid for a tier offer"</em>.</p>
+      <div class="bz-op__did" style="border-left-color:#B26A00;background:#FDF1DD;color:#7A4A00">
+        <b>Being straight with you</b>
+        The real Operator is a live language model. This page has no model behind it, so I match what you type against a curated set of topics and actions. Same shape, honest about the difference.
+      </div>` },
+
+    { keys: ['agent console', 'agent', 'agents', 'custom agent', 'build agent', 'autonomous'], t: 'Agent Console & Canvas agents', a: `
+      <p>The <strong>Agent Console</strong> is where you build and manage your own AI agents that then run <em>inside</em> your journeys. An agent is a small autonomous worker with instructions, guardrails and access to customer data.</p>
+      <p>The usual flow: you describe the job to <strong>Operator</strong> ("recommend each customer's next trip from the catalog"), Operator writes the agent's instructions, sets the guardrails, wires in the data and deploys it. You then drop it into a Canvas as an <strong>Agent step</strong> and route on its output, or attach it to a <strong>Catalog</strong>.</p>
+      <p><strong>The junior mistake:</strong> deploying an agent into a live journey with no guardrails, no control group and no human review of what it generates. Treat generated content like any other content — QA it, hold out a control, read the incremental number.</p>
+      <p class="bz-small">In this sandbox the <strong>Agent</strong> and <strong>Content Optimizer</strong> steps in the Canvas builder show you where an agent sits in a flow.</p>` },
+
+    { keys: ['decisioning', 'decision studio', 'offerfit', 'kpi', 'reinforcement', '1:1', 'next best'], t: 'Decisioning Studio', a: `
+      <p><strong>Decisioning Studio</strong> makes 1:1 decisions per user — which offer, which channel, which send time — optimised against a business KPI using reinforcement learning. It is the OfferFit engine built into Braze.</p>
+      <p>The shift in thinking: instead of <em>you</em> picking the variant and measuring it, you nominate the <strong>metric</strong> (say <code>booking_completed</code> or revenue) and the system chooses per user and keeps learning. You give it the options and the goal; it works out the assignment.</p>
+      <p><strong>Where it goes wrong:</strong> nominating a proxy metric. Optimise toward clicks and it will learn to maximise clicks — clickbait subject lines, not bookings. Point it at the outcome that actually pays.</p>` },
+
+    { keys: ['intelligent timing', 'intelligence suite', 'intelligent channel', 'intelligent selection', 'send time', 'best time'], t: 'Intelligence Suite', a: `
+      <p>Three narrower optimisations you switch on inside a message, all part of the <strong>Intelligence Suite</strong>:</p>
+      <ul>
+        <li><strong>Intelligent Timing</strong> — sends each user at their predicted best hour inside a window. Great for evergreen content; <em>wrong</em> for a hard deadline (it spreads the send), and it falls back to a default time for users with little history.</li>
+        <li><strong>Intelligent Channel</strong> — routes each user to the channel they engage with most. Only safe if every candidate channel has a valid message and valid consent.</li>
+        <li><strong>Intelligent Selection</strong> — reallocates traffic toward the winning variant automatically. Handy, but once it is on your variants are no longer a clean 50/50, so do not also read it as a naive A/B test.</li>
+      </ul>
+      <p>Related Canvas features powered by the same engine: <strong>Personalized Variant</strong> and <strong>Winning Paths</strong>.</p>` },
+
+    { keys: ['predictive', 'churn', 'propensity', 'prediction', 'predict', 'likelihood'], t: 'Predictive Suite', a: `
+      <p>The <strong>Predictive Suite</strong> scores each user on the likelihood of performing any custom event — a purchase, a churn, a renewal, a booking. You then use the score as a filter like any other attribute.</p>
+      <ul>
+        <li><strong>Predictive Churn</strong> — who is about to lapse. Feed it into a win-back Canvas <em>before</em> they go quiet.</li>
+        <li><strong>Purchase / event propensity</strong> — pick any event and get a per-user probability.</li>
+        <li><strong>Predictive audiences</strong> — the high/medium/low bands as ready-made segments.</li>
+      </ul>
+      <p><strong>The trap:</strong> acting on a score with no holdout, or training on too little data. A prediction is a targeting input, not a result — you still measure the campaign that uses it.</p>` },
+
+    { keys: ['sage', 'generative', 'write copy', 'create with ai', 'copywriting', 'image generation', 'ai copy'], t: 'Generative AI (Sage)', a: `
+      <p><strong>Sage AI</strong> is Braze's generative engine. In message composition it shows up as <strong>Create with AI</strong>: draft subject lines and body copy, adjust tone, and generate images, right in the editor.</p>
+      <p>It also quietly powers the Predictive Suite, the Intelligence Suite, Personalized Variant and Winning Paths — the same engine, different surface.</p>
+      <p><strong>Two rules before generated content ships:</strong> put it through brand and legal review like any copy, and <strong>check the Liquid survived the rewrite</strong> — an AI pass will happily mangle <code>{{\${first_name}}}</code> into prose.</p>
+      <p class="bz-small">In this sandbox the HTML editor's <em>Create with AI</em> affordance marks where this lives; the generation itself needs a live model, which a published page does not have.</p>` },
+
+    { keys: ['content optimizer', 'high variant', 'optimize content', 'multivariate'], t: 'Content Optimizer', a: `
+      <p><strong>Content Optimizer</strong> is a Canvas step (an agent step) for continuous, high-variant content testing. You define the components to test — subject line, hero, CTA — generate variants with AI or enter them by hand, and it automatically shifts traffic toward what performs on your chosen metric.</p>
+      <p>It is the grown-up version of an A/B test: many variants, always-on, self-optimising. Use it when you have real volume and a clear conversion event — not on a 4,000-person send where five variants leave you 800 each.</p>
+      <p class="bz-small">You will find it in the Canvas builder under <strong>Optimization → Content Optimizer</strong>.</p>` },
   ];
 
   /* ---------- natural-language → segment filters --------------------------- */
@@ -592,10 +661,13 @@ Promotions &amp; Offers is subscribed</code></pre>
     }
 
     /* -- add a canvas step -------------------------------------------------- */
-    if (/(add|insert).{0,24}(step|delay|message|path|webhook)/.test(q)) {
+    if (/(add|insert).{0,24}(step|delay|message|path|webhook|split|context|sync|flag|agent|optimizer)/.test(q)) {
       if (!c.canvas) return say('<p>Open a Canvas first and I will add the step there. <a href="#/canvases">Canvases →</a></p>');
-      const kind = /audience/.test(q) ? 'audience_paths' : /action/.test(q) ? 'action_paths'
-        : /experiment|test/.test(q) ? 'experiment_paths' : /webhook/.test(q) ? 'webhook'
+      const kind = /audience path/.test(q) ? 'audience_paths' : /action path/.test(q) ? 'action_paths'
+        : /experiment/.test(q) ? 'experiment_paths' : /decision|split/.test(q) ? 'decision_split'
+        : /content optimi/.test(q) ? 'content_optimizer' : /agent/.test(q) ? 'agent'
+        : /feature flag|flag/.test(q) ? 'feature_flag' : /audience sync|sync/.test(q) ? 'audience_sync'
+        : /context/.test(q) ? 'context' : /webhook/.test(q) ? 'webhook'
         : /update|attribute/.test(q) ? 'update_user' : /delay|wait/.test(q) ? 'delay'
         : /exit/.test(q) ? 'exit' : 'message';
       const step = window.BZCanvas.newStep(kind);

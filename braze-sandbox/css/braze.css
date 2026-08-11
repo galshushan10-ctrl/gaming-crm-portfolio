@@ -1338,3 +1338,78 @@ body.bz-op-open .bz-wizbar { padding-right: 16px; }
 }
 .bz-herocase__t { font-weight: 800; font-size: 16.5px; letter-spacing: -.2px; }
 .bz-herocase__d { margin: 5px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--bz-ink-2); }
+
+/* ==========================================================================
+   Canvas Flow v3 — top stepper, Components panel, Basics/Send/Summary
+   ========================================================================== */
+
+/* the "Canvas / Edit '…'" tab in the topbar */
+.bz-cvtab {
+  display: flex; align-items: center; gap: 10px; padding: 6px 14px;
+  border: 1px solid var(--bz-line); border-bottom: none; border-radius: 8px 8px 0 0;
+  background: var(--bz-bg-2); font-size: 13px; font-weight: 600; color: var(--bz-ink-2);
+  margin-bottom: -1px;
+}
+.bz-cvtab__x { color: var(--bz-ink-4); font-size: 12px; }
+
+/* numbered stepper across the top of the wizard */
+.bz-cvstepper {
+  display: flex; align-items: center; gap: 2px; flex: 0 0 auto;
+  padding: 12px 22px; border-bottom: 1px solid var(--bz-line); background: #fff;
+  overflow-x: auto;
+}
+.bz-cvstepper__s {
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px; white-space: nowrap;
+  border: none; background: none; cursor: pointer; border-radius: var(--bz-radius);
+  font-size: 13px; font-weight: 600; color: var(--bz-ink-4);
+}
+.bz-cvstepper__s:hover { background: var(--bz-bg-2); }
+.bz-cvstepper__s.is-active { color: var(--bz-purple-dark); }
+.bz-cvstepper__s.is-done { color: var(--bz-ink-2); }
+.bz-cvstepper__n {
+  width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+  border: 1.5px solid var(--bz-line-2); background: #fff; font-size: 11px; font-weight: 800; color: var(--bz-ink-4);
+}
+.bz-cvstepper__s.is-active .bz-cvstepper__n { background: var(--bz-purple); color: #fff; border-color: var(--bz-purple); }
+.bz-cvstepper__s.is-done .bz-cvstepper__n { background: #0A9D5C; color: #fff; border-color: #0A9D5C; }
+.bz-cvstepper__sep { width: 22px; height: 1.5px; background: var(--bz-line-2); flex: 0 0 auto; }
+
+/* Components panel on the left of the Build Canvas board */
+.bz-cvcomp {
+  width: 236px; flex: 0 0 236px; background: #fff; border-right: 1px solid var(--bz-line);
+  overflow-y: auto; padding: 16px 14px 60px; position: relative;
+}
+.bz-cvcomp__h { font-weight: 800; font-size: 14px; }
+.bz-cvcomp__sub { font-size: 12px; color: var(--bz-ink-3); margin: 4px 0 14px; line-height: 1.5; }
+.bz-cvcomp__g {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase;
+  color: var(--bz-ink-4); margin: 16px 0 7px;
+}
+.bz-cvcomp__item {
+  display: flex; align-items: center; gap: 9px; width: 100%; text-align: left;
+  padding: 8px 10px; margin-bottom: 5px; border: 1px solid var(--bz-line);
+  border-radius: 8px; background: #fff; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--bz-ink-2);
+}
+.bz-cvcomp__item:hover { border-color: var(--bz-purple); background: var(--bz-purple-soft); color: var(--bz-purple-dark); }
+.bz-cvcomp__ico { font-size: 15px; width: 18px; text-align: center; }
+.bz-cvcomp__clean {
+  display: flex; align-items: center; gap: 7px; width: 100%; margin-top: 20px;
+  padding: 9px 10px; border: 1px dashed var(--bz-line-2); border-radius: 8px;
+  background: none; cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--bz-ink-3);
+}
+.bz-cvcomp__clean:hover { border-color: var(--bz-purple); color: var(--bz-purple); }
+
+.bz-cvbeta {
+  font-size: 9px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase;
+  background: #FDF1DD; color: #7A4A00; padding: 1px 5px; border-radius: 4px; margin-left: 6px;
+}
+
+/* message variant chip on a step card, and the variant editor in the drawer */
+.bz-cvstep__variants {
+  font-size: 10.5px; font-weight: 700; color: var(--bz-purple-dark);
+  background: var(--bz-purple-soft); border-radius: 4px; padding: 1px 6px; margin-left: 7px;
+}
+.bz-cvvar {
+  border: 1px solid var(--bz-line); border-radius: 8px; padding: 10px; margin-bottom: 8px;
+  background: var(--bz-bg-2);
+}
